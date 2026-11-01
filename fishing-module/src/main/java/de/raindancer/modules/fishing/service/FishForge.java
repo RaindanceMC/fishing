@@ -77,7 +77,7 @@ public final class FishForge implements IFishingService {
 
     private static CustomItem fishDefinition(FishKind kind) {
         String colour = "<" + kind.tier().hex() + ">";
-        String waters = kind.waters().stream().sorted().map(Water::title).collect(Collectors.joining(", "));
+        String waters = kind.where();
         return CustomItem.builder(PLUGIN, kind.itemId())
                 .material(Material.COD)
                 .name(colour + kind.name())

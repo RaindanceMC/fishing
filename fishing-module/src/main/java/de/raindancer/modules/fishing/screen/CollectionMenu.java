@@ -50,7 +50,7 @@ public final class CollectionMenu extends PaginatedMenu<FishKind> implements IFi
 
     @Override
     protected ItemStack icon(FishKind kind) {
-        String waters = kind.waters().stream().sorted().map(Water::title).collect(Collectors.joining(", "));
+        String waters = kind.where();
         int caught = profile.caught(kind.id());
         String colour = "<" + kind.tier().hex() + ">";
         if (caught > 0) {

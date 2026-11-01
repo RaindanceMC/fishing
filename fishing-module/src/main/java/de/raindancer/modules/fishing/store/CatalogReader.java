@@ -53,8 +53,14 @@ public final class CatalogReader {
                         new IllegalArgumentException(entry.get("id").getAsString() + ": no water "
                                 + water.getAsString())));
             }
+            Set<String> biomes = new java.util.HashSet<>();
+            if (entry.has("biomes")) {
+                for (JsonElement biome : entry.getAsJsonArray("biomes")) {
+                    biomes.add(biome.getAsString());
+                }
+            }
             fish.add(new FishKind(entry.get("id").getAsString(), entry.get("name").getAsString(),
-                    tier(entry), waters, entry.has("glow") && entry.get("glow").getAsBoolean()));
+                    tier(entry), waters, entry.has("glow") && entry.get("glow").getAsBoolean(), biomes));
         }
         List<Dish> dishes = new ArrayList<>();
         for (JsonElement each : root.getAsJsonArray("dishes")) {

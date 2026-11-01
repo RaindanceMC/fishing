@@ -106,7 +106,8 @@ public final class CatchService implements IFishingService {
         boolean replacing = vanillaWasFish && (live.replaceVanillaFish() || water.needsSpecialLine());
         CatchRule.Cast cast = new CatchRule.Cast(water, rodOf(player), profiles.of(player.getUniqueId()),
                 spot.isPresent(), live.chestPermille(), live.spotChestPermille(),
-                replacing || water.needsSpecialLine(), spot.filter(Spot::fixed).map(Spot::best).orElse(null), bait);
+                replacing || water.needsSpecialLine(), spot.filter(Spot::fixed).map(Spot::best).orElse(null), bait,
+                hook.getWorld().getBiome(hook).getKey().toString());
         Catch caught = rule.roll(cast, random);
         if (!(caught instanceof Catch.Vanilla)) {
             spot.ifPresent(spots::fished);

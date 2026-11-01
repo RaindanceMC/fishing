@@ -38,9 +38,19 @@ public record Catalog(List<FishKind> fish, List<Dish> dishes) {
 
     /** The tiers that have at least one fish in this water, lowest first. */
     public List<Tier> tiersIn(Water water) {
+        return tiersIn(water, null);
+    }
+
+    /** What bites in this water in this biome at exactly this tier; a null biome is anywhere. */
+    public List<FishKind> in(Water water, String biome, Tier tier) {
+        return fish.stream().filter(kind -> kind.tier() == tier && kind.bitesIn(water, biome)).toList();
+    }
+
+    /** The tiers with at least one fish in this water in this biome, lowest first. */
+    public List<Tier> tiersIn(Water water, String biome) {
         List<Tier> found = new ArrayList<>();
         for (Tier tier : Tier.values()) {
-            if (!in(water, tier).isEmpty()) {
+            if (!in(water, biome, tier).isEmpty()) {
                 found.add(tier);
             }
         }

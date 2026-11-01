@@ -14,7 +14,7 @@ sections:
   - question: What can I catch?
     title: Fish and tiers
     text: |
-      Fish come in six tiers: <white>common</white>, <green>uncommon</green>, <aqua>rare</aqua>, <light_purple>epic</light_purple>, <gold>legendary</gold> and <aqua>mythic</aqua>. Rivers, oceans, warm seas, swamps, frozen water, cave water, lava and the void each have their own; the mythic ones live only in the void.
+      Fish come in six tiers: <white>common</white>, <green>uncommon</green>, <aqua>rare</aqua>, <light_purple>epic</light_purple>, <gold>legendary</gold> and <aqua>mythic</aqua>. Rivers, oceans, warm seas, swamps, frozen water, cave water, lava and the void each have their own; the mythic ones live only in the void. In the nether every biome's lava has fish of its own — crimson, warped, soul sand, basalt and the wastes.
       {if:fishing:catch.replace-vanilla-fish}Whatever fish or junk vanilla would have put on your hook becomes one of these fish instead — no more lily pads and old boots. Treasure stays treasure.{else}On this server cod and salmon stay vanilla; the new fish come from lava and the void, and from sea chests.{/if}
       {run:/fishing collection} shows every fish there is, and where the ones you have not caught yet bite.
   - question: What is a sea chest?
@@ -33,8 +33,8 @@ sections:
   - question: How do I fish lava or the void?
     title: Lava and the void
     text: |
-      An ordinary line burns through in lava. Fit the <white>Ember Line</white> and your hook floats on lava like on water.
-      For the void, fit the <white>Void Line</white> (fishing level {setting:fishing:rod.void-line-level|count}), stand on the edge of an End island and cast straight down into the nothing. The hook stays hanging there; when it dips and flares, reel in.
+      An ordinary line burns through in lava. Fit the <white>Ember Line</white> and your float rests on the lava like on water; watch for the wake of smoke coming at it before a bite.
+      For the void, fit the <white>Void Line</white> (fishing level {setting:fishing:rod.void-line-level|count}), stand on the edge of an End island and cast straight down into the nothing. The float hangs on a shimmering ring over the nothing; when the wake reaches it and it dips and flares, reel in.
   - question: Which rods are there?
     title: Rods
     text: |

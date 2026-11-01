@@ -510,7 +510,58 @@ def build_all():
           "....GG..........")
     spots(g, [(3, 4), (3, 7), (4, 8), (3, 10), (5, 6), (5, 10), (4, 5)], "Z")
     out["astral_leviathan"] = {"grid": g, "depth": 4, "plane": "xy", "ends": (0, 0), "dy": 0}
-    for rid in ("magma_ray", "star_ray"):
+    # ---- the nether's own (lava, by biome)
+    s = shaped(HERRING)
+    spots(s["grid"], [(1, 5), (1, 8), (2, 6), (2, 9), (3, 4)], "Z")
+    out["cinder_minnow"] = s
+
+    s = shaped(DEEP, depth=[2, 3, 4, 4, 4, 4, 4, 4, 4, 3, 2, 2, 2, 2])
+    spots(s["grid"], [(2, 4), (3, 6), (4, 8), (5, 5), (3, 9)], "A")
+    hrow(s["grid"], 0, 4, 7, "S")
+    out["crimson_snapper"] = s
+
+    s = shaped(TROUT)
+    hrow(s["grid"], 2, 3, 9, "Z", only="B")
+    spots(s["grid"], [(1, 5), (1, 8)], "A")
+    out["warped_tetra"] = s
+
+    s = shaped(STUBBY, depth=[2, 4, 4, 4, 4, 4, 4, 2, 2, 2])
+    spots(s["grid"], [(1, 3), (2, 5), (3, 6), (4, 3), (2, 2)], "K")
+    spots(s["grid"], [(3, 4), (4, 6)], "Z")
+    out["basalt_bass"] = s
+
+    s = shaped(LONG)
+    for c in range(3, 13, 2):
+        put(s["grid"], 2, c, "Z")
+    spots(s["grid"], [(1, 4), (1, 8), (3, 6), (3, 10)], "A")
+    out["soul_pike"] = s
+
+    g, path = wave([3, 2, 2, 2, 1, 1, 1, 2, 2, 3, 3, 3, 2, 2, 1, 1], 3, head=3)
+    for x in range(3, 16, 3):
+        put(g, path[x] - 1, x, "L")
+        put(g, path[x] + 1, x, "Z")
+    put(g, path[1], 1, "E")
+    out["shroomlight_eel"] = {"grid": g, "depth": 2, "plane": "xy", "ends": (0, 0), "dy": 0}
+
+    g = G(*RAY)
+    spots(g, [(4, 6), (6, 4), (8, 7), (7, 10), (10, 6), (5, 10), (9, 9)], "Z")
+    hrow(g, 7, 13, 15, "S")
+    out["wartling_ray"] = {"grid": g, "depth": [2, 2, 2, 4, 4, 4, 4, 4, 4, 2, 2, 2, 2, 2, 2, 2], "plane": "xz",
+                           "ends": (0, 0), "dy": 0}
+
+    s = shaped(LONG, depth=[2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 2, 2, 2])
+    hrow(s["grid"], 0, 3, 8, "S")
+    put(s["grid"], 0, 3, "S")
+    put(s["grid"], 2, 0, "K")
+    put(s["grid"], 3, 0, "K")
+    spots(s["grid"], [(2, 5), (2, 9), (3, 7), (1, 11)], "Z")
+    out["obsidian_gar"] = s
+
+    s = shaped(ANGLER, depth=[2, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 2, 2, 2, 2, 2])
+    spots(s["grid"], [(5, 8), (6, 6), (7, 9), (5, 4), (6, 10)], "Z")
+    out["soul_angler"] = s
+
+    for rid in ("magma_ray", "star_ray", "wartling_ray"):
         r = out[rid]
         g = r["grid"]
         keep = [row[:] for row in g]
@@ -519,7 +570,7 @@ def build_all():
                 if g[i][j] in "BZ":
                     near = [(i + 1, j), (i - 1, j), (i, j + 1), (i, j - 1)]
                     if any(not (0 <= a < len(g) and 0 <= b < len(g[0])) or g[a][b] == "." for a, b in near):
-                        keep[i][j] = "W" if rid == "magma_ray" else "F"
+                        keep[i][j] = "W" if rid in ("magma_ray", "wartling_ray") else "F"
         r["grid"] = keep
         r["depth"] = [2, 2, 2, 2, 3, 3, 3, 3, 3, 2, 2, 2, 2, 2, 2, 2]
     return out

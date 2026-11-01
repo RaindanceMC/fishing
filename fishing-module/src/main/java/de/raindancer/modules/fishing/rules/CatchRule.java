@@ -44,13 +44,19 @@ public final class CatchRule implements IFishingRule {
      * @param spotTier           the best a fixed spot the hook is in gives up (what its admin set), or null — a
      *                           wandering spot promises its water's best
      * @param bait               the bait on the hook, or null
+     * @param biome              the biome the hook is in ({@code minecraft:crimson_forest}), or null for anywhere
      */
     public record Cast(Water water, Rod rod, FisherProfile profile, boolean inSpot, int chestPermille,
-                       int spotChestPermille, boolean vanillaWasFish, Tier spotTier, Bait bait) {
+                       int spotChestPermille, boolean vanillaWasFish, Tier spotTier, Bait bait, String biome) {
 
         public Cast(Water water, Rod rod, FisherProfile profile, boolean inSpot, int chestPermille,
                     int spotChestPermille, boolean vanillaWasFish) {
-            this(water, rod, profile, inSpot, chestPermille, spotChestPermille, vanillaWasFish, null, null);
+            this(water, rod, profile, inSpot, chestPermille, spotChestPermille, vanillaWasFish, null, null, null);
+        }
+
+        public Cast(Water water, Rod rod, FisherProfile profile, boolean inSpot, int chestPermille,
+                    int spotChestPermille, boolean vanillaWasFish, Tier spotTier, Bait bait) {
+            this(water, rod, profile, inSpot, chestPermille, spotChestPermille, vanillaWasFish, spotTier, bait, null);
         }
     }
 
@@ -68,12 +74,12 @@ public final class CatchRule implements IFishingRule {
         if (!cast.vanillaWasFish() && !cast.water().needsSpecialLine()) {
             return new Catch.Vanilla();
         }
-        List<Tier> present = capped(catalog.tiersIn(cast.water()), cast.spotTier());
+        List<Tier> present = capped(catalog.tiersIn(cast.water(), cast.biome()), cast.spotTier());
         if (present.isEmpty()) {
             return new Catch.Vanilla();
         }
         Tier tier = pickTier(present, cast, random);
-        List<FishKind> kinds = catalog.in(cast.water(), tier);
+        List<FishKind> kinds = catalog.in(cast.water(), cast.biome(), tier);
         FishKind kind = kinds.get(random.nextInt(kinds.size()));
         int amount = random.nextInt(1000) < doublePermille(cast) ? 2 : 1;
         return new Catch.Fish(kind, amount);

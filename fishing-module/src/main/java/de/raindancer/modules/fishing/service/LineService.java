@@ -42,6 +42,7 @@ public final class LineService implements IFishingService {
         Water water;
         int ticks;
         boolean warned;
+        de.raindancer.modules.fishing.visual.LineVisual visual;
 
         Line(UUID player) {
             this.player = player;
@@ -86,7 +87,10 @@ public final class LineService implements IFishingService {
         Scheduling.entityTimer(plugin, hook, PERIOD, PERIOD, task -> {
             if (!hook.isValid()) {
                 task.cancel();
-                lines.remove(hook.getUniqueId());
+                Line gone = lines.remove(hook.getUniqueId());
+                if (gone != null && gone.visual != null) {
+                    gone.visual.remove();
+                }
                 baits.take(hook.getUniqueId());
                 return;
             }
@@ -99,10 +103,13 @@ public final class LineService implements IFishingService {
             case FALLING -> fall(player, hook, line, rod);
             case WAITING -> {
                 line.ticks -= (int) PERIOD;
+                if (line.visual != null) {
+                    line.visual.waiting(line.ticks, (int) PERIOD);
+                }
                 if (line.ticks <= 0) {
                     line.phase = Phase.BITING;
                     line.ticks = bites.biteWindowTicks();
-                    bite(player, hook, line.water);
+                    bite(player, hook, line);
                 }
             }
             case BITING -> {
@@ -111,7 +118,9 @@ public final class LineService implements IFishingService {
                 if (line.ticks <= 0) {
                     line.phase = Phase.WAITING;
                     line.ticks = wait(player, hook);
-                    hook.teleport(hook.getLocation().add(0, 0.15, 0));
+                    if (line.visual != null) {
+                        line.visual.missed();
+                    }
                 }
             }
         }
@@ -127,12 +136,14 @@ public final class LineService implements IFishingService {
                 hook.remove();
                 return;
             }
-            Location surface = at.getBlock().getLocation().add(0.5, 0.9, 0.5);
+            // on top of the lava, not in it: a float half sunk in lava is a float nobody sees
+            Location surface = at.getBlock().getLocation().add(0.5, 0.95, 0.5);
             while (surface.clone().add(0, 1, 0).getBlock().getType() == Material.LAVA) {
                 surface.add(0, 1, 0);
             }
             hold(hook, surface);
             line.water = Water.LAVA;
+            line.visual = de.raindancer.modules.fishing.visual.LineVisual.settle(hook, Water.LAVA, surface);
         } else if (world.getEnvironment() == World.Environment.THE_END && overVoid(at)
                 && at.getY() < player.getLocation().getY() - 3) {
             if (!rod.fishes(Water.VOID)) {
@@ -144,6 +155,7 @@ public final class LineService implements IFishingService {
             }
             hold(hook, at);
             line.water = Water.VOID;
+            line.visual = de.raindancer.modules.fishing.visual.LineVisual.settle(hook, Water.VOID, at.clone());
         } else {
             return;
         }
@@ -174,8 +186,13 @@ public final class LineService implements IFishingService {
         hook.teleport(where);
     }
 
-    private void bite(Player player, FishHook hook, Water water) {
-        hook.teleport(hook.getLocation().add(0, -0.15, 0));
+    private void bite(Player player, FishHook hook, Line line) {
+        Water water = line.water;
+        if (line.visual != null) {
+            line.visual.bite();
+        } else {
+            hook.teleport(hook.getLocation().add(0, -0.15, 0));
+        }
         flare(hook.getLocation(), water, 12);
         effects.play(player.getUniqueId(), Cues.NOTIFY);
     }
@@ -197,6 +214,9 @@ public final class LineService implements IFishingService {
      */
     public boolean reeled(Player player, FishHook hook) {
         Line line = lines.remove(hook.getUniqueId());
+        if (line != null && line.visual != null) {
+            line.visual.remove();
+        }
         if (line == null || line.phase == Phase.FALLING) {
             return false;
         }
@@ -213,6 +233,18 @@ public final class LineService implements IFishingService {
     }
 
     public void forget(UUID player) {
-        lines.values().removeIf(line -> line.player.equals(player));
+        lines.values().removeIf(line -> {
+            if (!line.player.equals(player)) {
+                return false;
+            }
+            if (line.visual != null) {
+                try {
+                    line.visual.remove();
+                } catch (RuntimeException notOnItsThread) {
+                    // The ring is never saved with the world; it goes with the chunk.
+                }
+            }
+            return true;
+        });
     }
 }

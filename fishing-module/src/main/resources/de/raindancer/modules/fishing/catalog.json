@@ -1,1005 +1,1188 @@
 {
-  "_": "The fishing catalogue, shared by the art scripts (blockbench/fish) and the plugin. Tiers: common, uncommon, rare, epic, legendary, mythic. Waters: river, ocean, warm_ocean, swamp, frozen, cave, lava, void. Colours are hints for the model: body, belly, fin, accent. Dish ingredients: a fish id, any:<tier> (any of this module's fish of that tier), any:fish (any fish at all, vanilla cod and salmon too) or a minecraft: item. Every dish is crafted raw and cooked in a furnace, smoker or over a campfire.",
-  "fish": [
-    {
-      "id": "pebble_trout",
-      "name": "Pebble Trout",
-      "tier": "common",
-      "waters": [
-        "river"
-      ],
-      "shape": "slim",
-      "colours": [
-        "#7d8a5a",
-        "#d9d2b0",
-        "#5d6a3e",
-        "#c9604a"
-      ]
-    },
-    {
-      "id": "reed_pike",
-      "name": "Reed Pike",
-      "tier": "uncommon",
-      "waters": [
-        "river",
-        "swamp"
-      ],
-      "shape": "long",
-      "colours": [
-        "#6b7d3a",
-        "#d6d3a0",
-        "#4a5a28",
-        "#e0c050"
-      ]
-    },
-    {
-      "id": "mirror_carp",
-      "name": "Mirror Carp",
-      "tier": "rare",
-      "waters": [
-        "river"
-      ],
-      "shape": "deep",
-      "colours": [
-        "#c9a24a",
-        "#efe2b0",
-        "#9a7428",
-        "#f4f4ec"
-      ]
-    },
-    {
-      "id": "moon_sturgeon",
-      "name": "Moon Sturgeon",
-      "tier": "epic",
-      "waters": [
-        "river"
-      ],
-      "shape": "long",
-      "colours": [
-        "#5a6070",
-        "#c8ccd8",
-        "#3c4250",
-        "#e6ecff"
-      ]
-    },
-    {
-      "id": "silver_herring",
-      "name": "Silver Herring",
-      "tier": "common",
-      "waters": [
-        "ocean",
-        "frozen"
-      ],
-      "shape": "slim",
-      "colours": [
-        "#9aa8b8",
-        "#eef2f6",
-        "#6a7a8c",
-        "#3a6aa0"
-      ]
-    },
-    {
-      "id": "storm_mackerel",
-      "name": "Storm Mackerel",
-      "tier": "uncommon",
-      "waters": [
-        "ocean"
-      ],
-      "shape": "slim",
-      "colours": [
-        "#2f5f7a",
-        "#d8e4ea",
-        "#1f3f52",
-        "#7fd0ff"
-      ]
-    },
-    {
-      "id": "pearl_snapper",
-      "name": "Pearl Snapper",
-      "tier": "rare",
-      "waters": [
-        "ocean",
-        "warm_ocean"
-      ],
-      "shape": "deep",
-      "colours": [
-        "#e07a8a",
-        "#f6e6ea",
-        "#b0505e",
-        "#f3f5fa"
-      ]
-    },
-    {
-      "id": "abyssal_angler",
-      "name": "Abyssal Angler",
-      "tier": "epic",
-      "waters": [
-        "ocean"
-      ],
-      "shape": "angler",
-      "colours": [
-        "#2a2236",
-        "#4a3e5a",
-        "#1a1424",
-        "#7ff6c0"
-      ]
-    },
-    {
-      "id": "leviathan_hatchling",
-      "name": "Leviathan Hatchling",
-      "tier": "legendary",
-      "waters": [
-        "ocean"
-      ],
-      "shape": "serpent",
-      "colours": [
-        "#6c2b1a",
-        "#e2b13c",
-        "#a87818",
-        "#ff8a1a"
-      ]
-    },
-    {
-      "id": "sunfin_tang",
-      "name": "Sunfin Tang",
-      "tier": "common",
-      "waters": [
-        "warm_ocean"
-      ],
-      "shape": "deep",
-      "colours": [
-        "#f2c230",
-        "#fff0a0",
-        "#d09010",
-        "#3a8adf"
-      ]
-    },
-    {
-      "id": "coral_wrasse",
-      "name": "Coral Wrasse",
-      "tier": "uncommon",
-      "waters": [
-        "warm_ocean"
-      ],
-      "shape": "slim",
-      "colours": [
-        "#ff6f7d",
-        "#ffd0d4",
-        "#d0404e",
-        "#40c0a0"
-      ]
-    },
-    {
-      "id": "glassfin",
-      "name": "Glassfin",
-      "tier": "rare",
-      "waters": [
-        "warm_ocean",
-        "cave"
-      ],
-      "shape": "slim",
-      "colours": [
-        "#bfe8f0",
-        "#f0fbff",
-        "#90c8d8",
-        "#ffffff"
-      ],
-      "translucent": true
-    },
-    {
-      "id": "crowned_marlin",
-      "name": "Crowned Marlin",
-      "tier": "legendary",
-      "waters": [
-        "warm_ocean"
-      ],
-      "shape": "marlin",
-      "colours": [
-        "#2a4f9a",
-        "#d8e0f0",
-        "#1a3070",
-        "#f0c650"
-      ]
-    },
-    {
-      "id": "bog_catfish",
-      "name": "Bog Catfish",
-      "tier": "common",
-      "waters": [
-        "swamp"
-      ],
-      "shape": "catfish",
-      "colours": [
-        "#5a4a30",
-        "#a89870",
-        "#3a2e1c",
-        "#2a2418"
-      ]
-    },
-    {
-      "id": "mire_eel",
-      "name": "Mire Eel",
-      "tier": "uncommon",
-      "waters": [
-        "swamp"
-      ],
-      "shape": "eel",
-      "colours": [
-        "#3e4a2a",
-        "#8a9a5a",
-        "#2a321a",
-        "#c0d060"
-      ]
-    },
-    {
-      "id": "lantern_gar",
-      "name": "Lantern Gar",
-      "tier": "rare",
-      "waters": [
-        "swamp"
-      ],
-      "shape": "long",
-      "colours": [
-        "#4a5a3a",
-        "#c8c08a",
-        "#2e3a22",
-        "#ffd060"
-      ],
-      "glow": true
-    },
-    {
-      "id": "frost_cod",
-      "name": "Frost Cod",
-      "tier": "common",
-      "waters": [
-        "frozen"
-      ],
-      "shape": "slim",
-      "colours": [
-        "#a8c0d0",
-        "#f0f6fa",
-        "#7898b0",
-        "#e0f4ff"
-      ]
-    },
-    {
-      "id": "glacier_char",
-      "name": "Glacier Char",
-      "tier": "uncommon",
-      "waters": [
-        "frozen",
-        "river"
-      ],
-      "shape": "slim",
-      "colours": [
-        "#5a7a90",
-        "#f0a080",
-        "#3a5a70",
-        "#ffffff"
-      ]
-    },
-    {
-      "id": "aurora_trout",
-      "name": "Aurora Trout",
-      "tier": "epic",
-      "waters": [
-        "frozen"
-      ],
-      "shape": "slim",
-      "colours": [
-        "#40c0a0",
-        "#c8f0e0",
-        "#2a8070",
-        "#b072ff"
-      ],
-      "glow": true
-    },
-    {
-      "id": "glow_goby",
-      "name": "Glow Goby",
-      "tier": "common",
-      "waters": [
-        "cave"
-      ],
-      "shape": "stubby",
-      "colours": [
-        "#4a8a7a",
-        "#a0e0d0",
-        "#2a5a50",
-        "#9affe0"
-      ],
-      "glow": true
-    },
-    {
-      "id": "blind_cavefish",
-      "name": "Blind Cavefish",
-      "tier": "uncommon",
-      "waters": [
-        "cave"
-      ],
-      "shape": "slim",
-      "colours": [
-        "#e8c8c0",
-        "#f8ecea",
-        "#c8a098",
-        "#e8c8c0"
-      ]
-    },
-    {
-      "id": "crystal_tetra",
-      "name": "Crystal Tetra",
-      "tier": "rare",
-      "waters": [
-        "cave"
-      ],
-      "shape": "stubby",
-      "colours": [
-        "#a66bff",
-        "#e0d0ff",
-        "#6a35c0",
-        "#ffffff"
-      ]
-    },
-    {
-      "id": "amethyst_koi",
-      "name": "Amethyst Koi",
-      "tier": "epic",
-      "waters": [
-        "cave"
-      ],
-      "shape": "deep",
-      "colours": [
-        "#f4f0f8",
-        "#ffffff",
-        "#9f6ae6",
-        "#6a35c0"
-      ]
-    },
-    {
-      "id": "ember_perch",
-      "name": "Ember Perch",
-      "tier": "uncommon",
-      "waters": [
-        "lava"
-      ],
-      "shape": "deep",
-      "colours": [
-        "#c84a1a",
-        "#ffb060",
-        "#7a2a10",
-        "#ffe060"
-      ]
-    },
-    {
-      "id": "magma_ray",
-      "name": "Magma Ray",
-      "tier": "rare",
-      "waters": [
-        "lava"
-      ],
-      "shape": "ray",
-      "colours": [
-        "#3a1a14",
-        "#ff7a2a",
-        "#24100c",
-        "#ffd040"
-      ],
-      "glow": true
-    },
-    {
-      "id": "blazefin",
-      "name": "Blazefin",
-      "tier": "epic",
-      "waters": [
-        "lava"
-      ],
-      "shape": "marlin",
-      "colours": [
-        "#e0a020",
-        "#fff0a0",
-        "#b06010",
-        "#ff5010"
-      ],
-      "glow": true
-    },
-    {
-      "id": "phoenix_koi",
-      "name": "Phoenix Koi",
-      "tier": "legendary",
-      "waters": [
-        "lava"
-      ],
-      "shape": "deep",
-      "colours": [
-        "#ff5a20",
-        "#ffe080",
-        "#d02010",
-        "#ffd040"
-      ],
-      "glow": true
-    },
-    {
-      "id": "shard_minnow",
-      "name": "Shard Minnow",
-      "tier": "rare",
-      "waters": [
-        "void"
-      ],
-      "shape": "stubby",
-      "colours": [
-        "#1c1536",
-        "#5fe6ff",
-        "#120c24",
-        "#7ff6ff"
-      ],
-      "glow": true
-    },
-    {
-      "id": "void_eel",
-      "name": "Void Eel",
-      "tier": "epic",
-      "waters": [
-        "void"
-      ],
-      "shape": "eel",
-      "colours": [
-        "#1a1430",
-        "#3a2f6a",
-        "#0c0818",
-        "#7ff6ff"
-      ],
-      "glow": true
-    },
-    {
-      "id": "star_ray",
-      "name": "Star Ray",
-      "tier": "legendary",
-      "waters": [
-        "void"
-      ],
-      "shape": "ray",
-      "colours": [
-        "#1c1536",
-        "#5a46a0",
-        "#0c0818",
-        "#f2feff"
-      ],
-      "glow": true
-    },
-    {
-      "id": "ouroboros_eel",
-      "name": "Ouroboros Eel",
-      "tier": "mythic",
-      "waters": [
-        "void"
-      ],
-      "shape": "serpent",
-      "colours": [
-        "#0c0818",
-        "#3df2c8",
-        "#1a1430",
-        "#f2feff"
-      ],
-      "glow": true
-    },
-    {
-      "id": "astral_leviathan",
-      "name": "Astral Leviathan",
-      "tier": "mythic",
-      "waters": [
-        "void"
-      ],
-      "shape": "leviathan",
-      "colours": [
-        "#141030",
-        "#7ff6ff",
-        "#2a1f5a",
-        "#ffffff"
-      ],
-      "glow": true
-    }
-  ],
-  "dishes": [
-    {
-      "id": "fish_skewer",
-      "name": "Fish Skewer",
-      "tier": "common",
-      "ingredients": [
-        "any:fish",
-        "minecraft:stick"
-      ],
-      "food": [
-        5,
-        6.0
-      ],
-      "effects": []
-    },
-    {
-      "id": "herring_sandwich",
-      "name": "Herring Sandwich",
-      "tier": "common",
-      "ingredients": [
-        "silver_herring",
-        "minecraft:bread"
-      ],
-      "food": [
-        8,
-        9.6
-      ],
-      "effects": []
-    },
-    {
-      "id": "herring_nigiri",
-      "name": "Herring Nigiri",
-      "tier": "common",
-      "ingredients": [
-        "silver_herring",
-        "minecraft:dried_kelp"
-      ],
-      "food": [
-        6,
-        7.2
-      ],
-      "effects": []
-    },
-    {
-      "id": "fish_and_chips",
-      "name": "Fish 'n' Chips",
-      "tier": "common",
-      "ingredients": [
-        "any:fish",
-        "minecraft:potato",
-        "minecraft:potato",
-        "minecraft:paper"
-      ],
-      "food": [
-        10,
-        12.0
-      ],
-      "effects": []
-    },
-    {
-      "id": "fishermans_stew",
-      "name": "Fisherman's Stew",
-      "tier": "common",
-      "ingredients": [
-        "any:fish",
-        "minecraft:carrot",
-        "minecraft:potato",
-        "minecraft:bowl"
-      ],
-      "food": [
-        9,
-        11.0
-      ],
-      "effects": [
-        [
-          "regeneration",
-          0,
-          5
-        ]
-      ]
-    },
-    {
-      "id": "fish_cakes",
-      "name": "Fish Cakes",
-      "tier": "common",
-      "ingredients": [
-        "any:fish",
-        "minecraft:egg",
-        "minecraft:wheat"
-      ],
-      "food": [
-        7,
-        8.4
-      ],
-      "effects": []
-    },
-    {
-      "id": "herb_trout",
-      "name": "Herb-Baked Trout",
-      "tier": "uncommon",
-      "ingredients": [
-        "pebble_trout",
-        "minecraft:fern",
-        "minecraft:potato"
-      ],
-      "food": [
-        9,
-        11.0
-      ],
-      "effects": [
-        [
-          "regeneration",
-          0,
-          8
-        ]
-      ]
-    },
-    {
-      "id": "bog_stew",
-      "name": "Bog Stew",
-      "tier": "uncommon",
-      "ingredients": [
-        "bog_catfish",
-        "minecraft:brown_mushroom",
-        "minecraft:bowl"
-      ],
-      "food": [
-        10,
-        12.0
-      ],
-      "effects": [
-        [
-          "resistance",
-          0,
-          30
-        ]
-      ]
-    },
-    {
-      "id": "frost_chowder",
-      "name": "Frost Chowder",
-      "tier": "uncommon",
-      "ingredients": [
-        "frost_cod",
-        "minecraft:milk_bucket",
-        "minecraft:bowl"
-      ],
-      "food": [
-        9,
-        10.8
-      ],
-      "effects": [
-        [
-          "speed",
-          0,
-          60
-        ]
-      ]
-    },
-    {
-      "id": "wrasse_maki",
-      "name": "Wrasse Maki",
-      "tier": "uncommon",
-      "ingredients": [
-        "coral_wrasse",
-        "minecraft:dried_kelp",
-        "minecraft:dried_kelp"
-      ],
-      "food": [
-        7,
-        8.4
-      ],
-      "effects": [
-        [
-          "dolphins_grace",
-          0,
-          45
-        ]
-      ]
-    },
-    {
-      "id": "coral_sushi",
-      "name": "Coral Sushi",
-      "tier": "rare",
-      "ingredients": [
-        "any:rare",
-        "minecraft:dried_kelp",
-        "minecraft:dried_kelp"
-      ],
-      "food": [
-        8,
-        12.0
-      ],
-      "effects": [
-        [
-          "water_breathing",
-          0,
-          180
-        ],
-        [
-          "dolphins_grace",
-          0,
-          60
-        ]
-      ]
-    },
-    {
-      "id": "ember_skewer",
-      "name": "Ember Skewer",
-      "tier": "rare",
-      "ingredients": [
-        "ember_perch",
-        "minecraft:blaze_rod"
-      ],
-      "food": [
-        7,
-        9.0
-      ],
-      "effects": [
-        [
-          "fire_resistance",
-          0,
-          240
-        ]
-      ]
-    },
-    {
-      "id": "glow_broth",
-      "name": "Glow Broth",
-      "tier": "rare",
-      "ingredients": [
-        "glow_goby",
-        "minecraft:glow_berries",
-        "minecraft:bowl"
-      ],
-      "food": [
-        8,
-        10.0
-      ],
-      "effects": [
-        [
-          "night_vision",
-          0,
-          300
-        ]
-      ]
-    },
-    {
-      "id": "abyssal_broth",
-      "name": "Abyssal Broth",
-      "tier": "epic",
-      "ingredients": [
-        "abyssal_angler",
-        "minecraft:nautilus_shell",
-        "minecraft:bowl"
-      ],
-      "food": [
-        10,
-        14.0
-      ],
-      "effects": [
-        [
-          "water_breathing",
-          0,
-          600
-        ],
-        [
-          "night_vision",
-          0,
-          600
-        ],
-        [
-          "conduit_power",
-          0,
-          120
-        ]
-      ]
-    },
-    {
-      "id": "void_sashimi",
-      "name": "Void Sashimi",
-      "tier": "epic",
-      "ingredients": [
-        "void_eel",
-        "minecraft:chorus_fruit"
-      ],
-      "food": [
-        8,
-        12.0
-      ],
-      "effects": [
-        [
-          "slow_falling",
-          0,
-          120
-        ],
-        [
-          "jump_boost",
-          1,
-          60
-        ]
-      ]
-    },
-    {
-      "id": "blazefin_roll",
-      "name": "Blazefin Roll",
-      "tier": "epic",
-      "ingredients": [
-        "blazefin",
-        "minecraft:dried_kelp",
-        "minecraft:blaze_powder"
-      ],
-      "food": [
-        10,
-        13.0
-      ],
-      "effects": [
-        [
-          "fire_resistance",
-          0,
-          480
-        ],
-        [
-          "strength",
-          0,
-          90
-        ]
-      ]
-    },
-    {
-      "id": "golden_fish_pie",
-      "name": "Golden Fish Pie",
-      "tier": "legendary",
-      "ingredients": [
-        "any:legendary",
-        "minecraft:gold_ingot",
-        "minecraft:wheat",
-        "minecraft:egg"
-      ],
-      "food": [
-        14,
-        18.0
-      ],
-      "effects": [
-        [
-          "absorption",
-          1,
-          120
-        ],
-        [
-          "regeneration",
-          1,
-          20
-        ],
-        [
-          "luck",
-          0,
-          600
-        ]
-      ]
-    },
-    {
-      "id": "starlight_soup",
-      "name": "Starlight Soup",
-      "tier": "legendary",
-      "ingredients": [
-        "star_ray",
-        "minecraft:glowstone_dust",
-        "minecraft:bowl"
-      ],
-      "food": [
-        12,
-        16.0
-      ],
-      "effects": [
-        [
-          "night_vision",
-          0,
-          900
-        ],
-        [
-          "luck",
-          1,
-          600
-        ],
-        [
-          "slow_falling",
-          0,
-          300
-        ]
-      ]
-    },
-    {
-      "id": "marlin_nigiri",
-      "name": "Crowned Marlin Nigiri",
-      "tier": "legendary",
-      "ingredients": [
-        "crowned_marlin",
-        "minecraft:dried_kelp",
-        "minecraft:gold_nugget"
-      ],
-      "food": [
-        12,
-        16.0
-      ],
-      "effects": [
-        [
-          "speed",
-          1,
-          120
-        ],
-        [
-          "strength",
-          0,
-          120
-        ],
-        [
-          "water_breathing",
-          0,
-          300
-        ]
-      ]
-    },
-    {
-      "id": "leviathan_feast",
-      "name": "Leviathan Feast",
-      "tier": "mythic",
-      "ingredients": [
-        "any:mythic",
-        "minecraft:golden_carrot",
-        "minecraft:golden_carrot",
-        "minecraft:bowl"
-      ],
-      "food": [
-        20,
-        20.0
-      ],
-      "effects": [
-        [
-          "strength",
-          1,
-          300
-        ],
-        [
-          "resistance",
-          1,
-          300
-        ],
-        [
-          "regeneration",
-          1,
-          60
-        ],
-        [
-          "luck",
-          2,
-          900
-        ]
-      ]
-    },
-    {
-      "id": "astral_sushi",
-      "name": "Astral Sushi",
-      "tier": "mythic",
-      "ingredients": [
-        "any:mythic",
-        "minecraft:dried_kelp",
-        "minecraft:dried_kelp",
-        "minecraft:glow_ink_sac"
-      ],
-      "food": [
-        16,
-        20.0
-      ],
-      "effects": [
-        [
-          "regeneration",
-          1,
-          30
-        ],
-        [
-          "water_breathing",
-          0,
-          900
-        ],
-        [
-          "night_vision",
-          0,
-          900
-        ],
-        [
-          "dolphins_grace",
-          0,
-          300
-        ],
-        [
-          "luck",
-          1,
-          900
-        ]
-      ]
-    }
-  ]
+ "_": "The fishing catalogue, shared by the art scripts (blockbench/fish) and the plugin. Tiers: common, uncommon, rare, epic, legendary, mythic. Waters: river, ocean, warm_ocean, swamp, frozen, cave, lava, void. Colours are hints for the model: body, belly, fin, accent. Dish ingredients: a fish id, any:<tier> (any of this module's fish of that tier), any:fish (any fish at all, vanilla cod and salmon too) or a minecraft: item. Every dish is crafted raw and cooked in a furnace, smoker or over a campfire.",
+ "fish": [
+  {
+   "id": "pebble_trout",
+   "name": "Pebble Trout",
+   "tier": "common",
+   "waters": [
+    "river"
+   ],
+   "shape": "slim",
+   "colours": [
+    "#7d8a5a",
+    "#d9d2b0",
+    "#5d6a3e",
+    "#c9604a"
+   ]
+  },
+  {
+   "id": "reed_pike",
+   "name": "Reed Pike",
+   "tier": "uncommon",
+   "waters": [
+    "river",
+    "swamp"
+   ],
+   "shape": "long",
+   "colours": [
+    "#6b7d3a",
+    "#d6d3a0",
+    "#4a5a28",
+    "#e0c050"
+   ]
+  },
+  {
+   "id": "mirror_carp",
+   "name": "Mirror Carp",
+   "tier": "rare",
+   "waters": [
+    "river"
+   ],
+   "shape": "deep",
+   "colours": [
+    "#c9a24a",
+    "#efe2b0",
+    "#9a7428",
+    "#f4f4ec"
+   ]
+  },
+  {
+   "id": "moon_sturgeon",
+   "name": "Moon Sturgeon",
+   "tier": "epic",
+   "waters": [
+    "river"
+   ],
+   "shape": "long",
+   "colours": [
+    "#5a6070",
+    "#c8ccd8",
+    "#3c4250",
+    "#e6ecff"
+   ]
+  },
+  {
+   "id": "silver_herring",
+   "name": "Silver Herring",
+   "tier": "common",
+   "waters": [
+    "ocean",
+    "frozen"
+   ],
+   "shape": "slim",
+   "colours": [
+    "#9aa8b8",
+    "#eef2f6",
+    "#6a7a8c",
+    "#3a6aa0"
+   ]
+  },
+  {
+   "id": "storm_mackerel",
+   "name": "Storm Mackerel",
+   "tier": "uncommon",
+   "waters": [
+    "ocean"
+   ],
+   "shape": "slim",
+   "colours": [
+    "#2f5f7a",
+    "#d8e4ea",
+    "#1f3f52",
+    "#7fd0ff"
+   ]
+  },
+  {
+   "id": "pearl_snapper",
+   "name": "Pearl Snapper",
+   "tier": "rare",
+   "waters": [
+    "ocean",
+    "warm_ocean"
+   ],
+   "shape": "deep",
+   "colours": [
+    "#e07a8a",
+    "#f6e6ea",
+    "#b0505e",
+    "#f3f5fa"
+   ]
+  },
+  {
+   "id": "abyssal_angler",
+   "name": "Abyssal Angler",
+   "tier": "epic",
+   "waters": [
+    "ocean"
+   ],
+   "shape": "angler",
+   "colours": [
+    "#2a2236",
+    "#4a3e5a",
+    "#1a1424",
+    "#7ff6c0"
+   ]
+  },
+  {
+   "id": "leviathan_hatchling",
+   "name": "Leviathan Hatchling",
+   "tier": "legendary",
+   "waters": [
+    "ocean"
+   ],
+   "shape": "serpent",
+   "colours": [
+    "#6c2b1a",
+    "#e2b13c",
+    "#a87818",
+    "#ff8a1a"
+   ]
+  },
+  {
+   "id": "sunfin_tang",
+   "name": "Sunfin Tang",
+   "tier": "common",
+   "waters": [
+    "warm_ocean"
+   ],
+   "shape": "deep",
+   "colours": [
+    "#f2c230",
+    "#fff0a0",
+    "#d09010",
+    "#3a8adf"
+   ]
+  },
+  {
+   "id": "coral_wrasse",
+   "name": "Coral Wrasse",
+   "tier": "uncommon",
+   "waters": [
+    "warm_ocean"
+   ],
+   "shape": "slim",
+   "colours": [
+    "#ff6f7d",
+    "#ffd0d4",
+    "#d0404e",
+    "#40c0a0"
+   ]
+  },
+  {
+   "id": "glassfin",
+   "name": "Glassfin",
+   "tier": "rare",
+   "waters": [
+    "warm_ocean",
+    "cave"
+   ],
+   "shape": "slim",
+   "colours": [
+    "#bfe8f0",
+    "#f0fbff",
+    "#90c8d8",
+    "#ffffff"
+   ],
+   "translucent": true
+  },
+  {
+   "id": "crowned_marlin",
+   "name": "Crowned Marlin",
+   "tier": "legendary",
+   "waters": [
+    "warm_ocean"
+   ],
+   "shape": "marlin",
+   "colours": [
+    "#2a4f9a",
+    "#d8e0f0",
+    "#1a3070",
+    "#f0c650"
+   ]
+  },
+  {
+   "id": "bog_catfish",
+   "name": "Bog Catfish",
+   "tier": "common",
+   "waters": [
+    "swamp"
+   ],
+   "shape": "catfish",
+   "colours": [
+    "#5a4a30",
+    "#a89870",
+    "#3a2e1c",
+    "#2a2418"
+   ]
+  },
+  {
+   "id": "mire_eel",
+   "name": "Mire Eel",
+   "tier": "uncommon",
+   "waters": [
+    "swamp"
+   ],
+   "shape": "eel",
+   "colours": [
+    "#3e4a2a",
+    "#8a9a5a",
+    "#2a321a",
+    "#c0d060"
+   ]
+  },
+  {
+   "id": "lantern_gar",
+   "name": "Lantern Gar",
+   "tier": "rare",
+   "waters": [
+    "swamp"
+   ],
+   "shape": "long",
+   "colours": [
+    "#4a5a3a",
+    "#c8c08a",
+    "#2e3a22",
+    "#ffd060"
+   ],
+   "glow": true
+  },
+  {
+   "id": "frost_cod",
+   "name": "Frost Cod",
+   "tier": "common",
+   "waters": [
+    "frozen"
+   ],
+   "shape": "slim",
+   "colours": [
+    "#a8c0d0",
+    "#f0f6fa",
+    "#7898b0",
+    "#e0f4ff"
+   ]
+  },
+  {
+   "id": "glacier_char",
+   "name": "Glacier Char",
+   "tier": "uncommon",
+   "waters": [
+    "frozen",
+    "river"
+   ],
+   "shape": "slim",
+   "colours": [
+    "#5a7a90",
+    "#f0a080",
+    "#3a5a70",
+    "#ffffff"
+   ]
+  },
+  {
+   "id": "aurora_trout",
+   "name": "Aurora Trout",
+   "tier": "epic",
+   "waters": [
+    "frozen"
+   ],
+   "shape": "slim",
+   "colours": [
+    "#40c0a0",
+    "#c8f0e0",
+    "#2a8070",
+    "#b072ff"
+   ],
+   "glow": true
+  },
+  {
+   "id": "glow_goby",
+   "name": "Glow Goby",
+   "tier": "common",
+   "waters": [
+    "cave"
+   ],
+   "shape": "stubby",
+   "colours": [
+    "#4a8a7a",
+    "#a0e0d0",
+    "#2a5a50",
+    "#9affe0"
+   ],
+   "glow": true
+  },
+  {
+   "id": "blind_cavefish",
+   "name": "Blind Cavefish",
+   "tier": "uncommon",
+   "waters": [
+    "cave"
+   ],
+   "shape": "slim",
+   "colours": [
+    "#e8c8c0",
+    "#f8ecea",
+    "#c8a098",
+    "#e8c8c0"
+   ]
+  },
+  {
+   "id": "crystal_tetra",
+   "name": "Crystal Tetra",
+   "tier": "rare",
+   "waters": [
+    "cave"
+   ],
+   "shape": "stubby",
+   "colours": [
+    "#a66bff",
+    "#e0d0ff",
+    "#6a35c0",
+    "#ffffff"
+   ]
+  },
+  {
+   "id": "amethyst_koi",
+   "name": "Amethyst Koi",
+   "tier": "epic",
+   "waters": [
+    "cave"
+   ],
+   "shape": "deep",
+   "colours": [
+    "#f4f0f8",
+    "#ffffff",
+    "#9f6ae6",
+    "#6a35c0"
+   ]
+  },
+  {
+   "id": "ember_perch",
+   "name": "Ember Perch",
+   "tier": "uncommon",
+   "waters": [
+    "lava"
+   ],
+   "shape": "deep",
+   "colours": [
+    "#c84a1a",
+    "#ffb060",
+    "#7a2a10",
+    "#ffe060"
+   ],
+   "biomes": [
+    "overworld",
+    "nether_wastes",
+    "crimson_forest"
+   ]
+  },
+  {
+   "id": "magma_ray",
+   "name": "Magma Ray",
+   "tier": "rare",
+   "waters": [
+    "lava"
+   ],
+   "shape": "ray",
+   "colours": [
+    "#3a1a14",
+    "#ff7a2a",
+    "#24100c",
+    "#ffd040"
+   ],
+   "glow": true,
+   "biomes": [
+    "overworld",
+    "basalt_deltas",
+    "nether_wastes"
+   ]
+  },
+  {
+   "id": "blazefin",
+   "name": "Blazefin",
+   "tier": "epic",
+   "waters": [
+    "lava"
+   ],
+   "shape": "marlin",
+   "colours": [
+    "#e0a020",
+    "#fff0a0",
+    "#b06010",
+    "#ff5010"
+   ],
+   "glow": true,
+   "biomes": [
+    "overworld",
+    "nether_wastes",
+    "soul_sand_valley"
+   ]
+  },
+  {
+   "id": "phoenix_koi",
+   "name": "Phoenix Koi",
+   "tier": "legendary",
+   "waters": [
+    "lava"
+   ],
+   "shape": "deep",
+   "colours": [
+    "#ff5a20",
+    "#ffe080",
+    "#d02010",
+    "#ffd040"
+   ],
+   "glow": true
+  },
+  {
+   "id": "shard_minnow",
+   "name": "Shard Minnow",
+   "tier": "rare",
+   "waters": [
+    "void"
+   ],
+   "shape": "stubby",
+   "colours": [
+    "#1c1536",
+    "#5fe6ff",
+    "#120c24",
+    "#7ff6ff"
+   ],
+   "glow": true
+  },
+  {
+   "id": "void_eel",
+   "name": "Void Eel",
+   "tier": "epic",
+   "waters": [
+    "void"
+   ],
+   "shape": "eel",
+   "colours": [
+    "#1a1430",
+    "#3a2f6a",
+    "#0c0818",
+    "#7ff6ff"
+   ],
+   "glow": true
+  },
+  {
+   "id": "star_ray",
+   "name": "Star Ray",
+   "tier": "legendary",
+   "waters": [
+    "void"
+   ],
+   "shape": "ray",
+   "colours": [
+    "#1c1536",
+    "#5a46a0",
+    "#0c0818",
+    "#f2feff"
+   ],
+   "glow": true
+  },
+  {
+   "id": "ouroboros_eel",
+   "name": "Ouroboros Eel",
+   "tier": "mythic",
+   "waters": [
+    "void"
+   ],
+   "shape": "serpent",
+   "colours": [
+    "#0c0818",
+    "#3df2c8",
+    "#1a1430",
+    "#f2feff"
+   ],
+   "glow": true
+  },
+  {
+   "id": "astral_leviathan",
+   "name": "Astral Leviathan",
+   "tier": "mythic",
+   "waters": [
+    "void"
+   ],
+   "shape": "leviathan",
+   "colours": [
+    "#141030",
+    "#7ff6ff",
+    "#2a1f5a",
+    "#ffffff"
+   ],
+   "glow": true
+  },
+  {
+   "id": "cinder_minnow",
+   "name": "Cinder Minnow",
+   "tier": "common",
+   "waters": [
+    "lava"
+   ],
+   "biomes": [
+    "overworld",
+    "nether_wastes"
+   ],
+   "shape": "slim",
+   "colours": [
+    "#5a4a44",
+    "#c8a890",
+    "#3a2c28",
+    "#ff8a3a"
+   ]
+  },
+  {
+   "id": "crimson_snapper",
+   "name": "Crimson Snapper",
+   "tier": "common",
+   "waters": [
+    "lava"
+   ],
+   "biomes": [
+    "crimson_forest"
+   ],
+   "shape": "deep",
+   "colours": [
+    "#a8202a",
+    "#e8806a",
+    "#6a1018",
+    "#ffb04a"
+   ]
+  },
+  {
+   "id": "warped_tetra",
+   "name": "Warped Tetra",
+   "tier": "common",
+   "waters": [
+    "lava"
+   ],
+   "biomes": [
+    "warped_forest"
+   ],
+   "shape": "slim",
+   "colours": [
+    "#167a78",
+    "#5ae0c8",
+    "#0c4a4a",
+    "#e05ac8"
+   ]
+  },
+  {
+   "id": "basalt_bass",
+   "name": "Basalt Bass",
+   "tier": "common",
+   "waters": [
+    "lava"
+   ],
+   "biomes": [
+    "basalt_deltas"
+   ],
+   "shape": "stubby",
+   "colours": [
+    "#4a4a52",
+    "#8a8a94",
+    "#2a2a30",
+    "#ff7a2a"
+   ]
+  },
+  {
+   "id": "soul_pike",
+   "name": "Soul Pike",
+   "tier": "uncommon",
+   "waters": [
+    "lava"
+   ],
+   "biomes": [
+    "soul_sand_valley"
+   ],
+   "shape": "long",
+   "colours": [
+    "#5a4632",
+    "#9a7e5a",
+    "#3a2a1c",
+    "#5ae8ff"
+   ],
+   "glow": true
+  },
+  {
+   "id": "shroomlight_eel",
+   "name": "Shroomlight Eel",
+   "tier": "rare",
+   "waters": [
+    "lava"
+   ],
+   "biomes": [
+    "crimson_forest"
+   ],
+   "shape": "eel",
+   "colours": [
+    "#c8501a",
+    "#ffcf80",
+    "#7a2a10",
+    "#ffe8a0"
+   ],
+   "glow": true
+  },
+  {
+   "id": "wartling_ray",
+   "name": "Wartling Ray",
+   "tier": "rare",
+   "waters": [
+    "lava"
+   ],
+   "biomes": [
+    "warped_forest"
+   ],
+   "shape": "ray",
+   "colours": [
+    "#0e5a5a",
+    "#3ad8b8",
+    "#083838",
+    "#ff6ad0"
+   ],
+   "glow": true
+  },
+  {
+   "id": "obsidian_gar",
+   "name": "Obsidian Gar",
+   "tier": "epic",
+   "waters": [
+    "lava"
+   ],
+   "biomes": [
+    "basalt_deltas"
+   ],
+   "shape": "long",
+   "colours": [
+    "#1a1024",
+    "#5a3a8a",
+    "#0a0612",
+    "#c87aff"
+   ],
+   "glow": true
+  },
+  {
+   "id": "soul_angler",
+   "name": "Soul Angler",
+   "tier": "epic",
+   "waters": [
+    "lava"
+   ],
+   "biomes": [
+    "soul_sand_valley"
+   ],
+   "shape": "angler",
+   "colours": [
+    "#2a3a48",
+    "#7ad8ff",
+    "#141c24",
+    "#5ae8ff"
+   ],
+   "glow": true
+  }
+ ],
+ "dishes": [
+  {
+   "id": "fish_skewer",
+   "name": "Fish Skewer",
+   "tier": "common",
+   "ingredients": [
+    "any:fish",
+    "minecraft:stick"
+   ],
+   "food": [
+    5,
+    6.0
+   ],
+   "effects": []
+  },
+  {
+   "id": "herring_sandwich",
+   "name": "Herring Sandwich",
+   "tier": "common",
+   "ingredients": [
+    "silver_herring",
+    "minecraft:bread"
+   ],
+   "food": [
+    8,
+    9.6
+   ],
+   "effects": []
+  },
+  {
+   "id": "herring_nigiri",
+   "name": "Herring Nigiri",
+   "tier": "common",
+   "ingredients": [
+    "silver_herring",
+    "minecraft:dried_kelp"
+   ],
+   "food": [
+    6,
+    7.2
+   ],
+   "effects": []
+  },
+  {
+   "id": "fish_and_chips",
+   "name": "Fish 'n' Chips",
+   "tier": "common",
+   "ingredients": [
+    "any:fish",
+    "minecraft:potato",
+    "minecraft:potato",
+    "minecraft:paper"
+   ],
+   "food": [
+    10,
+    12.0
+   ],
+   "effects": []
+  },
+  {
+   "id": "fishermans_stew",
+   "name": "Fisherman's Stew",
+   "tier": "common",
+   "ingredients": [
+    "any:fish",
+    "minecraft:carrot",
+    "minecraft:potato",
+    "minecraft:bowl"
+   ],
+   "food": [
+    9,
+    11.0
+   ],
+   "effects": [
+    [
+     "regeneration",
+     0,
+     5
+    ]
+   ]
+  },
+  {
+   "id": "fish_cakes",
+   "name": "Fish Cakes",
+   "tier": "common",
+   "ingredients": [
+    "any:fish",
+    "minecraft:egg",
+    "minecraft:wheat"
+   ],
+   "food": [
+    7,
+    8.4
+   ],
+   "effects": []
+  },
+  {
+   "id": "herb_trout",
+   "name": "Herb-Baked Trout",
+   "tier": "uncommon",
+   "ingredients": [
+    "pebble_trout",
+    "minecraft:fern",
+    "minecraft:potato"
+   ],
+   "food": [
+    9,
+    11.0
+   ],
+   "effects": [
+    [
+     "regeneration",
+     0,
+     8
+    ]
+   ]
+  },
+  {
+   "id": "bog_stew",
+   "name": "Bog Stew",
+   "tier": "uncommon",
+   "ingredients": [
+    "bog_catfish",
+    "minecraft:brown_mushroom",
+    "minecraft:bowl"
+   ],
+   "food": [
+    10,
+    12.0
+   ],
+   "effects": [
+    [
+     "resistance",
+     0,
+     30
+    ]
+   ]
+  },
+  {
+   "id": "frost_chowder",
+   "name": "Frost Chowder",
+   "tier": "uncommon",
+   "ingredients": [
+    "frost_cod",
+    "minecraft:milk_bucket",
+    "minecraft:bowl"
+   ],
+   "food": [
+    9,
+    10.8
+   ],
+   "effects": [
+    [
+     "speed",
+     0,
+     60
+    ]
+   ]
+  },
+  {
+   "id": "wrasse_maki",
+   "name": "Wrasse Maki",
+   "tier": "uncommon",
+   "ingredients": [
+    "coral_wrasse",
+    "minecraft:dried_kelp",
+    "minecraft:dried_kelp"
+   ],
+   "food": [
+    7,
+    8.4
+   ],
+   "effects": [
+    [
+     "dolphins_grace",
+     0,
+     45
+    ]
+   ]
+  },
+  {
+   "id": "coral_sushi",
+   "name": "Coral Sushi",
+   "tier": "rare",
+   "ingredients": [
+    "any:rare",
+    "minecraft:dried_kelp",
+    "minecraft:dried_kelp"
+   ],
+   "food": [
+    8,
+    12.0
+   ],
+   "effects": [
+    [
+     "water_breathing",
+     0,
+     180
+    ],
+    [
+     "dolphins_grace",
+     0,
+     60
+    ]
+   ]
+  },
+  {
+   "id": "ember_skewer",
+   "name": "Ember Skewer",
+   "tier": "rare",
+   "ingredients": [
+    "ember_perch",
+    "minecraft:blaze_rod"
+   ],
+   "food": [
+    7,
+    9.0
+   ],
+   "effects": [
+    [
+     "fire_resistance",
+     0,
+     240
+    ]
+   ]
+  },
+  {
+   "id": "glow_broth",
+   "name": "Glow Broth",
+   "tier": "rare",
+   "ingredients": [
+    "glow_goby",
+    "minecraft:glow_berries",
+    "minecraft:bowl"
+   ],
+   "food": [
+    8,
+    10.0
+   ],
+   "effects": [
+    [
+     "night_vision",
+     0,
+     300
+    ]
+   ]
+  },
+  {
+   "id": "abyssal_broth",
+   "name": "Abyssal Broth",
+   "tier": "epic",
+   "ingredients": [
+    "abyssal_angler",
+    "minecraft:nautilus_shell",
+    "minecraft:bowl"
+   ],
+   "food": [
+    10,
+    14.0
+   ],
+   "effects": [
+    [
+     "water_breathing",
+     0,
+     600
+    ],
+    [
+     "night_vision",
+     0,
+     600
+    ],
+    [
+     "conduit_power",
+     0,
+     120
+    ]
+   ]
+  },
+  {
+   "id": "void_sashimi",
+   "name": "Void Sashimi",
+   "tier": "epic",
+   "ingredients": [
+    "void_eel",
+    "minecraft:chorus_fruit"
+   ],
+   "food": [
+    8,
+    12.0
+   ],
+   "effects": [
+    [
+     "slow_falling",
+     0,
+     120
+    ],
+    [
+     "jump_boost",
+     1,
+     60
+    ]
+   ]
+  },
+  {
+   "id": "blazefin_roll",
+   "name": "Blazefin Roll",
+   "tier": "epic",
+   "ingredients": [
+    "blazefin",
+    "minecraft:dried_kelp",
+    "minecraft:blaze_powder"
+   ],
+   "food": [
+    10,
+    13.0
+   ],
+   "effects": [
+    [
+     "fire_resistance",
+     0,
+     480
+    ],
+    [
+     "strength",
+     0,
+     90
+    ]
+   ]
+  },
+  {
+   "id": "golden_fish_pie",
+   "name": "Golden Fish Pie",
+   "tier": "legendary",
+   "ingredients": [
+    "any:legendary",
+    "minecraft:gold_ingot",
+    "minecraft:wheat",
+    "minecraft:egg"
+   ],
+   "food": [
+    14,
+    18.0
+   ],
+   "effects": [
+    [
+     "absorption",
+     1,
+     120
+    ],
+    [
+     "regeneration",
+     1,
+     20
+    ],
+    [
+     "luck",
+     0,
+     600
+    ]
+   ]
+  },
+  {
+   "id": "starlight_soup",
+   "name": "Starlight Soup",
+   "tier": "legendary",
+   "ingredients": [
+    "star_ray",
+    "minecraft:glowstone_dust",
+    "minecraft:bowl"
+   ],
+   "food": [
+    12,
+    16.0
+   ],
+   "effects": [
+    [
+     "night_vision",
+     0,
+     900
+    ],
+    [
+     "luck",
+     1,
+     600
+    ],
+    [
+     "slow_falling",
+     0,
+     300
+    ]
+   ]
+  },
+  {
+   "id": "marlin_nigiri",
+   "name": "Crowned Marlin Nigiri",
+   "tier": "legendary",
+   "ingredients": [
+    "crowned_marlin",
+    "minecraft:dried_kelp",
+    "minecraft:gold_nugget"
+   ],
+   "food": [
+    12,
+    16.0
+   ],
+   "effects": [
+    [
+     "speed",
+     1,
+     120
+    ],
+    [
+     "strength",
+     0,
+     120
+    ],
+    [
+     "water_breathing",
+     0,
+     300
+    ]
+   ]
+  },
+  {
+   "id": "leviathan_feast",
+   "name": "Leviathan Feast",
+   "tier": "mythic",
+   "ingredients": [
+    "any:mythic",
+    "minecraft:golden_carrot",
+    "minecraft:golden_carrot",
+    "minecraft:bowl"
+   ],
+   "food": [
+    20,
+    20.0
+   ],
+   "effects": [
+    [
+     "strength",
+     1,
+     300
+    ],
+    [
+     "resistance",
+     1,
+     300
+    ],
+    [
+     "regeneration",
+     1,
+     60
+    ],
+    [
+     "luck",
+     2,
+     900
+    ]
+   ]
+  },
+  {
+   "id": "astral_sushi",
+   "name": "Astral Sushi",
+   "tier": "mythic",
+   "ingredients": [
+    "any:mythic",
+    "minecraft:dried_kelp",
+    "minecraft:dried_kelp",
+    "minecraft:glow_ink_sac"
+   ],
+   "food": [
+    16,
+    20.0
+   ],
+   "effects": [
+    [
+     "regeneration",
+     1,
+     30
+    ],
+    [
+     "water_breathing",
+     0,
+     900
+    ],
+    [
+     "night_vision",
+     0,
+     900
+    ],
+    [
+     "dolphins_grace",
+     0,
+     300
+    ],
+    [
+     "luck",
+     1,
+     900
+    ]
+   ]
+  }
+ ]
 }
