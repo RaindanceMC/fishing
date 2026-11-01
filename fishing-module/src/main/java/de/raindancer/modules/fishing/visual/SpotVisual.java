@@ -26,7 +26,8 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public final class SpotVisual {
 
-    private static final float RIPPLE_SCALE = 3.0f;
+    /** As wide as the water a spot covers: twice SpotService.RADIUS, the model being one block across. */
+    private static final float RIPPLE_SCALE = 8.0f;
     private static final float BOBBER_SCALE = 1.8f;
     private static final long PERIOD = 10L;
 

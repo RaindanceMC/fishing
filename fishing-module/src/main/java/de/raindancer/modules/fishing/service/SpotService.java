@@ -38,7 +38,7 @@ public final class SpotService implements IFishingService {
     private static final int FARTHEST = 36;
     private static final double NEAR = 64.0;
     /** A hook this close to a spot's centre is in it. */
-    public static final double RADIUS = 3.0;
+    public static final double RADIUS = 4.0;
 
     private record Live(Spot spot, SpotVisual visual) {
     }

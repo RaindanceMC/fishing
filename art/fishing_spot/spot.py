@@ -61,7 +61,7 @@ def ripple():
     os.makedirs(os.path.join(HERE, "textures"), exist_ok=True)
     strip.save(os.path.join(HERE, "textures", "ripple.png"))
     with open(os.path.join(HERE, "textures", "ripple.png.mcmeta"), "w") as out:
-        json.dump({"animation": {"frametime": 3}}, out, indent=1)
+        json.dump({"animation": {"frametime": 6, "interpolate": True}}, out, indent=1)
     face = {"uv": [0, 0, 16, 16], "texture": "#0", "tintindex": 0}
     model = {"textures": {"0": "rainsfishing:block/fishing_spot/ripple", "particle": "rainsfishing:block/fishing_spot/ripple"},
              "elements": [{"name": "ripple", "from": [0, 0.05, 0], "to": [16, 0.05, 16], "shade": False,
