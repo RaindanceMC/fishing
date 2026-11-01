@@ -1,0 +1,7 @@
+{
+ "parent": "rainsfishing:item/dish/golden_fish_pie",
+ "textures": {
+  "0": "rainsfishing:item/dish/raw_golden_fish_pie",
+  "particle": "rainsfishing:item/dish/raw_golden_fish_pie"
+ }
+}

@@ -1,0 +1,7 @@
+{
+ "parent": "rainsfishing:item/dish/marlin_nigiri",
+ "textures": {
+  "0": "rainsfishing:item/dish/raw_marlin_nigiri",
+  "particle": "rainsfishing:item/dish/raw_marlin_nigiri"
+ }
+}

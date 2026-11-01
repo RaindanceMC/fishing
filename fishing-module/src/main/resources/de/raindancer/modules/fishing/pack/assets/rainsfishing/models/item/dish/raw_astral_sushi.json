@@ -1,0 +1,7 @@
+{
+ "parent": "rainsfishing:item/dish/astral_sushi",
+ "textures": {
+  "0": "rainsfishing:item/dish/raw_astral_sushi",
+  "particle": "rainsfishing:item/dish/raw_astral_sushi"
+ }
+}

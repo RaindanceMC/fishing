@@ -1,0 +1,7 @@
+{
+ "parent": "rainsfishing:item/fishing_spot/bobber",
+ "textures": {
+  "0": "rainsfishing:item/fishing_spot/bobber_void",
+  "particle": "rainsfishing:item/fishing_spot/bobber_void"
+ }
+}

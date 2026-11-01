@@ -1,0 +1,7 @@
+{
+ "parent": "rainsfishing:item/dish/wrasse_maki",
+ "textures": {
+  "0": "rainsfishing:item/dish/raw_wrasse_maki",
+  "particle": "rainsfishing:item/dish/raw_wrasse_maki"
+ }
+}

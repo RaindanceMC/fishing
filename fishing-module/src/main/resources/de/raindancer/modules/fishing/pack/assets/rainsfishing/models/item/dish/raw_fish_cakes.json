@@ -1,0 +1,7 @@
+{
+ "parent": "rainsfishing:item/dish/fish_cakes",
+ "textures": {
+  "0": "rainsfishing:item/dish/raw_fish_cakes",
+  "particle": "rainsfishing:item/dish/raw_fish_cakes"
+ }
+}

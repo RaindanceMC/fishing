@@ -1,0 +1,7 @@
+{
+ "parent": "rainsfishing:item/dish/fish_and_chips",
+ "textures": {
+  "0": "rainsfishing:item/dish/raw_fish_and_chips",
+  "particle": "rainsfishing:item/dish/raw_fish_and_chips"
+ }
+}

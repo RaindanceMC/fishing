@@ -1,0 +1,7 @@
+{
+ "parent": "rainsfishing:item/dish/abyssal_broth",
+ "textures": {
+  "0": "rainsfishing:item/dish/raw_abyssal_broth",
+  "particle": "rainsfishing:item/dish/raw_abyssal_broth"
+ }
+}

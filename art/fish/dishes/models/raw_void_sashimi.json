@@ -1,0 +1,7 @@
+{
+ "parent": "rainsfishing:item/dish/void_sashimi",
+ "textures": {
+  "0": "rainsfishing:item/dish/raw_void_sashimi",
+  "particle": "rainsfishing:item/dish/raw_void_sashimi"
+ }
+}

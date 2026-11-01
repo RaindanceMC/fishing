@@ -1,0 +1,7 @@
+{
+ "parent": "rainsfishing:item/dish/herring_sandwich",
+ "textures": {
+  "0": "rainsfishing:item/dish/raw_herring_sandwich",
+  "particle": "rainsfishing:item/dish/raw_herring_sandwich"
+ }
+}

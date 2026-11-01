@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>de.raindancer.modules</groupId>
+        <artifactId>fishing-build</artifactId>
+        <version>1.0.0</version>
+    </parent>
+
+    <artifactId>fishing-module</artifactId>
+    <!-- Own version, independent of the reactor's: this module is published to the registry on its own
+         schedule under its own tag (fishing-module-vX.Y.Z), not tied to any other module's release. -->
+    <version>${fishing-module.version}</version>
+    <packaging>jar</packaging>
+
+    <name>Rain's Flexible Modules — Fishing</name>
+    <description>
+        Fishing worth doing: new fish in six tiers, sea chests that open with a show, fishing spots in their
+        own biomes, rods and skills that grow, fishing in lava and straight into the void, and dishes to cook.
+    </description>
+
+    <dependencies>
+        <dependency>
+            <groupId>de.raindancer.modules</groupId>
+            <artifactId>modules-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>de.raindancer.modules</groupId>
+            <artifactId>modules-api</artifactId>
+            <type>test-jar</type>
+            <version>${modules-api.version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+</project>

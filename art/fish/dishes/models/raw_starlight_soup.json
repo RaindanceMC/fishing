@@ -1,0 +1,7 @@
+{
+ "parent": "rainsfishing:item/dish/starlight_soup",
+ "textures": {
+  "0": "rainsfishing:item/dish/raw_starlight_soup",
+  "particle": "rainsfishing:item/dish/raw_starlight_soup"
+ }
+}

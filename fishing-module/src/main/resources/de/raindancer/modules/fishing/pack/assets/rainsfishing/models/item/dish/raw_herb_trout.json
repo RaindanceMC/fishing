@@ -1,0 +1,7 @@
+{
+ "parent": "rainsfishing:item/dish/herb_trout",
+ "textures": {
+  "0": "rainsfishing:item/dish/raw_herb_trout",
+  "particle": "rainsfishing:item/dish/raw_herb_trout"
+ }
+}

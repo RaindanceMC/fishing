@@ -1,0 +1,7 @@
+{
+ "parent": "rainsfishing:item/dish/glow_broth",
+ "textures": {
+  "0": "rainsfishing:item/dish/raw_glow_broth",
+  "particle": "rainsfishing:item/dish/raw_glow_broth"
+ }
+}

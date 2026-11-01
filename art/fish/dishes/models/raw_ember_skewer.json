@@ -1,0 +1,7 @@
+{
+ "parent": "rainsfishing:item/dish/ember_skewer",
+ "textures": {
+  "0": "rainsfishing:item/dish/raw_ember_skewer",
+  "particle": "rainsfishing:item/dish/raw_ember_skewer"
+ }
+}

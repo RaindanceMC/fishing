@@ -1,0 +1,92 @@
+# Rain's Fishing — every line this module says.
+#
+# Offered as a *floor*: anything an owner has already written in their own messages.yml wins. See
+# Messages.defineFrom. Every placeholder a line asks for is supplied where it is sent, and nothing
+# here is YAML's idea of a truth value.
+fishing:
+
+  usage: "<gray>/fishing [rods|skills|rod|collection]  ·  /fishing give <player> <fish:id|dish:id|chest:tier> [amount]  ·  /fishing xp <player> <amount>  ·  /fishing spot"
+  only-a-player: "<red>Only a player standing in the world can do that."
+  level-up: "<green>Fishing level <white><level></white>! You have <white><points></white> skill point(s) to spend — <white>/fishing skills</white>."
+
+  menu:
+    not-allowed: "<red>You may not open the fishing pages."
+
+  caught:
+    fish: "<green>You landed a <white><fish></white> of <white><weight></white> <gray>(<tier>)</gray>. Nice one."
+    weighed: "<fish> <gray>·</gray> <white><weight></white>"
+    record: "<gold>New personal best: a <white><weight></white> <white><fish></white>!"
+    double: "<green>Two <white><fish></white> on one hook. The water likes you today."
+    chest: "<gold>A <white><chest></white> came up on your line! Place it somewhere and right click it to open it."
+
+  whopper:
+    broadcast: "<gold><white><player></white> just landed a whopping <white><weight></white> <white><fish></white> <gray>(<tier>)</gray>!"
+    w: "<green><bold>[W]</bold></green>"
+    w-tooltip: "<gray>Congratulate them"
+    got-w: "<green><white><player></white> gave you a <bold>W</bold> for that <white><fish></white>."
+    gave-w: "<gray>You gave <white><player></white> a <bold>W</bold>."
+
+  line:
+    burnt: "<red>Your Silk Line burnt through in the lava. Fit an <white>Ember Line</white> to fish lava."
+    void-needed: "<gray>Only a <white>Void Line</white> holds down there. This one just keeps falling."
+
+  chest:
+    not-allowed: "<red>You may not open sea chests."
+    one-at-a-time: "<red>One chest at a time — let this one finish first."
+    placed: "<gray>Your <white><chest></white> is down. Right click it to open it; sneak and left click to take it back."
+    place-it: "<gray>Place the chest on the ground first, then right click it to open it."
+    not-yours: "<red>That sea chest is somebody else's catch."
+    opened: "<green>The <white><chest></white> held <white><count></white> thing(s), now in your bag."
+    money: "<green>…and <white><money></white>, straight to your balance."
+
+  dish:
+    eaten: "<green>That <white><dish></white> was something else. You feel it already."
+
+  rod:
+    hold-a-rod: "<red>Hold the fishing rod you want to upgrade in your main hand."
+    one-rod: "<red>Upgrade one rod at a time — hold a single rod, not a stack."
+    maxed: "<red>The <white><part></white> on this rod cannot go any higher."
+    level-too-low: "<red><white><part></white> needs fishing level <white><level></white>. Keep fishing."
+    not-enough: "<red>That needs <white><cost></white> fishing experience, and you have <white><have></white> to spend. Keep fishing."
+    upgraded: "<green>Fitted: <white><part></white>, for <white><cost></white> fishing experience."
+    moved: "<red>The rod left your hand before the upgrade went on, so your experience went back to you."
+
+  rods:
+    unlocked: "<green>The <white><rod></white> is yours — <white><cost></white> fishing experience well spent. Its recipe is in your recipe book now."
+    already: "<red>You unlocked the <white><rod></white> already. Craft it — the recipe is in your book."
+    previous-first: "<red>Unlock the <white><previous></white> before the <white><rod></white>."
+    level-too-low: "<red>The <white><rod></white> needs fishing level <white><level></white>. Keep fishing."
+    not-enough: "<red>The <white><rod></white> needs <white><cost></white> fishing experience, and you have <white><have></white> to spend."
+    not-yours: "<red>The <white><rod></white> is not unlocked for you yet — see <white>/fishing rods</white>."
+
+  skills:
+    learnt: "<green><white><skill></white> is now rank <white><rank></white>."
+    maxed: "<red><white><skill></white> is at its highest rank already."
+    no-points: "<red>No skill point left for <white><skill></white>. Every fishing level gives one."
+    nothing-to-unlearn: "<red>You have not learnt any fishing skill yet."
+    reset-not-paid: "<red>Unlearning costs <white><price></white>, and it could not be taken."
+    reset-failed: "<red>Your skills could not be reset just now; your money went back to you."
+    reset: "<green>Every skill unlearnt. <white><points></white> point(s) to spend again."
+
+  screen:
+    you: "<aqua><bold>Your fishing</bold></aqua><newline><gray>Level <white><level></white> · <white><next></white> experience to the next<newline><gray>Fish landed: <white><landed></white> · kinds <white><kinds></white>/<white><of></white><newline><gray>Heaviest: <white><best></white><newline><gray>Sea chests opened: <white><chests></white>"
+    top: "<aqua><bold>Fishing leaderboard</bold></aqua>"
+    heaviest: "<aqua><bold>Heaviest catches</bold></aqua>"
+    landed: "<aqua><bold>Most fish landed</bold></aqua>"
+    collectors: "<aqua><bold>Fish collectors</bold></aqua>"
+    row: "<gold><place>.</gold> <white><player></white> <gray>— <value></gray>"
+    nobody: "<gray>Nobody has fished here yet."
+
+  spot:
+    sign: "Fishing Spot<newline><white><shoal></white><newline><gray><chest> can bite here</gray>"
+    not-allowed: "<red>Only staff can place a fishing spot."
+    look-at-water: "<red>Look at water or lava — or, in the End, out into the void."
+    placed: "<green>A fishing spot is out on the <white><water></white>."
+
+  give:
+    not-allowed: "<red>Only staff can hand out fish, dishes and sea chests."
+    unknown: "<red>Nobody called <player> is online here."
+    bad-item: "<red><item> is nothing I know. Try fish:pebble_trout, dish:fish_skewer, chest:void or rod:reef."
+    bad-amount: "<red><amount> is not an amount."
+    given: "<green>Gave <white><amount>× <item></white> to <white><count></white> player(s)."
+    experience: "<green>Gave <white><amount></white> fishing experience to <white><count></white> player(s)."

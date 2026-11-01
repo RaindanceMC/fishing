@@ -1,0 +1,73 @@
+id: fishing
+title: Fishing
+summary: Thirty-odd fish in six tiers, sea chests that bite now and then, fishing spots, rod upgrades and skills — and fishing in lava and the void.
+intro: |
+  Throw a line anywhere and something better than cod can come up. Every kind of water has its own fish, from a <white>Pebble Trout</white> in a stream to an <white>Astral Leviathan</white> hanging in the void under the End.
+icon: FISHING_ROD
+category: Progress & rewards
+order: 35
+module: fishing
+aliases: [fish, angling, rod, lootbox, sea chest, chests]
+keywords: [catch, tier, mythic, void, lava, spot, shoal, upgrade, skill, dish, sushi, recipe]
+commands: [fishing]
+sections:
+  - question: What can I catch?
+    title: Fish and tiers
+    text: |
+      Fish come in six tiers: <white>common</white>, <green>uncommon</green>, <aqua>rare</aqua>, <light_purple>epic</light_purple>, <gold>legendary</gold> and <aqua>mythic</aqua>. Rivers, oceans, warm seas, swamps, frozen water, cave water, lava and the void each have their own; the mythic ones live only in the void.
+      {if:fishing:catch.replace-vanilla-fish}Whatever vanilla would have put on your hook becomes one of these fish. Treasure and junk stay as they always were.{else}On this server cod and salmon stay vanilla; the new fish come from lava and the void, and from sea chests.{/if}
+      {run:/fishing collection} shows every fish there is, and where the ones you have not caught yet bite.
+  - question: What is a sea chest?
+    title: Sea chests
+    text: |
+      Now and then a chest bites instead of a fish — about {setting:fishing:chests.chance-permille|count} casts in a thousand, more with a chest lure, treasure sense or in a fishing spot. There are six: <white>Driftwood</white>, <green>Reef</green>, <aqua>Pearl</aqua>, <light_purple>Abyss</light_purple>, <gold>Leviathan</gold> and <aqua>Void</aqua>.
+      Place one wherever you like and right click it to open it: it shakes, bursts open, and what was inside comes out one thing at a time — each rises in a puff of smoke, turns in the air and drops into your bag. Money, fish no better than the chest, and things that get richer each tier. Only you can open your chest; sneak and left click it to take it back.
+      Each water has its own chests: a river gives up to Pearl, swamps and caves up to Abyss, the sea up to Leviathan. The Void chest comes only out of the void.
+  - question: What are fishing spots?
+    title: Fishing spots
+    when: fishing:spots.enabled
+    text: |
+      Shoals that come up on the water near you: rings rippling out, a big bobber turning over them and a sign naming what can bite there. Cast into one and fish bite sooner, rarer fish and more sea chests come up.
+      A spot lasts {setting:fishing:spots.minutes|count} minutes or {setting:fishing:spots.catches|count} catches, whichever runs out first. Spots belong to their water — an ocean spot on the ocean, a void spot hanging off an End island.
+  - question: How do I fish lava or the void?
+    title: Lava and the void
+    text: |
+      An ordinary line burns through in lava. Fit the <white>Ember Line</white> and your hook floats on lava like on water.
+      For the void, fit the <white>Void Line</white> (fishing level {setting:fishing:rod.void-line-level|count}), stand on the edge of an End island and cast straight down into the nothing. The hook stays hanging there; when it dips and flares, reel in.
+  - question: Which rods are there?
+    title: Rods
+    text: |
+      Six rods, one per tier: the <white>Reed</white>, <green>Reef</green>, <aqua>Pearl</aqua>, <light_purple>Ember</light_purple>, <gold>Leviathan</gold> and <aqua>Void</aqua> Rod. Each bites sooner, brings more sea chests, rarer fish and double catches than the one before; the Ember and Leviathan rods fish lava, the Void Rod fishes the void too.
+      They are earned like everything else here: open {run:/fishing rods}, and once you have the fishing level, unlock the next rod with fishing experience (the one below it first). Its recipe then appears in your recipe book — its shaft, its line and a fish of its tier — and you craft it. Only a fisher who unlocked a rod can craft it or cast it; a plain fishing rod is always yours.
+  - question: Are there fishing enchantments?
+    title: Fishing enchantments
+    text: |
+      Four, on any rod: <white>Deep Bite</white> (fish bite sooner), <white>Twin Catch</white> (double catches), <white>Treasure Hunter</white> (more sea chests) and <white>Mythic Lure</white> (rarer fish and chests). Their shards come from the shard world like every enchantment's, and Abyss, Leviathan and Void chests hold some — Mythic Lure only the Void chest. Unlock them in your guild, buy the book, and put it on at an anvil.
+  - question: How do I upgrade my rod?
+    title: Rod upgrades
+    permission: rainsfishing.rod.upgrade
+    text: |
+      Upgrades are <i>earned</i>, not bought: they cost the fishing experience you have caught your way to, and each rank needs a fishing level. Spending experience never lowers your level.
+      Hold the rod and open {run:/fishing rod}. The <white>Hook</white> makes fish bite sooner, the <white>Chest Lure</white> brings more sea chests, the <white>Reel</white> brings double catches, and the <white>Line</white> opens lava and the void.
+      Hook I costs {setting:fishing:rod.hook-cost|count} experience, and each further rank costs {setting:fishing:rod.cost-growth-percent|count}% of the one before, {setting:fishing:rod.levels-per-rank|count} fishing levels after the last. The Ember Line costs {setting:fishing:rod.ember-line-cost|count} (level {setting:fishing:rod.ember-line-level|count}), the Void Line {setting:fishing:rod.void-line-cost|count} (level {setting:fishing:rod.void-line-level|count}). Upgrades are written onto that rod and go wherever it goes.
+  - question: How do levels and skills work?
+    title: Levels and skills
+    text: |
+      Every catch earns fishing experience, more for rarer fish and for opening chests. Levels go up to {setting:fishing:levels.highest|count}, and every level is one skill point.
+      Spend them in {run:/fishing skills}: <white>Quick Bite</white>, <white>Treasure Sense</white>, <white>Rare Instinct</white> and <white>Double Catch</white>, five ranks each. Unlearning them all costs {setting:fishing:skills.reset-fee|money} and gives every point back.
+  - question: What can I cook?
+    title: Dishes
+    text: |
+      Every meal is made in two steps: craft it, and you hold the <white>raw</white> dish; cook that in a furnace, a smoker or over a campfire, and it is done. Every recipe is in your recipe book.
+      Everyday meals take any fish at all — plain cod and salmon too: <white>Fish 'n' Chips</white>, <white>Fisherman's Stew</white>, <white>Fish Cakes</white> and the <white>Fish Skewer</white>.
+      The finer ones want a particular catch: Herb-Baked Trout, Bog Stew, Frost Chowder, Ember Skewer, Glow Broth, Abyssal Broth, Void Sashimi, a Golden Fish Pie, Starlight Soup, the Leviathan Feast — and sushi on every tier, from Herring Nigiri and Wrasse Maki to Coral Sushi, the Blazefin Roll, Crowned Marlin Nigiri and Astral Sushi.
+      A dish fills you more than the fish it is made from, and the better ones come with effects: fire resistance, night vision, water breathing, slow falling, strength, luck and more.
+  - question: Is there a leaderboard?
+    title: Leaderboards
+    text: |
+      Four: the highest fishing level, the most fish landed, the heaviest catch and the most kinds found. Staff can put them up as floating screens with {cmd:/screen}, next to a screen of everybody's own fishing record — and as statues of the top fishers (with the mannequins plugin: {cmd:/mannequin statue top fishing:level 1}).
+  - question: What can staff do?
+    title: Staff
+    permission: rainsfishing.give
+    text: |
+      {cmd:/fishing give <player> <fish:id|dish:id|chest:tier> [amount]} hands out any fish, dish or sea chest; {cmd:/fishing xp <player> <amount>} grants fishing experience. {cmd:/fishing spot} puts a fishing spot on the water or lava you are looking at — or, in the End, out in the void.

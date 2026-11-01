@@ -1,0 +1,7 @@
+{
+ "parent": "rainsfishing:item/dish/leviathan_feast",
+ "textures": {
+  "0": "rainsfishing:item/dish/raw_leviathan_feast",
+  "particle": "rainsfishing:item/dish/raw_leviathan_feast"
+ }
+}

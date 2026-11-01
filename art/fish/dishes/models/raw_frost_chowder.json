@@ -1,0 +1,7 @@
+{
+ "parent": "rainsfishing:item/dish/frost_chowder",
+ "textures": {
+  "0": "rainsfishing:item/dish/raw_frost_chowder",
+  "particle": "rainsfishing:item/dish/raw_frost_chowder"
+ }
+}
