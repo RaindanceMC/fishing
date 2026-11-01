@@ -51,7 +51,7 @@ import java.util.Random;
  */
 public final class FishingModule implements FlexModule {
 
-    private static final ModuleInfo INFO = ModuleInfo.of("fishing", "Fishing", "0.1.2")
+    private static final ModuleInfo INFO = ModuleInfo.of("fishing", "Fishing", "0.2.0")
             .describedAs("New fish in six tiers, sea chests, fishing spots, rod upgrades and skills, lava and "
                     + "void fishing, and dishes cooked from the catch.")
             .by("Raindancer118");
@@ -65,6 +65,8 @@ public final class FishingModule implements FlexModule {
     private DishService dishes;
     private de.raindancer.modules.fishing.service.SeaChestBlocks seaChests;
     private de.raindancer.modules.fishing.service.RodWorkshopService workshop;
+    private de.raindancer.modules.fishing.service.BaitService baits;
+    private de.raindancer.modules.fishing.service.NetService nets;
     private de.raindancer.core.content.pack.ResourcePacks packs;
 
     @Override
@@ -103,11 +105,19 @@ public final class FishingModule implements FlexModule {
         RodService rods = new RodService(context.plugin(), context.core().messages(), context.core().effects(),
                 profiles, store, forge, now);
         spots = new SpotService(context.plugin(), log, context.core().messages(), new WaterRule(), catchRule,
-                System::currentTimeMillis, now);
+                System::currentTimeMillis, now,
+                new de.raindancer.modules.fishing.store.FixedSpotStore(context.plugin().getDataFolder().toPath()));
         CatchService catches = new CatchService(context.plugin(), server, context.core(), context.core().messages(), context.core().effects(), forge,
                 profiles, spots, catchRule, random, now);
+        baits = new de.raindancer.modules.fishing.service.BaitService(context.plugin(), server, log, catalog, forge);
+        nets = new de.raindancer.modules.fishing.service.NetService(context.plugin(), server, log, forge,
+                new de.raindancer.modules.fishing.store.NetStore(context.plugin().getDataFolder().toPath()));
+        if (!nets.load()) {
+            log.warn("The fishing nets could not be read now; they are read again the first time one is opened.");
+        }
+        catches.nets(nets);
         LineService lines = new LineService(context.plugin(), context.core().messages(), context.core().effects(),
-                catches, profiles, new BiteRule(), random);
+                catches, profiles, new BiteRule(), random, baits);
         seaChests = new de.raindancer.modules.fishing.service.SeaChestBlocks(context.plugin(), server);
         ChestService chests = new ChestService(context.plugin(), server, context.core().messages(),
                 context.core().effects(), forge, profiles, seaChests, new ChestLootRule(catalog), random, now);
@@ -123,20 +133,25 @@ public final class FishingModule implements FlexModule {
 
         services = new FishingServices(context.plugin(), server, log, context.core().messages(),
                 context.chat().brand(), context.core(), settings::current, settings, catalog, forge, profiles, rods,
-                spots, catches, lines, chests, seaChests, dishes, workshop, new LiveScreens());
+                spots, catches, lines, chests, seaChests, dishes, workshop, baits, nets, new LiveScreens());
 
         context.listener(new FishListener(services));
         context.listener(new ChestListener(services));
+        context.listener(new de.raindancer.modules.fishing.listener.SpotListener(services));
+        context.listener(new de.raindancer.modules.fishing.listener.NetListener(services));
         context.listener(new DishListener(services));
         context.listener(new de.raindancer.modules.fishing.listener.RodListener(services));
         FishingCommands.ready(services);
 
         int recipes = dishes.registerRecipes();
         int rodRecipes = workshop.registerRecipes();
+        int baitRecipes = baits.registerRecipes() + nets.registerRecipe();
         server.getOnlinePlayers().forEach(online -> Scheduling.entity(context.plugin(), online,
                 () -> {
                     dishes.discover(online);
                     workshop.discover(online);
+                    baits.discover(online);
+                    nets.discover(online);
                 }));
         packs = context.core().resourcePacks();
         try {
@@ -167,15 +182,19 @@ public final class FishingModule implements FlexModule {
         } catch (LinkageError olderCore) {
             log.info("RainsCore is too old for fishing's screens and leaderboards; there are none until it is updated.");
         }
+        SpotService fixing = spots;
+        Scheduling.async(context.plugin(), () -> log.info("{} fixed fishing spot(s).",
+                fixing.loadFixed(server::getWorld)));
         var timer = Scheduling.globalTimer(context.plugin(), SPOT_PERIOD, SPOT_PERIOD,
                 task -> spots.tick(server.getOnlinePlayers()));
         if (timer != null) {
             context.closeWith(timer::cancel);
         }
 
-        log.info("Fishing is up: {} fish and {} dishes ({} recipes), {} rods, {} new item definition(s); spots {}.",
+        log.info("Fishing is up: {} fish and {} dishes ({} recipes), {} rods, {} new item definition(s); spots {}; "
+                        + "{} bait and net recipes.",
                 catalog.fish().size(), catalog.dishes().size(), recipes, rodRecipes, defined,
-                now.spotsEnabled() ? "on, " + now.spotsPerPlayer() + " per player" : "off");
+                now.spotsEnabled() ? "on, " + now.spotsPerPlayer() + " per player" : "off", baitRecipes);
     }
 
     /** Opening this module's screens without the command knowing the menu classes. */
@@ -230,6 +249,12 @@ public final class FishingModule implements FlexModule {
         }
         if (workshop != null) {
             workshop.unregisterRecipes();
+        }
+        if (baits != null) {
+            baits.unregisterRecipes();
+        }
+        if (nets != null) {
+            nets.unregisterRecipe();
         }
         if (packs != null) {
             FishingPack.withdraw(packs);

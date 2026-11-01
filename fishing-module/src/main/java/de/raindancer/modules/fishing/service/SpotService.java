@@ -5,9 +5,11 @@ import de.raindancer.core.platform.util.Scheduling;
 import de.raindancer.core.ui.messages.Messages;
 import de.raindancer.modules.fishing.FishingSettings;
 import de.raindancer.modules.fishing.model.Spot;
+import de.raindancer.modules.fishing.model.Tier;
 import de.raindancer.modules.fishing.model.Water;
 import de.raindancer.modules.fishing.rules.CatchRule;
 import de.raindancer.modules.fishing.rules.WaterRule;
+import de.raindancer.modules.fishing.store.FixedSpotStore;
 import de.raindancer.modules.fishing.visual.SpotVisual;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
@@ -29,7 +31,9 @@ import java.util.function.LongSupplier;
 
 /**
  * Fishing spots: shoals that come up on the water around players, in whatever water is there — a spot on a river
- * is a river spot, one off an End island's edge hangs in the void — and go again when fished out or after a while.
+ * is a river spot, one off an End island's edge hangs in the void — and go again when fished out or after a while;
+ * and the fixed ones admins put down, with their own size and best tier, which stay. No spot comes up inside another.
+ * A fixed spot is shown while its chunk is loaded.
  */
 public final class SpotService implements IFishingService {
 
@@ -37,8 +41,8 @@ public final class SpotService implements IFishingService {
     private static final int NEAREST = 10;
     private static final int FARTHEST = 36;
     private static final double NEAR = 64.0;
-    /** A hook this close to a spot's centre is in it. */
-    public static final double RADIUS = 4.0;
+    /** A hook this close to a wandering spot's centre is in it. */
+    public static final double RADIUS = Spot.WANDERING_RADIUS;
 
     private record Live(Spot spot, SpotVisual visual) {
     }
@@ -50,10 +54,20 @@ public final class SpotService implements IFishingService {
     private final CatchRule catches;
     private final LongSupplier clock;
     private final Map<UUID, Live> spots = new ConcurrentHashMap<>();
+    private final Map<UUID, Spot> fixed = new ConcurrentHashMap<>();
+    private final Map<UUID, SpotVisual> fixedShown = new ConcurrentHashMap<>();
+    private final FixedSpotStore store;
     private volatile FishingSettings settings;
 
     public SpotService(Plugin plugin, LogChannel log, Messages messages, WaterRule waters, CatchRule catches,
                        LongSupplier clock, FishingSettings settings) {
+        this(plugin, log, messages, waters, catches, clock, settings, null);
+    }
+
+    /** @param store where the fixed spots are kept; null for none */
+    public SpotService(Plugin plugin, LogChannel log, Messages messages, WaterRule waters, CatchRule catches,
+                       LongSupplier clock, FishingSettings settings, FixedSpotStore store) {
+        this.store = store;
         this.plugin = plugin;
         this.log = log;
         this.messages = messages;
@@ -90,6 +104,7 @@ public final class SpotService implements IFishingService {
             return;
         }
         Location at = player.getLocation();
+        // Fixed spots are an admin's and do not use up anybody's share.
         long near = spots.values().stream().filter(each -> each.spot().world().equals(at.getWorld().getUID())
                 && distanceSquared(each.spot(), at) <= NEAR * NEAR).count();
         if (near >= live.spotsPerPlayer()) {
@@ -160,13 +175,132 @@ public final class SpotService implements IFishingService {
         return waters.classify(new WaterRule.Place(biome, dimension, lava, voidBelow, sky));
     }
 
-    /** Puts a spot on the surface at {@code at}; call on its region thread. */
-    public Spot spawn(Location at, Water water, FishingSettings live) {
+    /**
+     * Puts a wandering spot on the surface at {@code at}; call on its region thread.
+     *
+     * @return the spot; empty when it would come up inside another
+     */
+    public Optional<Spot> spawn(Location at, Water water, FishingSettings live) {
         Spot spot = new Spot(UUID.randomUUID(), at.getWorld().getUID(), at.getX(), at.getY(), at.getZ(), water,
                 catches.bestChest(water), live.spotCatches(), clock.getAsLong() + live.spotMinutes() * 60_000L);
+        if (overlapsAny(spot)) {
+            return Optional.empty();
+        }
         SpotVisual visual = SpotVisual.spawn(plugin, at, spot, sign(spot));
         spots.put(spot.id(), new Live(spot, visual));
-        return spot;
+        return Optional.of(spot);
+    }
+
+    private boolean overlapsAny(Spot spot) {
+        return spots.values().stream().anyMatch(each -> each.spot().overlaps(spot))
+                || fixed.values().stream().anyMatch(each -> each.overlaps(spot));
+    }
+
+    // ---------------------------------------------------------------------------- fixed spots
+
+    /** Reads the fixed spots (the database: off the world's threads) and shows those in loaded chunks; once, at start. */
+    public int loadFixed(java.util.function.Function<UUID, World> worlds) {
+        if (store == null || !store.load()) {
+            return 0;
+        }
+        for (Spot spot : store.all()) {
+            fixed.put(spot.id(), spot);
+            World world = worlds.apply(spot.world());
+            if (world != null && world.isChunkLoaded(chunk(spot.x()), chunk(spot.z()))) {
+                Location at = new Location(world, spot.x(), spot.y(), spot.z());
+                Scheduling.region(plugin, at, () -> show(spot, at));
+            }
+        }
+        return fixed.size();
+    }
+
+    /**
+     * An admin's spot, for good: centred at {@code at}, {@code radius} blocks round, giving up chests and fish up to
+     * {@code best}. Call on {@code at}'s region thread.
+     *
+     * @return the spot; empty when it would lie over another fixed spot
+     */
+    public Optional<Spot> createFixed(Location at, Water water, Tier best, double radius) {
+        Spot spot = Spot.fixed(UUID.randomUUID(), at.getWorld().getUID(), at.getX(), at.getY(), at.getZ(), water,
+                best, Math.clamp(radius, FixedSpotStore.LEAST_RADIUS, FixedSpotStore.MOST_RADIUS));
+        if (fixed.values().stream().anyMatch(each -> each.overlaps(spot))) {
+            return Optional.empty();
+        }
+        // A wandering spot where the admin wants theirs simply makes room.
+        for (Live live : List.copyOf(spots.values())) {
+            if (live.spot().overlaps(spot)) {
+                end(live.spot().id());
+            }
+        }
+        fixed.put(spot.id(), spot);
+        show(spot, at);
+        if (store != null) {
+            Scheduling.async(plugin, () -> {
+                if (!store.put(spot)) {
+                    log.warn("The fixed fishing spot {} could not be saved; it is gone after a restart.", spot.id());
+                }
+            });
+        }
+        return Optional.of(spot);
+    }
+
+    /** Takes a fixed spot away for good. */
+    public boolean removeFixed(UUID id) {
+        Spot gone = fixed.remove(id);
+        if (gone == null) {
+            return false;
+        }
+        hide(id);
+        if (store != null) {
+            Scheduling.async(plugin, () -> store.remove(id));
+        }
+        return true;
+    }
+
+    /** The fixed spots of one world, nearest to {@code from} first. */
+    public List<Spot> fixedIn(World world, Location from) {
+        return fixed.values().stream().filter(spot -> spot.world().equals(world.getUID()))
+                .sorted(java.util.Comparator.comparingDouble(spot -> distanceSquared(spot, from))).toList();
+    }
+
+    /** A chunk came in: show the fixed spots in it. Call on its region thread. */
+    public void chunkLoaded(org.bukkit.Chunk chunk) {
+        UUID world = chunk.getWorld().getUID();
+        for (Spot spot : fixed.values()) {
+            if (spot.world().equals(world) && chunk(spot.x()) == chunk.getX() && chunk(spot.z()) == chunk.getZ()
+                    && !fixedShown.containsKey(spot.id())) {
+                show(spot, new Location(chunk.getWorld(), spot.x(), spot.y(), spot.z()));
+            }
+        }
+    }
+
+    /** A chunk goes: its fixed spots' displays go with it (they are never saved with the world). */
+    public void chunkUnloaded(org.bukkit.Chunk chunk) {
+        UUID world = chunk.getWorld().getUID();
+        for (Spot spot : fixed.values()) {
+            if (spot.world().equals(world) && chunk(spot.x()) == chunk.getX() && chunk(spot.z()) == chunk.getZ()) {
+                SpotVisual shown = fixedShown.remove(spot.id());
+                if (shown != null) {
+                    shown.remove();
+                }
+            }
+        }
+    }
+
+    private void show(Spot spot, Location at) {
+        hide(spot.id());
+        fixedShown.put(spot.id(), SpotVisual.spawn(plugin, at, spot, sign(spot)));
+    }
+
+    private void hide(UUID id) {
+        SpotVisual shown = fixedShown.remove(id);
+        if (shown != null) {
+            Scheduling.region(plugin, shown.location(), shown::remove);
+        }
+    }
+
+    private static int chunk(double coordinate) {
+        return (int) Math.floor(coordinate) >> 4;
     }
 
     private Component sign(Spot spot) {
@@ -176,15 +310,19 @@ public final class SpotService implements IFishingService {
                 .colorIfAbsent(net.kyori.adventure.text.format.TextColor.color(spot.best().colour()));
     }
 
-    /** The spot a hook at {@code at} is in, if any. */
+    /** The spot a hook at {@code at} is in, if any — a fixed one first. */
     public Optional<Spot> at(Location at) {
         UUID world = at.getWorld().getUID();
-        return spots.values().stream().map(Live::spot)
-                .filter(spot -> spot.covers(world, at.getX(), at.getY(), at.getZ(), RADIUS)).findFirst();
+        return fixed.values().stream().filter(spot -> spot.covers(world, at.getX(), at.getY(), at.getZ())).findFirst()
+                .or(() -> spots.values().stream().map(Live::spot)
+                        .filter(spot -> spot.covers(world, at.getX(), at.getY(), at.getZ())).findFirst());
     }
 
-    /** One catch taken out of a spot; it goes when it is fished out. */
+    /** One catch taken out of a spot; it goes when it is fished out. A fixed spot never runs out. */
     public void fished(Spot spot) {
+        if (spot.fixed()) {
+            return;
+        }
         Live live = spots.get(spot.id());
         if (live == null) {
             return;
@@ -211,15 +349,18 @@ public final class SpotService implements IFishingService {
     /** Takes every spot down at once — the module is stopping, so this runs where it is called. */
     public int clear() {
         int count = spots.size();
-        for (Live live : List.copyOf(spots.values())) {
+        List<SpotVisual> shown = new ArrayList<>(spots.values().stream().map(Live::visual).toList());
+        shown.addAll(fixedShown.values());
+        for (SpotVisual visual : shown) {
             try {
-                live.visual().remove();
+                visual.remove();
             } catch (RuntimeException notOnItsThread) {
                 log.debug("A fishing spot's displays could not be removed here; they are not saved with the "
                         + "world and go with the next restart.");
             }
         }
         spots.clear();
+        fixedShown.clear();
         return count;
     }
 

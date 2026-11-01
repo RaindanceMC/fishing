@@ -103,6 +103,15 @@ public final class ProfileService implements IFishingService {
      * Spends a point on a skill. {@code then} hears, on the player's thread, empty when it went through, else why
      * not.
      */
+    /** A skin token used: the skin is theirs for good. Written off the world's threads; {@code then} on theirs. */
+    public void unlockSkin(Player player, de.raindancer.modules.fishing.model.RodSkin skin, Consumer<Boolean> then) {
+        UUID id = player.getUniqueId();
+        Scheduling.async(plugin, () -> {
+            boolean written = store.change(id, profile -> profile.withSkin(skin));
+            Scheduling.entity(plugin, player, () -> then.accept(written));
+        });
+    }
+
     public void learn(Player player, Skill skill, Consumer<Optional<SkillRule.Refusal>> then) {
         UUID id = player.getUniqueId();
         Optional<SkillRule.Refusal> refusal = skills.refusal(of(id), skill);

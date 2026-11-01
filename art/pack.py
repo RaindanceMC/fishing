@@ -62,11 +62,17 @@ def main():
             copy("lootbox/models/%s%s.json" % (chest, part), "models/item/chest/%s%s.json" % (chest, part))
             item("chest/%s%s" % (chest, part), "item/chest/%s%s" % (chest, part))
 
-    for rod in ("reed", "reef", "pearl", "ember", "leviathan", "void"):
+    skins = ("driftwood", "frostbite", "tidepool", "magma", "golden", "abyssal", "bonewhale", "starfall")
+    for rod in ("reed", "reef", "pearl", "ember", "leviathan", "void") + tuple("skin_" + skin for skin in skins):
         for suffix in ("", "_cast"):
             copy("rods/textures/%s%s.png" % (rod, suffix), "textures/item/rod/%s%s.png" % (rod, suffix))
             copy("rods/models/%s%s.json" % (rod, suffix), "models/item/rod/%s%s.json" % (rod, suffix))
         copy("rods/items/%s.json" % rod, "items/rod/%s.json" % rod)
+
+    for gear in ("bait_wriggler", "bait_shimmer", "bait_gilded", "bait_abyss", "bait_starlure", "net"):
+        copy("gear/textures/%s.png" % gear, "textures/item/gear/%s.png" % gear)
+        copy("gear/models/%s.json" % gear, "models/item/gear/%s.json" % gear)
+        item(gear.replace("bait_", "bait/"), "item/gear/" + gear)
 
     copy("fishing_spot/textures/ripple.png", "textures/block/fishing_spot/ripple.png")
     copy("fishing_spot/textures/ripple.png.mcmeta", "textures/block/fishing_spot/ripple.png.mcmeta")

@@ -54,6 +54,7 @@ class ChestLootRuleTest {
                         case Reward.Book book -> assertThat(book.levels()).isBetween(1, 30);
                         case Reward.Fish fish -> assertThat(fish.amount()).isPositive();
                         case Reward.Shard shard -> assertThat(shard.amount()).isPositive();
+                        case Reward.Skin token -> assertThat(token.skin().chest()).isEqualTo(tier);
                     }
                 }
             }
@@ -88,5 +89,29 @@ class ChestLootRuleTest {
         assertThat(seen.get(Tier.LEGENDARY)).contains(de.raindancer.modules.fishing.model.Rod.TREASURE_HUNTER)
                 .doesNotContain(de.raindancer.modules.fishing.model.Rod.MYTHIC_LURE);
         assertThat(seen.get(Tier.MYTHIC)).contains(de.raindancer.modules.fishing.model.Rod.MYTHIC_LURE);
+    }
+
+    @Test
+    @DisplayName("a skin token comes only out of its own chest tier, now and then")
+    void skinTokens() {
+        Random random = new Random(11);
+        for (Tier tier : Tier.values()) {
+            int tokens = 0;
+            for (int n = 0; n < 4000; n++) {
+                for (Reward reward : rule.open(tier, 100, random)) {
+                    if (reward instanceof Reward.Skin token) {
+                        assertThat(token.skin().chest()).isEqualTo(tier);
+                        tokens++;
+                    }
+                }
+            }
+            boolean gives = java.util.Arrays.stream(de.raindancer.modules.fishing.model.RodSkin.values())
+                    .anyMatch(skin -> skin.chest() == tier);
+            if (gives) {
+                assertThat(tokens).as(tier + " tokens").isBetween(160, 340);
+            } else {
+                assertThat(tokens).as(tier + " tokens").isZero();
+            }
+        }
     }
 }

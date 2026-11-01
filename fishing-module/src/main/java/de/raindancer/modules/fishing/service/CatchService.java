@@ -37,6 +37,7 @@ public final class CatchService implements IFishingService {
     private final FishForge forge;
     private final ProfileService profiles;
     private final SpotService spots;
+    private volatile NetService nets;
     private final CatchRule rule;
     private final Random random;
     private final de.raindancer.core.RainsCore core;
@@ -65,6 +66,18 @@ public final class CatchService implements IFishingService {
         this.settings = settings;
     }
 
+    /** Catches go into a carried net from now on. */
+    public void nets(NetService nets) {
+        this.nets = nets;
+    }
+
+    /** The rod item the player is fishing with: the main hand's, else the off hand's. */
+    public ItemStack rodStack(Player player) {
+        PlayerInventory inventory = player.getInventory();
+        ItemStack main = inventory.getItemInMainHand();
+        return RodTags.isRod(main) ? main : inventory.getItemInOffHand();
+    }
+
     /** The rod the player is fishing with: the main hand's, else the off hand's. */
     public Rod rodOf(Player player) {
         PlayerInventory inventory = player.getInventory();
@@ -82,12 +95,18 @@ public final class CatchService implements IFishingService {
      * @param vanillaWasFish vanilla put a fish on the hook (rather than treasure or junk)
      */
     public Catch decide(Player player, Location hook, Water water, boolean vanillaWasFish) {
+        return decide(player, hook, water, vanillaWasFish, null);
+    }
+
+    /** @param bait the bait that was on the hook, or null */
+    public Catch decide(Player player, Location hook, Water water, boolean vanillaWasFish,
+                        de.raindancer.modules.fishing.model.Bait bait) {
         FishingSettings live = settings;
         Optional<Spot> spot = spots.at(hook);
         boolean replacing = vanillaWasFish && (live.replaceVanillaFish() || water.needsSpecialLine());
         CatchRule.Cast cast = new CatchRule.Cast(water, rodOf(player), profiles.of(player.getUniqueId()),
                 spot.isPresent(), live.chestPermille(), live.spotChestPermille(),
-                replacing || water.needsSpecialLine());
+                replacing || water.needsSpecialLine(), spot.filter(Spot::fixed).map(Spot::best).orElse(null), bait);
         Catch caught = rule.roll(cast, random);
         if (!(caught instanceof Catch.Vanilla)) {
             spot.ifPresent(spots::fished);
@@ -117,8 +136,13 @@ public final class CatchService implements IFishingService {
                 return;
             }
             de.raindancer.core.platform.util.Scheduling.entity(plugin, player, () -> {
-                player.getInventory().addItem(item).values()
-                        .forEach(left -> player.getWorld().dropItemNaturally(player.getLocation(), left));
+                // A fisher carrying a net: the fish goes into it, and only what does not fit into the bag.
+                if (nets == null || !nets.catchInto(player, item, rest -> rest.forEach(left -> player.getInventory()
+                        .addItem(left).values().forEach(more -> player.getWorld().dropItemNaturally(
+                                player.getLocation(), more))))) {
+                    player.getInventory().addItem(item).values()
+                            .forEach(left -> player.getWorld().dropItemNaturally(player.getLocation(), left));
+                }
                 effects.play(player.getUniqueId(), Cues.CLICK);
             });
         });

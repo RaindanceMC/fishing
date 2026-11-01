@@ -108,6 +108,9 @@ public final class RodMenu extends Menu implements IFishingScreen {
                         services.rods().upgrade(viewer, part, this::refresh);
                     });
         }
+        band(MenuLayout.LAND, 4, Icons.of(Material.PAINTING, "<light_purple>Rod skins",
+                "<gray>A look for the rod in your hand.", "<yellow>Click to choose one."),
+                click -> new SkinsMenu(services, viewer, this).open());
     }
 
     private static void enchantLine(List<String> lines, Rod rod, String key, String name, String effect) {

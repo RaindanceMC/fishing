@@ -59,8 +59,11 @@ public final class LineService implements IFishingService {
     private final Random random;
     private final Map<UUID, Line> lines = new ConcurrentHashMap<>();
 
+    private final BaitService baits;
+
     public LineService(Plugin plugin, Messages messages, Effects effects, CatchService catches,
-                       ProfileService profiles, BiteRule bites, Random random) {
+                       ProfileService profiles, BiteRule bites, Random random, BaitService baits) {
+        this.baits = baits;
         this.plugin = plugin;
         this.messages = messages;
         this.effects = effects;
@@ -84,6 +87,7 @@ public final class LineService implements IFishingService {
             if (!hook.isValid()) {
                 task.cancel();
                 lines.remove(hook.getUniqueId());
+                baits.take(hook.getUniqueId());
                 return;
             }
             watch(player, hook, line, rod);
@@ -149,7 +153,7 @@ public final class LineService implements IFishingService {
 
     private int wait(Player player, FishHook hook) {
         return bites.customWait(catches.rodOf(player), profiles.of(player.getUniqueId()),
-                catches.inSpot(hook.getLocation()), random);
+                catches.inSpot(hook.getLocation()), baits.on(hook.getUniqueId()), random);
     }
 
     private static boolean overVoid(Location at) {
@@ -198,7 +202,7 @@ public final class LineService implements IFishingService {
         }
         if (line.phase == Phase.BITING) {
             Location at = hook.getLocation();
-            Catch caught = catches.decide(player, at, line.water, true);
+            Catch caught = catches.decide(player, at, line.water, true, baits.take(hook.getUniqueId()));
             Optional<ItemStack> stack = catches.stack(caught);
             stack.ifPresent(item -> catches.bringUp(player, at, line.water, item));
             flare(at, line.water, 20);

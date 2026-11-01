@@ -26,8 +26,9 @@
         <!-- 0.1.0: fishing — 32 fish in six tiers, sea chests from Driftwood to Void, fishing spots in their biomes,
              rod upgrades and fishing skills, lava and void fishing, dishes.
              0.1.1: a catch comes up out of the water — from under the surface, through it with a splash.
-             0.1.2: a fishing spot reaches four blocks around its centre, and its ripples show as far, at half the speed. -->
-        <plugin.version>0.1.2</plugin.version>
+             0.1.2: a fishing spot reaches four blocks around its centre, and its ripples show as far, at half the speed.
+             0.2.0: bait, a fishing net, rod skins, fixed spots admins put down; no spot comes up inside another. -->
+        <plugin.version>0.2.0</plugin.version>
     </properties>
 
     <dependencies>

@@ -25,8 +25,9 @@ import org.bukkit.Material;
 public record FishingSettings(
 
         @In("fishing") @Title("New fish replace vanilla fish")
-        @Describe("Whether a fish vanilla would have put on the hook becomes one of this module's fish. Off leaves "
-                + "cod and salmon alone; sea chests still bite, and lava and the void are fished all the same.")
+        @Describe("Whether a fish — or junk — vanilla would have put on the hook becomes one of this module's catches. "
+                + "Vanilla's treasure always stays. Off leaves cod, salmon and junk alone; sea chests still bite, "
+                + "and lava and the void are fished all the same.")
         @Key("catch.replace-vanilla-fish")
         boolean replaceVanillaFish,
 

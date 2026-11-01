@@ -232,6 +232,7 @@ public final class ChestService implements IFishingService {
             case Reward.Shard shard -> de.raindancer.core.content.enchant.EnchantShards.of(shard.enchantment(),
                     shard.amount());
             case Reward.Money money -> new ItemStack(Material.GOLD_NUGGET);
+            case Reward.Skin token -> forge.skinToken(token.skin());
         };
     }
 

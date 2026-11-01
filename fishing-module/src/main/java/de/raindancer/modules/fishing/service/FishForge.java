@@ -5,10 +5,12 @@ import de.raindancer.core.content.items.CustomItems;
 import de.raindancer.core.content.items.ItemFactory;
 import de.raindancer.core.content.items.NonIngredients;
 import de.raindancer.modules.fishing.FishingSettings;
+import de.raindancer.modules.fishing.model.Bait;
 import de.raindancer.modules.fishing.model.Catalog;
 import de.raindancer.modules.fishing.model.Dish;
 import de.raindancer.modules.fishing.model.FishKind;
 import de.raindancer.modules.fishing.model.Rod;
+import de.raindancer.modules.fishing.model.RodSkin;
 import de.raindancer.modules.fishing.model.RodTier;
 import de.raindancer.modules.fishing.store.RodTags;
 import de.raindancer.modules.fishing.model.Tier;
@@ -62,6 +64,13 @@ public final class FishForge implements IFishingService {
         }
         for (RodTier rod : RodTier.values()) {
             added += items.defineIfAbsent(rodDefinition(rod)) ? 1 : 0;
+        }
+        for (Bait bait : Bait.values()) {
+            added += items.defineIfAbsent(baitDefinition(bait)) ? 1 : 0;
+        }
+        added += items.defineIfAbsent(netDefinition()) ? 1 : 0;
+        for (RodSkin skin : RodSkin.values()) {
+            added += items.defineIfAbsent(tokenDefinition(skin)) ? 1 : 0;
         }
         return added;
     }
@@ -161,7 +170,9 @@ public final class FishForge implements IFishingService {
     }
 
     public ItemStack rod(RodTier rod) {
-        return make(rod.itemId(), () -> rodDefinition(rod), 1);
+        ItemStack made = make(rod.itemId(), () -> rodDefinition(rod), 1);
+        describe(made);
+        return made;
     }
 
     /** Which of the module's rods this is; empty for a vanilla rod or anything else. */
@@ -172,6 +183,154 @@ public final class FishForge implements IFishingService {
     /** Everything fishing asks about this rod: parts, enchantments and tier. */
     public Rod rodOf(ItemStack stack) {
         return RodTags.read(stack).withTier(rodTierOf(stack).orElse(null));
+    }
+
+    private static CustomItem baitDefinition(Bait bait) {
+        String colour = "<" + bait.tier().hex() + ">";
+        return CustomItem.builder(PLUGIN, bait.itemId())
+                .material(Material.PAPER)
+                .name(colour + bait.title())
+                .lore(List.of("<gray>" + bait.promise(),
+                        "<dark_gray>Hold it in your off hand: every cast takes one."))
+                .itemModel(FishingPack.NAMESPACE + ":bait/" + bait.id())
+                .build();
+    }
+
+    private static CustomItem netDefinition() {
+        return CustomItem.builder(PLUGIN, "net")
+                .material(Material.PAPER)
+                .name("<#7ec8e3>Fishing Net")
+                .lore(List.of("<gray>A bag for fish: a chest's worth of them.",
+                        "<gray>While you carry it, what you catch goes in.",
+                        "<dark_gray>Right click it — in your hand or in your inventory — to open it."))
+                .itemModel(FishingPack.NAMESPACE + ":net")
+                .build();
+    }
+
+    private static CustomItem tokenDefinition(RodSkin skin) {
+        String colour = "<" + skin.hex() + ">";
+        return CustomItem.builder(PLUGIN, "skin-" + skin.id())
+                .material(Material.PAPER)
+                .name(colour + skin.title() + " Rod Skin")
+                .lore(List.of("<gray>A look for any of your rods.",
+                        "<dark_gray>Right click to add it to your skins for good;",
+                        "<dark_gray>wear it from /fishing rod."))
+                .itemModel(skin.model())
+                .glowing(true)
+                .build();
+    }
+
+    /** A skin's token, as it comes out of a sea chest. */
+    public ItemStack skinToken(RodSkin skin) {
+        return NonIngredients.mark(make("skin-" + skin.id(), () -> tokenDefinition(skin), 1));
+    }
+
+    public Optional<RodSkin> skinTokenOf(ItemStack stack) {
+        return id(stack).filter(id -> id.startsWith("skin-")).flatMap(id -> RodSkin.parse(id.substring(5)));
+    }
+
+    /** Puts a skin on a rod — or, with null, takes it off and shows the rod as itself again. */
+    public void wear(ItemStack rod, RodSkin skin) {
+        org.bukkit.inventory.meta.ItemMeta meta = rod.getItemMeta();
+        if (skin == null) {
+            meta.getPersistentDataContainer().remove(SKIN);
+        } else {
+            meta.getPersistentDataContainer().set(SKIN, org.bukkit.persistence.PersistentDataType.STRING, skin.id());
+        }
+        rod.setItemMeta(meta);
+        describe(rod);
+        String model = skin != null ? skin.model() : rodTierOf(rod).map(RodTier::model).orElse(null);
+        if (model == null) {
+            rod.unsetData(io.papermc.paper.datacomponent.DataComponentTypes.ITEM_MODEL);
+        } else {
+            rod.setData(io.papermc.paper.datacomponent.DataComponentTypes.ITEM_MODEL, net.kyori.adventure.key.Key.key(model));
+        }
+    }
+
+    /** The skin a rod wears, if any. */
+    public Optional<RodSkin> skinOf(ItemStack rod) {
+        if (rod == null || !rod.hasItemMeta()) {
+            return Optional.empty();
+        }
+        return RodSkin.parse(rod.getItemMeta().getPersistentDataContainer().get(SKIN,
+                org.bukkit.persistence.PersistentDataType.STRING));
+    }
+
+    private static final org.bukkit.NamespacedKey LORE_LINES =
+            new org.bukkit.NamespacedKey(FishingPack.NAMESPACE, "rod_lore_lines");
+    private static final de.raindancer.modules.fishing.rules.RodStatsRule STATS =
+            new de.raindancer.modules.fishing.rules.RodStatsRule();
+
+    /**
+     * Writes what a rod does against a plain one at the top of its lore — tier, upgrades, enchantments and skin added
+     * up. The lines are ours by count (kept on the rod), so whatever other plugins put below them stays.
+     */
+    public void describe(ItemStack stack) {
+        if (!RodTags.isRod(stack)) {
+            return;
+        }
+        Rod rod = rodOf(stack);
+        org.bukkit.inventory.meta.ItemMeta meta = stack.getItemMeta();
+        List<net.kyori.adventure.text.Component> old = meta.lore() == null ? List.of() : meta.lore();
+        Integer ours = meta.getPersistentDataContainer().get(LORE_LINES, org.bukkit.persistence.PersistentDataType.INTEGER);
+        List<net.kyori.adventure.text.Component> others = ours != null
+                ? new ArrayList<>(old.subList(Math.min(ours, old.size()), old.size()))
+                : new ArrayList<>(old.stream().filter(line -> !writtenBefore(line)).toList());
+        List<String> mine = new ArrayList<>();
+        Optional<RodTier> tier = rodTierOf(stack);
+        tier.ifPresent(own -> mine.add("<" + own.tier().hex() + ">" + own.tier().title() + " rod"));
+        mine.addAll(STATS.lines(rod));
+        skinOf(stack).ifPresent(skin -> mine.add("<" + skin.hex() + ">Skin: " + skin.title()));
+        if (tier.isPresent()) {
+            mine.add("<dark_gray>Only for fishers who unlocked it (/fishing rods).");
+        }
+        List<net.kyori.adventure.text.Component> lore = new ArrayList<>();
+        net.kyori.adventure.text.minimessage.MiniMessage mini = net.kyori.adventure.text.minimessage.MiniMessage.miniMessage();
+        for (String line : mine) {
+            lore.add(mini.deserialize(line).decoration(net.kyori.adventure.text.format.TextDecoration.ITALIC, false));
+        }
+        lore.addAll(others);
+        meta.lore(lore.isEmpty() ? null : lore);
+        meta.getPersistentDataContainer().set(LORE_LINES, org.bukkit.persistence.PersistentDataType.INTEGER, mine.size());
+        stack.setItemMeta(meta);
+    }
+
+    /** A line an older version of this module wrote, before it counted its lines. */
+    private static boolean writtenBefore(net.kyori.adventure.text.Component line) {
+        String plain = net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer.plainText().serialize(line);
+        if (plain.startsWith("Fish bite ") || plain.startsWith("Sea chests: ") || plain.startsWith("Rarer catches: ")
+                || plain.startsWith("Double catches: ") || plain.startsWith("Fishes ") || plain.startsWith("Only for fishers")
+                || plain.endsWith(" Line") || plain.endsWith(" rod")) {
+            return true;
+        }
+        for (de.raindancer.modules.fishing.model.RodPart part : de.raindancer.modules.fishing.model.RodPart.values()) {
+            if (plain.startsWith(part.title())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static final org.bukkit.NamespacedKey SKIN = new org.bukkit.NamespacedKey(FishingPack.NAMESPACE, "rod_skin");
+
+    /** A new, empty net; it gets its own id the first time it is used. */
+    public ItemStack net() {
+        ItemStack net = NonIngredients.mark(make("net", FishForge::netDefinition, 1));
+        net.setData(io.papermc.paper.datacomponent.DataComponentTypes.MAX_STACK_SIZE, 1);
+        return net;
+    }
+
+    public boolean isNet(ItemStack stack) {
+        return id(stack).filter("net"::equals).isPresent();
+    }
+
+    public ItemStack bait(Bait bait, int amount) {
+        // Paper underneath, so it must not become a map or a rocket in a crafting grid.
+        return NonIngredients.mark(make(bait.itemId(), () -> baitDefinition(bait), amount));
+    }
+
+    public Optional<Bait> baitOf(ItemStack stack) {
+        return id(stack).filter(id -> id.startsWith("bait-")).flatMap(id -> Bait.parse(id.substring(5)));
     }
 
     public ItemStack chest(Tier tier, int amount) {

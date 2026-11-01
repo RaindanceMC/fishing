@@ -60,6 +60,8 @@ public final class DishListener implements IFishingListener {
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         services.dishes().discover(event.getPlayer());
+        services.baits().discover(event.getPlayer());
+        services.nets().discover(event.getPlayer());
     }
 
     @Override

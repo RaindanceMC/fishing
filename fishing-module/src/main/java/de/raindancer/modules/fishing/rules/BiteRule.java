@@ -1,5 +1,6 @@
 package de.raindancer.modules.fishing.rules;
 
+import de.raindancer.modules.fishing.model.Bait;
 import de.raindancer.modules.fishing.model.FisherProfile;
 import de.raindancer.modules.fishing.model.Rod;
 import de.raindancer.modules.fishing.model.RodPart;
@@ -20,17 +21,27 @@ public final class BiteRule implements IFishingRule {
     static final int SLOWEST_TICKS = 500;
 
     public double waitFactor(Rod rod, FisherProfile profile, boolean inSpot) {
+        return waitFactor(rod, profile, inSpot, null);
+    }
+
+    /** @param bait the bait on the hook, or null */
+    public double waitFactor(Rod rod, FisherProfile profile, boolean inSpot, Bait bait) {
         double factor = (1.0 - 0.08 * rod.rank(RodPart.HOOK))
                 * rod.ownWaitFactor()
                 * (1.0 - 0.06 * profile.rank(Skill.QUICK_BITE))
-                * (inSpot ? 0.8 : 1.0);
+                * (inSpot ? 0.8 : 1.0)
+                * (bait == null ? 1.0 : bait.waitFactor());
         return Math.max(FASTEST, factor);
     }
 
     /** Ticks until a bite in lava or the void. */
     public int customWait(Rod rod, FisherProfile profile, boolean inSpot, Random random) {
+        return customWait(rod, profile, inSpot, null, random);
+    }
+
+    public int customWait(Rod rod, FisherProfile profile, boolean inSpot, Bait bait, Random random) {
         int plain = QUICKEST_TICKS + random.nextInt(SLOWEST_TICKS - QUICKEST_TICKS + 1);
-        return Math.max(20, (int) Math.round(plain * waitFactor(rod, profile, inSpot)));
+        return Math.max(20, (int) Math.round(plain * waitFactor(rod, profile, inSpot, bait)));
     }
 
     /** How long a bite in lava or the void lasts before the fish is gone again. */

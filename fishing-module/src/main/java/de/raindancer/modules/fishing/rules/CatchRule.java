@@ -1,5 +1,6 @@
 package de.raindancer.modules.fishing.rules;
 
+import de.raindancer.modules.fishing.model.Bait;
 import de.raindancer.modules.fishing.model.Catalog;
 import de.raindancer.modules.fishing.model.Catch;
 import de.raindancer.modules.fishing.model.FishKind;
@@ -40,9 +41,17 @@ public final class CatchRule implements IFishingRule {
      * @param spotChestPermille  what a spot adds to it
      * @param vanillaWasFish     vanilla had put a fish on the hook rather than treasure or junk; lava and the void
      *                           have no vanilla catch, and count as fish
+     * @param spotTier           the best a fixed spot the hook is in gives up (what its admin set), or null — a
+     *                           wandering spot promises its water's best
+     * @param bait               the bait on the hook, or null
      */
     public record Cast(Water water, Rod rod, FisherProfile profile, boolean inSpot, int chestPermille,
-                       int spotChestPermille, boolean vanillaWasFish) {
+                       int spotChestPermille, boolean vanillaWasFish, Tier spotTier, Bait bait) {
+
+        public Cast(Water water, Rod rod, FisherProfile profile, boolean inSpot, int chestPermille,
+                    int spotChestPermille, boolean vanillaWasFish) {
+            this(water, rod, profile, inSpot, chestPermille, spotChestPermille, vanillaWasFish, null, null);
+        }
     }
 
     private final Catalog catalog;
@@ -53,13 +62,13 @@ public final class CatchRule implements IFishingRule {
 
     public Catch roll(Cast cast, Random random) {
         if (random.nextInt(1000) < chestPermille(cast)) {
-            List<Tier> band = chestBand(cast.water());
+            List<Tier> band = chestBand(cast.water(), cast.spotTier());
             return new Catch.Chest(pickTier(band, cast, random));
         }
         if (!cast.vanillaWasFish() && !cast.water().needsSpecialLine()) {
             return new Catch.Vanilla();
         }
-        List<Tier> present = catalog.tiersIn(cast.water());
+        List<Tier> present = capped(catalog.tiersIn(cast.water()), cast.spotTier());
         if (present.isEmpty()) {
             return new Catch.Vanilla();
         }
@@ -76,7 +85,8 @@ public final class CatchRule implements IFishingRule {
                 + cast.rod().rank(RodPart.LURE) * 15
                 + cast.rod().ownChestPermille()
                 + cast.profile().rank(Skill.TREASURE_SENSE) * 10
-                + (cast.inSpot() ? Math.max(0, cast.spotChestPermille()) : 0);
+                + (cast.inSpot() ? Math.max(0, cast.spotChestPermille()) : 0)
+                + (cast.bait() == null ? 0 : cast.bait().chestPermille());
         return Math.min(1000, chance);
     }
 
@@ -97,6 +107,38 @@ public final class CatchRule implements IFishingRule {
         };
     }
 
+    /**
+     * Which sea chests can bite at a fixed spot of {@code spotTier} in a water: from the water's lowest up to the
+     * spot's tier, past what the water alone gives up — but a Void chest only ever over the void.
+     */
+    public List<Tier> chestBand(Water water, Tier spotTier) {
+        List<Tier> band = chestBand(water);
+        if (spotTier == null) {
+            return band;
+        }
+        Tier low = band.getFirst();
+        Tier top = water == Water.VOID || spotTier != Tier.MYTHIC ? spotTier : Tier.LEGENDARY;
+        if (!top.atLeast(low)) {
+            top = low;
+        }
+        List<Tier> spanned = new java.util.ArrayList<>();
+        for (Tier tier : Tier.values()) {
+            if (tier.atLeast(low) && top.atLeast(tier)) {
+                spanned.add(tier);
+            }
+        }
+        return spanned;
+    }
+
+    /** The tiers present, none above a fixed spot's; the lowest is kept when the spot is below all of them. */
+    private static List<Tier> capped(List<Tier> present, Tier spotTier) {
+        if (spotTier == null || present.isEmpty()) {
+            return present;
+        }
+        List<Tier> kept = present.stream().filter(spotTier::atLeast).toList();
+        return kept.isEmpty() ? List.of(present.getFirst()) : kept;
+    }
+
     /** The best sea chest a spot in this water can give up — what its hologram promises. */
     public Tier bestChest(Water water) {
         List<Tier> band = chestBand(water);
@@ -115,6 +157,9 @@ public final class CatchRule implements IFishingRule {
             }
             if (cast.inSpot() && tier.atLeast(Tier.UNCOMMON)) {
                 weight *= 1.5;
+            }
+            if (cast.bait() != null) {
+                weight *= cast.bait().weight(tier);
             }
             weights[n] = weight;
             total += weight;

@@ -43,6 +43,8 @@ public record FishingServices(
         de.raindancer.modules.fishing.service.SeaChestBlocks seaChests,
         DishService dishes,
         de.raindancer.modules.fishing.service.RodWorkshopService workshop,
+        de.raindancer.modules.fishing.service.BaitService baits,
+        de.raindancer.modules.fishing.service.NetService nets,
         IFishingScreensOpener screens) {
 
     public FishingSettings config() {

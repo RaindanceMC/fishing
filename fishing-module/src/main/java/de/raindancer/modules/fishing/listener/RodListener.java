@@ -44,6 +44,36 @@ public final class RodListener implements IFishingListener {
         }
     }
 
+    /** A skin token used: the skin is the fisher's for good, the token is gone. */
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onToken(org.bukkit.event.player.PlayerInteractEvent event) {
+        if (event.getHand() != org.bukkit.inventory.EquipmentSlot.HAND
+                || !event.getAction().isRightClick()) {
+            return;
+        }
+        org.bukkit.inventory.ItemStack held = event.getItem();
+        services.forge().skinTokenOf(held).ifPresent(skin -> {
+            event.setCancelled(true);
+            Player player = event.getPlayer();
+            if (services.profiles().of(player.getUniqueId()).hasSkin(skin)) {
+                services.messages().send(player, "fishing.skin.already", "skin", skin.title());
+                return;
+            }
+            held.setAmount(held.getAmount() - 1);
+            services.profiles().unlockSkin(player, skin, written -> {
+                if (written) {
+                    services.messages().send(player, "fishing.skin.unlocked", "skin", skin.title());
+                    services.effects().play(player.getUniqueId(), Cues.REWARD);
+                } else {
+                    // The database said no: the token comes back rather than vanishing.
+                    player.getInventory().addItem(services.forge().skinToken(skin)).values()
+                            .forEach(left -> player.getWorld().dropItemNaturally(player.getLocation(), left));
+                    services.messages().send(player, "fishing.skin.try-again");
+                }
+            });
+        });
+    }
+
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         services.workshop().discover(event.getPlayer());

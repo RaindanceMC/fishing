@@ -3,6 +3,7 @@ package de.raindancer.modules.fishing.rules;
 import de.raindancer.modules.fishing.model.Catalog;
 import de.raindancer.modules.fishing.model.FishKind;
 import de.raindancer.modules.fishing.model.Reward;
+import de.raindancer.modules.fishing.model.RodSkin;
 import de.raindancer.modules.fishing.model.Rod;
 import de.raindancer.modules.fishing.model.Tier;
 
@@ -88,6 +89,9 @@ public final class ChestLootRule implements IFishingRule {
         this.catalog = catalog;
     }
 
+    /** Out of 1000: how often a chest holds the token of the skin that only its tier gives. */
+    static final int SKIN_PERMILLE = 60;
+
     /** How many things besides money and fish come out of a chest of this tier. */
     public int rolls(Tier tier) {
         return 2 + tier.ordinal();
@@ -120,6 +124,11 @@ public final class ChestLootRule implements IFishingRule {
                     rewards.add(entry.roll(random));
                     break;
                 }
+            }
+        }
+        for (RodSkin skin : RodSkin.values()) {
+            if (skin.chest() == tier && random.nextInt(1000) < SKIN_PERMILLE) {
+                rewards.add(new Reward.Skin(skin));
             }
         }
         return rewards;

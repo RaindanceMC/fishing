@@ -125,7 +125,7 @@ public final class RodService implements IFishingService {
                 }
                 Rod upgraded = rod.with(part, rod.rank(part) + 1);
                 RodTags.write(now, upgraded);
-                describe(now, upgraded);
+                forge.describe(now);
                 player.getInventory().setItem(slot, now);
                 effects.play(id, Cues.REWARD);
                 messages.send(player, "fishing.rod.upgraded", "part", part.rankName(upgraded.rank(part)),
@@ -135,37 +135,6 @@ public final class RodService implements IFishingService {
         });
     }
 
-    /** Lists the fitted parts in the rod's lore, under whatever lore it already had of its own. */
-    static void describe(ItemStack stack, Rod rod) {
-        ItemMeta meta = stack.getItemMeta();
-        List<Component> lore = new ArrayList<>();
-        if (meta.lore() != null) {
-            for (Component line : meta.lore()) {
-                if (!isOurs(line)) {
-                    lore.add(line);
-                }
-            }
-        }
-        for (RodPart part : RodPart.values()) {
-            int rank = rod.rank(part);
-            if (rank > 0) {
-                lore.add(Component.text(part.rankName(rank), NamedTextColor.AQUA)
-                        .decoration(TextDecoration.ITALIC, false));
-            }
-        }
-        meta.lore(lore.isEmpty() ? null : lore);
-        stack.setItemMeta(meta);
-    }
-
-    private static boolean isOurs(Component line) {
-        String plain = PlainTextComponentSerializer.plainText().serialize(line);
-        for (RodPart part : RodPart.values()) {
-            if (plain.startsWith(part.title()) || plain.endsWith(" Line")) {
-                return true;
-            }
-        }
-        return false;
-    }
 
     private void refuse(Player player, Runnable then, String key, Object... values) {
         effects.play(player.getUniqueId(), Cues.NO);

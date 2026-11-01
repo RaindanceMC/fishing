@@ -1,5 +1,7 @@
 package de.raindancer.modules.fishing.command;
 
+import de.raindancer.modules.fishing.store.FixedSpotStore;
+import de.raindancer.core.platform.util.Scheduling;
 import de.raindancer.core.platform.command.PlayerLookup;
 import de.raindancer.core.platform.command.PlayerTargets;
 import de.raindancer.modules.fishing.FishingServices;
@@ -28,7 +30,9 @@ import java.util.function.Supplier;
 /**
  * {@code /fishing} opens the fishing page; {@code skills}, {@code rod} and {@code collection} go straight to theirs.
  * Staff: {@code give <player> <fish:id|dish:id|chest:tier> [amount]}, {@code xp <player> <amount>} for fishing
- * experience, and {@code spot}, which puts a fishing spot on the water being looked at.
+ * experience, and {@code spot}, which puts a wandering fishing spot on the water being looked at; {@code spot create
+ * <tier> [radius]} puts down a fixed one for good, {@code spot list} lists this world's, {@code spot remove [id]}
+ * takes one (the nearest, without an id) away.
  */
 public final class FishingCommand implements IFishingCommand {
 
@@ -56,7 +60,7 @@ public final class FishingCommand implements IFishingCommand {
             return;
         }
         if (sub.equals("spot")) {
-            spot(live, viewer);
+            spot(live, viewer, args);
             return;
         }
         if (!viewer.hasPermission(PermissionNodes.MENU)) {
@@ -73,11 +77,32 @@ public final class FishingCommand implements IFishingCommand {
         }
     }
 
-    private void spot(FishingServices live, Player viewer) {
+    private record Target(Location at, Water water) {
+    }
+
+    private void spot(FishingServices live, Player viewer, String[] args) {
         if (!viewer.hasPermission(PermissionNodes.SPOT)) {
             live.messages().send(viewer, "fishing.spot.not-allowed");
             return;
         }
+        String what = args.length < 2 ? "" : args[1].toLowerCase(Locale.ROOT);
+        switch (what) {
+            case "create" -> createFixed(live, viewer, args);
+            case "list" -> listFixed(live, viewer);
+            case "remove" -> removeFixed(live, viewer, args);
+            case "" -> target(live, viewer).ifPresent(target -> {
+                if (live.spots().spawn(target.at(), target.water(), live.config()).isEmpty()) {
+                    live.messages().send(viewer, "fishing.spot.taken");
+                } else {
+                    live.messages().send(viewer, "fishing.spot.placed", "water", target.water().title());
+                }
+            });
+            default -> live.messages().send(viewer, "fishing.spot.usage");
+        }
+    }
+
+    /** The water being looked at — or, in the End, the void out in front. */
+    private Optional<Target> target(FishingServices live, Player viewer) {
         Block target = viewer.getTargetBlockExact(40, FluidCollisionMode.ALWAYS);
         Location at;
         Optional<Water> water;
@@ -88,15 +113,89 @@ public final class FishingCommand implements IFishingCommand {
             at = viewer.getEyeLocation().add(viewer.getLocation().getDirection().multiply(8)).add(0, -6, 0);
             water = Optional.of(Water.VOID);
         } else {
-            live.messages().send(viewer, "fishing.spot.look-at-water");
-            return;
+            water = Optional.empty();
+            at = null;
         }
         if (water.isEmpty()) {
             live.messages().send(viewer, "fishing.spot.look-at-water");
+            return Optional.empty();
+        }
+        return Optional.of(new Target(at, water.get()));
+    }
+
+    private void createFixed(FishingServices live, Player viewer, String[] args) {
+        Tier tier = args.length < 3 ? null : Tier.parse(args[2]).orElse(null);
+        double radius = de.raindancer.modules.fishing.model.Spot.WANDERING_RADIUS;
+        if (args.length >= 4) {
+            try {
+                radius = Double.parseDouble(args[3]);
+            } catch (NumberFormatException notANumber) {
+                tier = null;
+            }
+        }
+        if (tier == null || radius < FixedSpotStore.LEAST_RADIUS || radius > FixedSpotStore.MOST_RADIUS) {
+            live.messages().send(viewer, "fishing.spot.usage");
             return;
         }
-        live.spots().spawn(at, water.get(), live.config());
-        live.messages().send(viewer, "fishing.spot.placed", "water", water.get().title());
+        Tier best = tier;
+        double reach = radius;
+        target(live, viewer).ifPresent(target -> {
+            if (best == Tier.MYTHIC && target.water() != Water.VOID) {
+                live.messages().send(viewer, "fishing.spot.void-only");
+                return;
+            }
+            Scheduling.region(live.plugin(), target.at(), () -> {
+                Optional<de.raindancer.modules.fishing.model.Spot> made =
+                        live.spots().createFixed(target.at(), target.water(), best, reach);
+                Scheduling.entity(live.plugin(), viewer, () -> made.ifPresentOrElse(
+                        spot -> live.messages().send(viewer, "fishing.spot.fixed", "shoal", spot.shoalName(),
+                                "water", spot.water().title(), "radius", blocks(spot.radius()),
+                                "id", spot.id().toString().substring(0, 8)),
+                        () -> live.messages().send(viewer, "fishing.spot.taken")));
+            });
+        });
+    }
+
+    /** 4 for 4.0, 4.5 for 4.5. */
+    private static String blocks(double radius) {
+        return radius == Math.rint(radius) ? String.valueOf((long) radius) : String.valueOf(radius);
+    }
+
+    private void listFixed(FishingServices live, Player viewer) {
+        List<de.raindancer.modules.fishing.model.Spot> all = live.spots().fixedIn(viewer.getWorld(),
+                viewer.getLocation());
+        if (all.isEmpty()) {
+            live.messages().send(viewer, "fishing.spot.none");
+            return;
+        }
+        live.messages().send(viewer, "fishing.spot.list", "count", String.valueOf(all.size()));
+        for (de.raindancer.modules.fishing.model.Spot spot : all) {
+            live.messages().send(viewer, "fishing.spot.line", "id", spot.id().toString().substring(0, 8),
+                    "shoal", spot.shoalName(), "water", spot.water().title(), "radius", blocks(spot.radius()),
+                    "x", String.valueOf((int) Math.floor(spot.x())), "y", String.valueOf((int) Math.floor(spot.y())),
+                    "z", String.valueOf((int) Math.floor(spot.z())),
+                    "distance", String.valueOf((int) Math.round(viewer.getLocation().distance(
+                            new Location(viewer.getWorld(), spot.x(), spot.y(), spot.z())))));
+        }
+    }
+
+    private void removeFixed(FishingServices live, Player viewer, String[] args) {
+        List<de.raindancer.modules.fishing.model.Spot> all = live.spots().fixedIn(viewer.getWorld(),
+                viewer.getLocation());
+        Optional<de.raindancer.modules.fishing.model.Spot> chosen;
+        if (args.length >= 3) {
+            String wanted = args[2].toLowerCase(Locale.ROOT);
+            chosen = all.stream().filter(spot -> spot.id().toString().startsWith(wanted)).findFirst();
+        } else {
+            chosen = all.stream().findFirst().filter(spot -> viewer.getLocation().distance(
+                    new Location(viewer.getWorld(), spot.x(), spot.y(), spot.z())) <= 32);
+        }
+        if (chosen.isEmpty() || !live.spots().removeFixed(chosen.get().id())) {
+            live.messages().send(viewer, "fishing.spot.not-found");
+            return;
+        }
+        live.messages().send(viewer, "fishing.spot.removed", "shoal", chosen.get().shoalName(),
+                "id", chosen.get().id().toString().substring(0, 8));
     }
 
     private void give(FishingServices live, CommandSender sender, String[] args) {
@@ -182,6 +281,9 @@ public final class FishingCommand implements IFishingCommand {
             case "dish" -> live.catalog().dish(id).map(dish -> live.forge().dish(dish, 1));
             case "chest" -> Tier.parse(id).map(tier -> live.forge().chest(tier, 1));
             case "rod" -> de.raindancer.modules.fishing.model.RodTier.parse(id).map(rod -> live.forge().rod(rod));
+            case "bait" -> de.raindancer.modules.fishing.model.Bait.parse(id).map(bait -> live.forge().bait(bait, 1));
+            case "net" -> Optional.of(live.forge().net());
+            case "skin" -> de.raindancer.modules.fishing.model.RodSkin.parse(id).map(skin -> live.forge().skinToken(skin));
             default -> Optional.empty();
         };
     }
@@ -200,6 +302,21 @@ public final class FishingCommand implements IFishingCommand {
                 subs.add("spot");
             }
             return subs.stream().filter(sub -> sub.startsWith(started)).toList();
+        }
+        if (args[0].equalsIgnoreCase("spot") && sender.hasPermission(PermissionNodes.SPOT)) {
+            String started = args[args.length - 1].toLowerCase(Locale.ROOT);
+            List<String> options = switch (args.length) {
+                case 2 -> List.of("create", "list", "remove");
+                case 3 -> args[1].equalsIgnoreCase("create")
+                        ? java.util.Arrays.stream(Tier.values()).map(Tier::id).toList()
+                        : args[1].equalsIgnoreCase("remove") && sender instanceof Player player
+                        ? services.get().spots().fixedIn(player.getWorld(), player.getLocation()).stream()
+                                .map(spot -> spot.id().toString().substring(0, 8)).toList()
+                        : List.of();
+                case 4 -> args[1].equalsIgnoreCase("create") ? List.of("4", "6", "8", "12") : List.of();
+                default -> List.of();
+            };
+            return options.stream().filter(option -> option.startsWith(started)).toList();
         }
         boolean giving = args[0].equalsIgnoreCase("give");
         if ((!giving && !args[0].equalsIgnoreCase("xp")) || !sender.hasPermission(PermissionNodes.GIVE)) {
@@ -226,6 +343,13 @@ public final class FishingCommand implements IFishingCommand {
             for (de.raindancer.modules.fishing.model.RodTier rod : de.raindancer.modules.fishing.model.RodTier.values()) {
                 items.add("rod:" + rod.id());
             }
+            for (de.raindancer.modules.fishing.model.Bait bait : de.raindancer.modules.fishing.model.Bait.values()) {
+                items.add("bait:" + bait.id());
+            }
+            items.add("net:fishing");
+            for (de.raindancer.modules.fishing.model.RodSkin skin : de.raindancer.modules.fishing.model.RodSkin.values()) {
+                items.add("skin:" + skin.id());
+            }
             return items.stream().filter(item -> item.startsWith(started)).toList();
         }
         return List.of();
@@ -233,6 +357,7 @@ public final class FishingCommand implements IFishingCommand {
 
     @Override
     public String describe() {
-        return "the fishing pages, giving out fish, dishes and sea chests, and placing a fishing spot";
+        return "the fishing pages, giving out fish, dishes and sea chests, and placing fishing spots — wandering or "
+                + "fixed for good";
     }
 }

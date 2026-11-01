@@ -8,27 +8,28 @@ category: Progress & rewards
 order: 35
 module: fishing
 aliases: [fish, angling, rod, lootbox, sea chest, chests]
-keywords: [catch, tier, mythic, void, lava, spot, shoal, upgrade, skill, dish, sushi, recipe]
+keywords: [catch, tier, mythic, void, lava, spot, shoal, upgrade, skill, dish, sushi, recipe, bait, net, skin, sell]
 commands: [fishing]
 sections:
   - question: What can I catch?
     title: Fish and tiers
     text: |
       Fish come in six tiers: <white>common</white>, <green>uncommon</green>, <aqua>rare</aqua>, <light_purple>epic</light_purple>, <gold>legendary</gold> and <aqua>mythic</aqua>. Rivers, oceans, warm seas, swamps, frozen water, cave water, lava and the void each have their own; the mythic ones live only in the void.
-      {if:fishing:catch.replace-vanilla-fish}Whatever vanilla would have put on your hook becomes one of these fish. Treasure and junk stay as they always were.{else}On this server cod and salmon stay vanilla; the new fish come from lava and the void, and from sea chests.{/if}
+      {if:fishing:catch.replace-vanilla-fish}Whatever fish or junk vanilla would have put on your hook becomes one of these fish instead — no more lily pads and old boots. Treasure stays treasure.{else}On this server cod and salmon stay vanilla; the new fish come from lava and the void, and from sea chests.{/if}
       {run:/fishing collection} shows every fish there is, and where the ones you have not caught yet bite.
   - question: What is a sea chest?
     title: Sea chests
     text: |
       Now and then a chest bites instead of a fish — about {setting:fishing:chests.chance-permille|count} casts in a thousand, more with a chest lure, treasure sense or in a fishing spot. There are six: <white>Driftwood</white>, <green>Reef</green>, <aqua>Pearl</aqua>, <light_purple>Abyss</light_purple>, <gold>Leviathan</gold> and <aqua>Void</aqua>.
-      Place one wherever you like and right click it to open it: it shakes, bursts open, and what was inside comes out one thing at a time — each rises in a puff of smoke, turns in the air and drops into your bag. Money, fish no better than the chest, and things that get richer each tier. Only you can open your chest; sneak and left click it to take it back.
+      Place one wherever you like and right click it to open it: it shakes, bursts open, and what was inside comes out one thing at a time — each rises in a puff of smoke, turns in the air and drops into your bag. A cheque for its money, fish no better than the chest, and things that get richer each tier. Only you can open your chest; sneak and left click it to take it back.
       Each water has its own chests: a river gives up to Pearl, swamps and caves up to Abyss, the sea up to Leviathan. The Void chest comes only out of the void.
   - question: What are fishing spots?
     title: Fishing spots
     when: fishing:spots.enabled
     text: |
       Shoals that come up on the water near you: rings rippling out, a big bobber turning over them and a sign naming what can bite there. Cast into one and fish bite sooner, rarer fish and more sea chests come up.
-      A spot lasts {setting:fishing:spots.minutes|count} minutes or {setting:fishing:spots.catches|count} catches, whichever runs out first. Spots belong to their water — an ocean spot on the ocean, a void spot hanging off an End island.
+      A spot reaches four blocks round its bobber. It lasts {setting:fishing:spots.minutes|count} minutes or {setting:fishing:spots.catches|count} catches, whichever runs out first; no spot comes up inside another. Spots belong to their water — an ocean spot on the ocean, a void spot hanging off an End island.
+      Some spots are put down by staff and stay for good: they never run out, and their sign names the best chest that bites there.
   - question: How do I fish lava or the void?
     title: Lava and the void
     text: |
@@ -62,6 +63,26 @@ sections:
       Everyday meals take any fish at all — plain cod and salmon too: <white>Fish 'n' Chips</white>, <white>Fisherman's Stew</white>, <white>Fish Cakes</white> and the <white>Fish Skewer</white>.
       The finer ones want a particular catch: Herb-Baked Trout, Bog Stew, Frost Chowder, Ember Skewer, Glow Broth, Abyssal Broth, Void Sashimi, a Golden Fish Pie, Starlight Soup, the Leviathan Feast — and sushi on every tier, from Herring Nigiri and Wrasse Maki to Coral Sushi, the Blazefin Roll, Crowned Marlin Nigiri and Astral Sushi.
       A dish fills you more than the fish it is made from, and the better ones come with effects: fire resistance, night vision, water breathing, slow falling, strength, luck and more.
+  - question: What does bait do?
+    title: Bait
+    text: |
+      Hold bait in your off hand: every cast takes one. <white>Wriggler Bait</white> makes fish bite a third sooner, <green>Shimmer Bait</green> brings rare fish more often, <aqua>Gilded Bait</aqua> sea chests, <light_purple>Abyss Bait</light_purple> epic catches and better, and the <gold>Starlure</gold> legendary and mythic ones.
+      Each is crafted from a fish of its tier and a few things from the larder; every recipe is in your recipe book.
+  - question: What is a fishing net?
+    title: Fishing net
+    text: |
+      A bag for fish, crafted from string and a lead. Right click it — in your hand, or on it in your inventory — and it opens like a shulker box with room for a chest's worth of fish. Shift-click fish in to put them away, click a stack to take it out.
+      While you carry a net with room in it, what you catch goes straight in. Only fish go into a net.
+  - question: How do I get rod skins?
+    title: Rod skins
+    text: |
+      A skin is a look for any of your rods; the rod still fishes as itself. Hold the rod, open {run:/fishing rod} and pick one under <white>Rod skins</white>.
+      Most are earned by fishing: <white>Driftwood</white> at fishing level 10, <white>Golden</white> at level 40, and <white>Frostbite</white>, <white>Tidepool</white> and <white>Magma</white> for catching every fish of the frozen water, the warm ocean and lava. The rarest — <light_purple>Abyssal</light_purple>, <gold>Bonewhale</gold> and <aqua>Starfall</aqua> — only ever come out of Abyss, Leviathan and Void chests as tokens: right click one to keep the skin for good, or trade it.
+  - question: Can I sell my catch?
+    title: Selling fish
+    when: fishing:market.fish-price > 0
+    text: |
+      The shop buys fish and dishes like anything else ({cmd:/sell hand}, {cmd:/sell all}): a common fish fetches {setting:fishing:market.fish-price|money}, a rarer one up to seventy-five times as much, and a dish half again its fish.
   - question: Is there a leaderboard?
     title: Leaderboards
     text: |
@@ -70,4 +91,5 @@ sections:
     title: Staff
     permission: rainsfishing.give
     text: |
-      {cmd:/fishing give <player> <fish:id|dish:id|chest:tier> [amount]} hands out any fish, dish or sea chest; {cmd:/fishing xp <player> <amount>} grants fishing experience. {cmd:/fishing spot} puts a fishing spot on the water or lava you are looking at — or, in the End, out in the void.
+      {cmd:/fishing give <player> <fish:id|dish:id|chest:tier|rod:tier|bait:id|net:fishing|skin:id> [amount]} hands out anything fishing makes; {cmd:/fishing xp <player> <amount>} grants fishing experience. {cmd:/fishing spot} puts a fishing spot on the water or lava you are looking at — or, in the End, out in the void.
+      {cmd:/fishing spot create <tier> [radius]} puts down a spot for good, as big as you say (1 to 32 blocks round) and giving up chests and fish up to that tier — past what the water alone would; a mythic one only over the void. {cmd:/fishing spot list} shows this world's, {cmd:/fishing spot remove [id]} takes one away (the nearest within 32 blocks without an id).

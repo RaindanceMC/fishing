@@ -1,6 +1,7 @@
 package de.raindancer.modules.fishing.listener;
 
 import de.raindancer.modules.fishing.FishingServices;
+import de.raindancer.modules.fishing.model.Bait;
 import de.raindancer.modules.fishing.model.Catch;
 import de.raindancer.modules.fishing.model.Water;
 import de.raindancer.modules.fishing.rules.BiteRule;
@@ -29,6 +30,8 @@ public final class FishListener implements IFishingListener {
 
     private final FishingServices services;
     private final BiteRule bites = new BiteRule();
+    private final de.raindancer.modules.fishing.rules.VanillaCatchRule junkOrFish =
+            new de.raindancer.modules.fishing.rules.VanillaCatchRule();
 
     public FishListener(FishingServices services) {
         this.services = services;
@@ -51,13 +54,20 @@ public final class FishListener implements IFishingListener {
                 cast(player, hook);
             }
             case CAUGHT_FISH -> caught(event, player, hook);
-            default -> services.lines().reeled(player, hook);
+            default -> {
+                services.lines().reeled(player, hook);
+                // Reeled in empty, or the line came in some other way: the bait went with the cast.
+                services.baits().take(hook.getUniqueId());
+            }
         }
     }
 
     private void cast(Player player, FishHook hook) {
+        // An anvil may have put a fishing enchantment on since: the lore says what the rod does now.
+        services.forge().describe(services.catches().rodStack(player));
+        Bait bait = services.baits().castWith(player, hook).orElse(null);
         double factor = bites.waitFactor(services.catches().rodOf(player),
-                services.profiles().of(player.getUniqueId()), false);
+                services.profiles().of(player.getUniqueId()), false, bait);
         if (factor < 1.0) {
             int least = Math.max(1, (int) Math.round(hook.getMinWaitTime() * factor));
             int most = Math.max(least, (int) Math.round(hook.getMaxWaitTime() * factor));
@@ -71,8 +81,12 @@ public final class FishListener implements IFishingListener {
             return;
         }
         Water water = services.spots().waterAt(hook.getLocation(), false, false).orElse(Water.RIVER);
-        boolean fish = VANILLA_FISH.contains(item.getItemStack().getType());
-        Catch caught = services.catches().decide(player, hook.getLocation(), water, fish);
+        ItemStack hooked = item.getItemStack();
+        // Fish and junk are swapped for a catch of ours; treasure (an enchanted rod among it) stays.
+        boolean fish = junkOrFish.replaced(hooked.getType().getKey().getKey())
+                && !(hooked.getType() == Material.FISHING_ROD && !hooked.getEnchantments().isEmpty());
+        Catch caught = services.catches().decide(player, hook.getLocation(), water, fish,
+                services.baits().take(hook.getUniqueId()));
         ItemStack landed = services.catches().stack(caught).orElse(item.getItemStack());
         // Not thrown at the fisher like vanilla's: it comes up out of the water, turns, and goes into the bag —
         // never into a neighbour's hands; a full bag puts the rest at the fisher's feet.

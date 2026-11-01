@@ -100,8 +100,12 @@ public final class ProfileStore {
                 heaviest.put(key, heavySection.getDouble(key));
             }
         }
+        java.util.Set<de.raindancer.modules.fishing.model.RodSkin> skins = new java.util.HashSet<>();
+        for (String skin : entry.getStringList("skins")) {
+            de.raindancer.modules.fishing.model.RodSkin.parse(skin).ifPresent(skins::add);
+        }
         return new FisherProfile(entry.getLong("experience"), entry.getLong("spent"), skills, caught, chests, rods,
-                heaviest);
+                heaviest, skins);
     }
 
     static void write(ConfigurationSection yaml, String path, FisherProfile profile) {
@@ -115,6 +119,9 @@ public final class ProfileStore {
         profile.heaviest().forEach((fish, kilos) -> yaml.set(path + ".heaviest." + fish, kilos));
         if (!profile.rods().isEmpty()) {
             yaml.set(path + ".rods", profile.rods().stream().sorted().map(rod -> rod.id()).toList());
+        }
+        if (!profile.skins().isEmpty()) {
+            yaml.set(path + ".skins", profile.skins().stream().sorted().map(skin -> skin.id()).toList());
         }
     }
 }

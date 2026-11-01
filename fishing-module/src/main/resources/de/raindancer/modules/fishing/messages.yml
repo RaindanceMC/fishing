@@ -5,7 +5,7 @@
 # here is YAML's idea of a truth value.
 fishing:
 
-  usage: "<gray>/fishing [rods|skills|rod|collection]  ·  /fishing give <player> <fish:id|dish:id|chest:tier> [amount]  ·  /fishing xp <player> <amount>  ·  /fishing spot"
+  usage: "<gray>/fishing [rods|skills|rod|collection]  ·  /fishing give <player> <fish:id|dish:id|chest:tier|rod:tier|bait:id> [amount]  ·  /fishing xp <player> <amount>  ·  /fishing spot"
   only-a-player: "<red>Only a player standing in the world can do that."
   level-up: "<green>Fishing level <white><level></white>! You have <white><points></white> skill point(s) to spend — <white>/fishing skills</white>."
 
@@ -83,11 +83,35 @@ fishing:
     not-allowed: "<red>Only staff can place a fishing spot."
     look-at-water: "<red>Look at water or lava — or, in the End, out into the void."
     placed: "<green>A fishing spot is out on the <white><water></white>."
+    taken: "<red>Another fishing spot already covers that water."
+    usage: "<gray>/fishing spot  ·  /fishing spot create <tier> [radius 1–32]  ·  /fishing spot list  ·  /fishing spot remove [id]"
+    void-only: "<red>A Void Shoal only ever hangs over the void."
+    fixed: "<green>A fixed <white><shoal></white> is out on the <white><water></white>, <white><radius></white> blocks round, for good. <dark_gray>(<id>)"
+    none: "<gray>No fixed fishing spots in this world."
+    list: "<gold>Fixed fishing spots here: <white><count></white>"
+    line: "<dark_gray><id></dark_gray> <white><shoal></white> <gray>· <water> · <radius> blocks round · <x> <y> <z> · <distance> blocks away"
+    not-found: "<red>No fixed fishing spot like that here — stand within 32 blocks of one, or give its id from /fishing spot list."
+    removed: "<green>The fixed <white><shoal></white> is gone for good. <dark_gray>(<id>)"
+
+  skin:
+    not-yours: "<red>The <white><skin></white> skin is not yours yet. <gray><how>"
+    hold-a-rod: "<red>Hold the rod you want to dress in your main hand."
+    worn: "<green>Your rod now wears <white><skin></white>."
+    off: "<gray>Your rod shows as itself again."
+    unlocked: "<gold>The <white><skin></white> rod skin is yours! <gray>Put it on in /fishing rod."
+    already: "<gray>You already have the <white><skin></white> skin; keep the token to trade it."
+    try-again: "<red>That did not go through just now — your token is back. Try again in a moment."
+
+  net:
+    only-fish: "<red>Only fish go into a fishing net."
+    full: "<yellow>The net is full; the rest stays with you."
+    bag-full: "<yellow>Your inventory is full; the rest stays in the net."
+    no-fish: "<gray>You carry no fish to put in."
 
   give:
     not-allowed: "<red>Only staff can hand out fish, dishes and sea chests."
     unknown: "<red>Nobody called <player> is online here."
-    bad-item: "<red><item> is nothing I know. Try fish:pebble_trout, dish:fish_skewer, chest:void or rod:reef."
+    bad-item: "<red><item> is nothing I know. Try fish:pebble_trout, dish:fish_skewer, chest:void, rod:reef or bait:wriggler."
     bad-amount: "<red><amount> is not an amount."
     given: "<green>Gave <white><amount>× <item></white> to <white><count></white> player(s)."
     experience: "<green>Gave <white><amount></white> fishing experience to <white><count></white> player(s)."

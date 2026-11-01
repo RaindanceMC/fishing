@@ -1,0 +1,14 @@
+{
+ "model": {
+  "type": "minecraft:condition",
+  "property": "minecraft:fishing_rod/cast",
+  "on_false": {
+   "type": "minecraft:model",
+   "model": "rainsfishing:item/rod/skin_frostbite"
+  },
+  "on_true": {
+   "type": "minecraft:model",
+   "model": "rainsfishing:item/rod/skin_frostbite_cast"
+  }
+ }
+}

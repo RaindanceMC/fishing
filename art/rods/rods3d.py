@@ -353,7 +353,260 @@ def void():
             "extras": [tip, shards], "grip_rings": [2.2, 3.4, 4.6], "reel_r": 1.5}
 
 
+# ------------------------------------------------------------------ skins: any rod can wear one, it changes only the look
+
+def skin_driftwood():
+    r = "skin_driftwood"
+    M(r, "shaft", "#9a8f80", "wood")
+    M(r, "handle", "#c9b48a", "wrap")
+    M(r, "fit", "#6b5a44", "wood")
+    M(r, "ring", "#d8c49a", "cloth")
+    M(r, "band", "#d8c49a", "wrap")
+    M(r, "guide", "#6b5a44", "wood")
+    M(r, "eyelet", "#b8aa90", "metal")
+    M(r, "line", "#e8e0cc", "cloth")
+    M(r, "spool", "#d8c49a", "wrap")
+    M(r, "reel", "#7a6a52", "wood")
+    M(r, "hub", "#e9e2d2", "shell")
+    M(r, "knob", "#e9e2d2", "shell")
+    M(r, "gem", "#f0e6d6", "shell")
+    M(r, "tipcap", "#6b5a44", "wood")
+    M(r, "knot", "#7a6a52", "wood")
+
+    def knots(rid):
+        out = []
+        for i, (s, off) in enumerate(((9.6, 0.9), (13.0, -0.8), (16.8, 0.7))):
+            cx, cy = at(s, off)
+            out.append(ab("knot%d" % i, cx - 0.45, cy - 0.45, Z - 0.45, cx + 0.45, cy + 0.45, Z + 0.45, rid + "_knot"))
+        return out
+    return {"collars": [], "bands": [7.4, 10.8, 14.6], "band_len": 0.9, "grip_rings": [2.0, 3.6, 5.2],
+            "gem_r": 1.35, "extras": [knots, tip_cap("tipcap", 0.9, 0.7)]}
+
+
+def skin_frostbite():
+    r = "skin_frostbite"
+    M(r, "shaft", "#9fd8f2", "prism", colour2="#e8f8ff")
+    M(r, "handle", "#3a6a9a", "wrap")
+    M(r, "fit", "#e8f6ff", "metal")
+    M(r, "ring", "#ffffff", "cloth")
+    M(r, "band", "#ffffff", "cloth")
+    M(r, "guide", "#bfe6fa", "metal")
+    M(r, "eyelet", "#e8f6ff", "metal")
+    M(r, "line", "#e8f8ff", "cloth")
+    M(r, "spool", "#cfeeff", "wrap")
+    M(r, "reel", "#d8f0ff", "metal")
+    M(r, "hub", "#7fd8ff", "gem")
+    M(r, "knob", "#7fd8ff", "gem")
+    M(r, "gem", "#a8e8ff", "gem")
+    M(r, "ice", "#c8f0ff", "gem")
+    M(r, "tipcap", "#e8f6ff", "metal")
+
+    def icicles(rid):
+        out = []
+        for i, (s, size) in enumerate(((10.4, 1.1), (12.6, 0.8), (14.6, 1.0), (17.2, 0.7))):
+            cx, cy = at(s, -(thick_at(s) / 2 + 0.2))
+            out.append(ab("icicle%d" % i, cx - 0.3, cy - size * 1.6, Z - 0.3, cx + 0.3, cy, Z + 0.3, rid + "_ice"))
+        tx, ty = at(TIP + 0.6)
+        out += blob("tip_ice", tx, ty, Z, 0.75, rid + "_ice")
+        return out
+    return {"collars": [7.7, 11.2, 15.2], "collar_mat": "ring", "bands": [8.4], "band_len": 0.7, "gem_r": 1.5,
+            "extras": [icicles, tip_cap("tipcap", 0.8, 0.8)], "grip_rings": [2.6, 4.2]}
+
+
+def skin_tidepool():
+    r = "skin_tidepool"
+    M(r, "shaft", "#e8d6a6", "speckle")
+    M(r, "handle", "#2f8a8a", "wrap")
+    M(r, "fit", "#3fb0b0", "verdigris", colour2="#9ae8d8", seed=2)
+    M(r, "ring", "#f2e6c8", "cloth")
+    M(r, "band", "#2f8a8a", "wrap")
+    M(r, "guide", "#3fb0b0", "metal")
+    M(r, "eyelet", "#f2e6c8", "metal")
+    M(r, "line", "#f2f2f2", "cloth")
+    M(r, "spool", "#ff9a70", "wrap")
+    M(r, "reel", "#3fb0b0", "metal")
+    M(r, "hub", "#ff7a8a", "gem")
+    M(r, "knob", "#ff7a8a", "shell")
+    M(r, "gem", "#ffb090", "shell")
+    M(r, "star", "#ff8a5a", "speckle")
+    M(r, "shellb", "#f6e8f0", "shell")
+    M(r, "tipcap", "#3fb0b0", "metal")
+
+    def starfish(rid):
+        cx, cy = at(9.8, 1.1)
+        out = [ab("star_c", cx - 0.5, cy - 0.5, Z + 0.5, cx + 0.5, cy + 0.5, Z + 1.1, rid + "_star"),
+               ab("star_a", cx - 1.3, cy - 0.25, Z + 0.55, cx + 1.3, cy + 0.25, Z + 1.0, rid + "_star"),
+               ab("star_b", cx - 0.25, cy - 1.3, Z + 0.55, cx + 0.25, cy + 1.3, Z + 1.0, rid + "_star")]
+        sx, sy = at(15.0, 0.8)
+        out += blob("shell", sx, sy, Z - 0.6, 0.65, rid + "_shellb")
+        return out
+    return {"collars": [11.2, 15.2], "bands": [7.6, 12.4], "band_len": 0.8, "gem_r": 1.5,
+            "extras": [starfish, tip_cap("tipcap")], "grip_rings": [2.4, 3.8, 5.2]}
+
+
+def skin_magma():
+    r = "skin_magma"
+    M(r, "shaft", "#2a1a26", "magma", colour2="#ff6a14", seed=8)
+    M(r, "handle", "#1c1218", "brick")
+    M(r, "fit", "#3a2a34", "metal")
+    M(r, "ring", "#ff7a1a", "glow")
+    M(r, "band", "#ff7a1a", "glow")
+    M(r, "guide", "#3a2a34", "metal")
+    M(r, "eyelet", "#ff9a3a", "glow")
+    M(r, "line", "#ffcf90", "cloth")
+    M(r, "spool", "#ff5a10", "magma", colour2="#2a0e0a", seed=2)
+    M(r, "reel", "#3a2a34", "metal")
+    M(r, "hub", "#ffd060", "glow")
+    M(r, "knob", "#ff7a1a", "glow")
+    M(r, "gem", "#ff5a10", "magma", colour2="#ffd060", seed=4)
+    M(r, "rock", "#3a2a34", "speckle")
+    M(r, "tipcap", "#ffb040", "glow")
+
+    def rocks(rid):
+        out = []
+        for i, (s, off, size) in enumerate(((9.0, 1.2, 0.9), (12.8, -1.0, 0.7), (16.0, 0.9, 0.6))):
+            cx, cy = at(s, off)
+            out.append(ab("rock%d" % i, cx - size / 2, cy - size / 2, Z - size / 2, cx + size / 2, cy + size / 2,
+                          Z + size / 2, rid + "_rock"))
+        return out
+    return {"collars": [7.7, 11.2, 15.2], "collar_mat": "ring", "collar_extra": 0.5, "gem_r": 1.55,
+            "extras": [rocks, tip_cap("tipcap", 1.2, 1.0)], "grip_rings": [2.4, 4.0]}
+
+
+def skin_golden():
+    r = "skin_golden"
+    M(r, "shaft", "#f5f2ea", "pearly", colour2="#f0d88a", seed=4)
+    M(r, "handle", "#e2b13c", "scale", colour2="#ffd870", seed=2)
+    M(r, "fit", "#f0c650", "metal")
+    M(r, "ring", "#f0c650", "metal")
+    M(r, "band", "#f0c650", "metal")
+    M(r, "guide", "#f0c650", "metal")
+    M(r, "eyelet", "#fff0b0", "metal")
+    M(r, "line", "#fff6d8", "cloth")
+    M(r, "spool", "#f0c650", "wrap")
+    M(r, "reel", "#f0c650", "metal")
+    M(r, "hub", "#ff4a6a", "gem")
+    M(r, "knob", "#ff4a6a", "gem")
+    M(r, "gem", "#ff4a6a", "gem")
+    M(r, "crown", "#f0c650", "metal")
+    M(r, "jewel", "#4ab0ff", "gem")
+
+    def crown(rid):
+        tx, ty = at(TIP + 0.6)
+        out = [seg("tip", TIP, TIP + 0.8, 1.0, 1.0, rid + "_crown"),
+               ab("crown_base", tx - 1.0, ty - 0.2, Z - 1.0, tx + 1.0, ty + 0.5, Z + 1.0, rid + "_crown"),
+               ab("crown_l", tx - 1.0, ty + 0.5, Z - 0.3, tx - 0.6, ty + 1.4, Z + 0.3, rid + "_crown"),
+               ab("crown_m", tx - 0.2, ty + 0.5, Z - 0.3, tx + 0.2, ty + 1.7, Z + 0.3, rid + "_crown"),
+               ab("crown_r", tx + 0.6, ty + 0.5, Z - 0.3, tx + 1.0, ty + 1.4, Z + 0.3, rid + "_crown"),
+               ab("crown_jewel", tx - 0.3, ty - 0.1, Z + 1.0, tx + 0.3, ty + 0.4, Z + 1.2, rid + "_jewel")]
+        return out
+    return {"collars": [7.7, 11.2, 15.2], "bands": [8.4, 12.2, 16.2], "band_len": 0.5, "gem_r": 1.7,
+            "extras": [crown], "grip_rings": [2.0, 3.0, 4.0, 5.0], "reel_r": 1.5}
+
+
+def skin_abyssal():
+    r = "skin_abyssal"
+    M(r, "shaft", "#14244a", "scale", colour2="#24407a", seed=3)
+    M(r, "handle", "#0c142a", "wrap")
+    M(r, "fit", "#2a3a60", "metal")
+    M(r, "ring", "#3ad8c8", "glow")
+    M(r, "band", "#1a2a52", "wrap")
+    M(r, "guide", "#2a3a60", "metal")
+    M(r, "eyelet", "#3ad8c8", "glow")
+    M(r, "line", "#9af0e8", "cloth")
+    M(r, "spool", "#3ad8c8", "glow")
+    M(r, "reel", "#2a3a60", "metal")
+    M(r, "hub", "#3ad8c8", "glow")
+    M(r, "knob", "#3ad8c8", "glow")
+    M(r, "gem", "#1a6aa8", "gem")
+    M(r, "lure", "#e8ffb0", "glow")
+    M(r, "stalk", "#2a3a60", "metal")
+    M(r, "tooth", "#e8e6d8", "shell")
+
+    def lure(rid):
+        tx, ty = at(TIP + 0.4)
+        out = [seg("tip", TIP, TIP + 0.8, 0.8, 0.8, rid + "_stalk"),
+               ab("lure_stalk", tx - 0.15, ty + 0.2, Z - 0.15, tx + 0.15, ty + 2.2, Z + 0.15, rid + "_stalk"),
+               ab("lure_stalk_b", tx + 0.15, ty + 1.9, Z - 0.15, tx + 1.3, ty + 2.2, Z + 0.15, rid + "_stalk")]
+        out += blob("lure_light", tx + 1.4, ty + 1.3, Z, 0.6, rid + "_lure")
+        for i, s in enumerate((8.0, 8.8, 9.6)):
+            cx, cy = at(s, thick_at(s) / 2 + 0.3)
+            out.append(ab("tooth%d" % i, cx - 0.2, cy - 0.2, Z - 0.2, cx + 0.2, cy + 0.6, Z + 0.2, rid + "_tooth"))
+        return out
+    return {"collars": [11.2, 15.2], "collar_mat": "ring", "bands": [7.4], "band_len": 2.6, "gem_r": 1.55,
+            "extras": [lure], "grip_rings": [2.6, 4.4]}
+
+
+def skin_bonewhale():
+    r = "skin_bonewhale"
+    M(r, "shaft", "#ece4d0", "shell")
+    M(r, "handle", "#5a4a3a", "wrap")
+    M(r, "fit", "#d8ccb0", "shell")
+    M(r, "ring", "#8a7a62", "wood")
+    M(r, "band", "#5a4a3a", "wrap")
+    M(r, "guide", "#d8ccb0", "shell")
+    M(r, "eyelet", "#8a7a62", "metal")
+    M(r, "line", "#f2ead8", "cloth")
+    M(r, "spool", "#8a7a62", "wrap")
+    M(r, "reel", "#d8ccb0", "shell")
+    M(r, "hub", "#4a8ab0", "gem")
+    M(r, "knob", "#ece4d0", "shell")
+    M(r, "gem", "#4a8ab0", "gem")
+    M(r, "rib", "#ece4d0", "shell")
+    M(r, "tipcap", "#d8ccb0", "shell")
+
+    def ribs(rid):
+        out = []
+        for i, s in enumerate((8.0, 9.2, 10.4, 11.6, 12.8)):
+            top = 2.4 - abs(i - 2) * 0.45
+            lo = thick_at(s) / 2 - 0.1
+            out.append(seg("rib%d" % i, s, s + 0.45, top - lo, 1.6, rid + "_rib", off=(top + lo) / 2))
+        return out
+    return {"collars": [7.7, 14.0, 17.0], "collar_extra": 0.6, "bands": [16.0], "band_len": 0.7, "gem_r": 1.6,
+            "extras": [ribs, tip_cap("tipcap", 1.3, 0.9)], "grip_rings": [2.2, 3.6, 5.0], "reel_r": 1.55}
+
+
+def skin_starfall():
+    r = "skin_starfall"
+    M(r, "shaft", "#101a3a", "stars", colour2="#2a3a7a")
+    M(r, "handle", "#0a1024", "wrap")
+    M(r, "fit", "#c8d0ff", "metal")
+    M(r, "ring", "#ffe88a", "glow")
+    M(r, "band", "#ffe88a", "glow")
+    M(r, "guide", "#c8d0ff", "metal")
+    M(r, "eyelet", "#ffe88a", "glow")
+    M(r, "line", "#ffe88a", "glow")
+    M(r, "spool", "#ffe88a", "glow")
+    M(r, "reel", "#c8d0ff", "metal")
+    M(r, "hub", "#ffffff", "glow")
+    M(r, "knob", "#ffe88a", "glow")
+    M(r, "gem", "#ffd84a", "gem")
+    M(r, "comet", "#fff6c0", "glow")
+    M(r, "tail", "#8aa8ff", "glow")
+
+    def comet(rid):
+        tx, ty = at(TIP + 1.0)
+        out = [seg("tip", TIP, TIP + 0.9, 0.8, 0.8, rid + "_fit")]
+        out += blob("comet", tx, ty, Z, 0.85, rid + "_comet")
+        out.append(seg("tail0", TIP - 1.6, TIP - 0.2, 0.5, 0.5, rid + "_tail", off=0.9))
+        out.append(seg("tail1", TIP - 2.8, TIP - 1.0, 0.4, 0.4, rid + "_tail", off=-0.9))
+        for i, (s, off) in enumerate(((10.2, 1.5), (13.4, -1.4), (16.0, 1.3))):
+            cx, cy = at(s, off)
+            out += [ab("spark%d" % i, cx - 0.5, cy - 0.12, Z - 0.12, cx + 0.5, cy + 0.12, Z + 0.12, rid + "_comet"),
+                    ab("spark%db" % i, cx - 0.12, cy - 0.5, Z - 0.12, cx + 0.12, cy + 0.5, Z + 0.12, rid + "_comet")]
+        return out
+    return {"collars": [7.7, 11.2, 15.2], "collar_mat": "ring", "collar_extra": 0.35, "gem_r": 1.6,
+            "extras": [comet], "grip_rings": [2.2, 3.4, 4.6], "reel_r": 1.5}
+
+
+SKINS = {"skin_driftwood": ("Driftwood", "#c9b48a"), "skin_frostbite": ("Frostbite", "#9fd8f2"),
+         "skin_tidepool": ("Tidepool", "#ff9a70"), "skin_magma": ("Magma", "#ff7a1a"),
+         "skin_golden": ("Golden", "#f0c650"), "skin_abyssal": ("Abyssal", "#3ad8c8"),
+         "skin_bonewhale": ("Bonewhale", "#ece4d0"), "skin_starfall": ("Starfall", "#ffe88a")}
+
+
 LOOKS = {"reed": reed, "reef": reef, "pearl": pearl, "ember": ember, "leviathan": leviathan, "void": void}
+LOOKS.update({rid: globals()[rid] for rid in SKINS})
 
 
 # ------------------------------------------------------------------ build
@@ -462,11 +715,12 @@ def render(rid, spec):
 
 # ------------------------------------------------------------------ sheet
 
-def sheet():
+def sheet(names=None, path="sheet.png"):
     from sheets import font, crop, BG
+    names = names or TIERS
     title, tiny = font(22), font(12)
     cell_w, cell_h, per_row = 660, 250, 3
-    ids = list(TIERS)
+    ids = list(names)
     rows = [ids[i:i + per_row] for i in range(0, len(ids), per_row)]
     out = Image.new("RGB", (per_row * cell_w + 40, 20 + len(rows) * (cell_h + 70) + 10), BG)
     draw = ImageDraw.Draw(out)
@@ -474,7 +728,7 @@ def sheet():
     for row in rows:
         for n, rid in enumerate(row):
             x = 20 + n * cell_w
-            name, colour = TIERS[rid]
+            name, colour = names[rid]
             draw.text((x + 10, y), name, font=title, fill=colour)
             draw.line((x + 10, y + 30, x + cell_w - 20, y + 30), fill=colour, width=2)
             for k, (suffix, caption) in enumerate((("", "with line"), ("_cast", "cast"), ("_held", "held"))):
@@ -486,17 +740,20 @@ def sheet():
                 w = draw.textlength(caption, font=tiny)
                 draw.text((cx - w / 2, y + 38 + 220), caption, font=tiny, fill=(120, 124, 134))
         y += cell_h + 70
-    out.save(os.path.join(HERE, "sheet.png"))
+    out.save(os.path.join(HERE, path))
 
 
 def main():
     wanted = sys.argv[1:]
-    for rid in TIERS:
+    for rid in list(TIERS) + list(SKINS):
         if wanted and rid not in wanted:
             continue
         print(rid, make(rid), "parts/atlas", flush=True)
     if not wanted:
         sheet()
+        sheet(SKINS, "skins_sheet.png")
+    elif all(rid in SKINS for rid in wanted):
+        sheet(SKINS, "skins_sheet.png")
 
 
 if __name__ == "__main__":

@@ -26,8 +26,6 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public final class SpotVisual {
 
-    /** As wide as the water a spot covers: twice SpotService.RADIUS, the model being one block across. */
-    private static final float RIPPLE_SCALE = 8.0f;
     private static final float BOBBER_SCALE = 1.8f;
     private static final long PERIOD = 10L;
 
@@ -48,14 +46,16 @@ public final class SpotVisual {
         World world = at.getWorld();
         boolean glows = spot.water() == Water.VOID || spot.water() == Water.LAVA || spot.water() == Water.CAVE;
         Location surface = at.clone().add(0, 0.06, 0);
-        ItemDisplay ripple = world.spawn(surface, ItemDisplay.class, display -> {
+        // As wide as the water the spot covers, the model being one block across.
+        float ripple = (float) spot.radius() * 2f;
+        ItemDisplay rings = world.spawn(surface, ItemDisplay.class, display -> {
             display.setPersistent(false);
             display.setItemStack(Looks.wearing(FishingPack.rippleModel(), spot.water().ripple()));
             display.setItemDisplayTransform(ItemDisplay.ItemDisplayTransform.NONE);
             // NONE draws the model centred on the display, so the quad (at the bottom of its block) is lifted back
             // up to the water line.
             display.setTransformation(new Transformation(new Vector3f(0, 0.5f, 0), new AxisAngle4f(),
-                    new Vector3f(RIPPLE_SCALE, 1f, RIPPLE_SCALE), new AxisAngle4f()));
+                    new Vector3f(ripple, 1f, ripple), new AxisAngle4f()));
             if (glows) {
                 display.setBrightness(new Display.Brightness(15, 15));
             }
@@ -87,9 +87,9 @@ public final class SpotVisual {
             step[0]++;
             bobber.setInterpolationDelay(0);
             bobber.setTransformation(bobberPose(step[0]));
-            sparkle(world, at, spot.water());
+            sparkle(world, at, spot.water(), spot.radius());
         });
-        return new SpotVisual(ripple, bobber, sign, timer);
+        return new SpotVisual(rings, bobber, sign, timer);
     }
 
     /** Up and down like a dropped item, turning a little more each step. */
@@ -100,10 +100,11 @@ public final class SpotVisual {
                 new Vector3f(BOBBER_SCALE, BOBBER_SCALE, BOBBER_SCALE), new AxisAngle4f());
     }
 
-    private static void sparkle(World world, Location at, Water water) {
+    private static void sparkle(World world, Location at, Water water, double radius) {
         ThreadLocalRandom random = ThreadLocalRandom.current();
-        double dx = random.nextDouble(-1.2, 1.2);
-        double dz = random.nextDouble(-1.2, 1.2);
+        double reach = Math.max(1.0, radius * 0.6);
+        double dx = random.nextDouble(-reach, reach);
+        double dz = random.nextDouble(-reach, reach);
         Location point = at.clone().add(dx, 0.1, dz);
         switch (water) {
             case VOID -> world.spawnParticle(Particle.REVERSE_PORTAL, point, 3, 0.2, 0.3, 0.2, 0.01);
