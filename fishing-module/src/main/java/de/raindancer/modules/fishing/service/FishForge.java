@@ -136,8 +136,9 @@ public final class FishForge implements IFishingService {
 
     private static CustomItem chestDefinition(Tier tier) {
         String colour = "<" + tier.hex() + ">";
+        // Not a block item: the client would draw a plain chest for a moment before the sea chest stands there.
         return CustomItem.builder(PLUGIN, "chest-" + tier.chest())
-                .material(Material.CHEST)
+                .material(Material.PAPER)
                 .name(colour + tier.chestName())
                 .lore(List.of(colour + tier.title() + " sea chest",
                         "<gray>Fished up, still dripping.",
@@ -175,7 +176,7 @@ public final class FishForge implements IFishingService {
 
     public ItemStack chest(Tier tier, int amount) {
         ItemStack stack = make("chest-" + tier.chest(), () -> chestDefinition(tier), amount);
-        // A chest underneath, and a sea chest must not turn into a hopper or a boat in a crafting grid.
+        // Paper underneath, and a sea chest must not turn into a map or a book in a crafting grid.
         return NonIngredients.mark(stack);
     }
 

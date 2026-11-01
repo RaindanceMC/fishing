@@ -30,6 +30,10 @@ public final class CatchService implements IFishingService {
     private final org.bukkit.plugin.Plugin plugin;
     private final Messages messages;
     private final Effects effects;
+    private static final de.raindancer.core.ui.effect.Effect SPLASH = de.raindancer.core.ui.effect.Effect.of(
+            new de.raindancer.core.ui.effect.SoundCue("entity.fishing_bobber.splash", 0.8f, 1.1f));
+    private static final de.raindancer.core.ui.effect.Effect LAVA_POP = de.raindancer.core.ui.effect.Effect.of(
+            new de.raindancer.core.ui.effect.SoundCue("block.lava.pop", 1f, 1f));
     private final FishForge forge;
     private final ProfileService profiles;
     private final SpotService spots;
@@ -106,7 +110,8 @@ public final class CatchService implements IFishingService {
      */
     public void bringUp(Player player, org.bukkit.Location hook, Water water, ItemStack item) {
         org.bukkit.Location from = hook.clone();
-        de.raindancer.modules.fishing.visual.CatchShow.play(plugin, from, player, item, water, () -> {
+        de.raindancer.modules.fishing.visual.CatchShow.play(plugin, from, player, item, water, at -> effects.playAt(
+                at.getWorld().getName(), at.getX(), at.getY(), at.getZ(), water == Water.LAVA ? LAVA_POP : SPLASH), () -> {
             if (!player.isOnline()) {
                 from.getWorld().dropItemNaturally(from, item);
                 return;

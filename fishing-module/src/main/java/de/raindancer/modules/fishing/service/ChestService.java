@@ -32,8 +32,8 @@ import java.util.UUID;
 /**
  * Opening a sea chest that stands in the world: its owner right-clicks it, it plays its show where it stands, and
  * what was in it is handed over one thing at a time as each one comes out — into the bag, or at the opener's feet
- * when the bag is full. The money comes out too, as the economy's coins (and a cheque for more than a few stacks);
- * only an economy without cash puts it straight onto the balance. Only the opener hears about it. A show cut short (the
+ * when the bag is full. The money comes out too, as one cheque from the chest; only an economy without cheques
+ * puts it straight onto the balance. Only the opener hears about it. A show cut short (the
  * chunk unloaded, the server stopped) still hands over everything it had not shown yet.
  */
 public final class ChestService implements IFishingService {
@@ -49,8 +49,8 @@ public final class ChestService implements IFishingService {
     private final SeaChestBlocks blocks;
     private final ChestLootRule loot;
     private final Random random;
-    /** Most of a chest's money that comes out as coins — three stacks; the rest is one cheque. */
-    static final int MOST_COINS = 192;
+    /** A chest's money comes out as one cheque, never as stacks of loose coins. */
+    static final int MOST_COINS = 0;
 
     private final Cooldowns<UUID> between = Cooldowns.shared("fishing:chest");
     /** Chests whose money is being paid out; they stand until it is ready. */

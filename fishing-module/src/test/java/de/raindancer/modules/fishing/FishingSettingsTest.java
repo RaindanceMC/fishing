@@ -20,6 +20,7 @@ class FishingSettingsTest {
         assertThat(defaults.spotChestPermille()).isEqualTo(50);
         assertThat(defaults.chestPermille()).isEqualTo(25);
         assertThat(defaults.chestMoney()).isEqualTo("100");
+        assertThat(defaults.fishPrice()).as("a common fish sells for about a cod's value").isEqualTo("8");
         assertThat(defaults.hookCost()).isEqualTo(40);
         assertThat(defaults.lureCost()).isEqualTo(120);
         assertThat(defaults.reelCost()).isEqualTo(100);

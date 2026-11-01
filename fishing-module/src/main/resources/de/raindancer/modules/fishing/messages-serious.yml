@@ -12,6 +12,7 @@ fishing:
     place-it: "<gray>Place the chest first, then right click it to open it."
   dish:
     eaten: "<green><white><dish></white> eaten; its effects are active."
+    cook-a-dish: "<gray>A <fish> is cooked into a dish, not on its own. See the recipe book."
   line:
     void-needed: "<gray>A Void Line is needed to fish the void."
   give:

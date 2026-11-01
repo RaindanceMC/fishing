@@ -24,8 +24,9 @@
         <!-- The name the server sees, and the name of its data folder. -->
         <plugin.name>RainsFishing</plugin.name>
         <!-- 0.1.0: fishing — 32 fish in six tiers, sea chests from Driftwood to Void, fishing spots in their biomes,
-             rod upgrades and fishing skills, lava and void fishing, dishes. -->
-        <plugin.version>0.1.0</plugin.version>
+             rod upgrades and fishing skills, lava and void fishing, dishes.
+             0.1.1: a catch comes up out of the water — from under the surface, through it with a splash. -->
+        <plugin.version>0.1.1</plugin.version>
     </properties>
 
     <dependencies>

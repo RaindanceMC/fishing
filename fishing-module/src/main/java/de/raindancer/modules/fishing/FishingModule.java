@@ -51,7 +51,7 @@ import java.util.Random;
  */
 public final class FishingModule implements FlexModule {
 
-    private static final ModuleInfo INFO = ModuleInfo.of("fishing", "Fishing", "0.1.0")
+    private static final ModuleInfo INFO = ModuleInfo.of("fishing", "Fishing", "0.1.1")
             .describedAs("New fish in six tiers, sea chests, fishing spots, rod upgrades and skills, lava and "
                     + "void fishing, and dishes cooked from the catch.")
             .by("Raindancer118");
@@ -147,6 +147,16 @@ public final class FishingModule implements FlexModule {
         }
 
         seaChests.start();
+        // The shop buys our fish and dishes at our prices; a fish is never sold as the cod it is made of.
+        de.raindancer.modules.fishing.rules.PriceRule prices = new de.raindancer.modules.fishing.rules.PriceRule();
+        de.raindancer.core.social.economy.ItemPricer pricer = stack -> {
+            long base = settings.current().fishPriceMinor();
+            java.util.Optional<Long> price = forge.fishOf(stack).map(kind -> prices.fish(kind.tier(), base))
+                    .or(() -> forge.dishOf(stack).map(dish -> prices.dish(dish.tier(), base)));
+            return price.filter(each -> each > 0).map(de.raindancer.core.social.economy.Money::of);
+        };
+        de.raindancer.core.social.economy.ItemPrices.provide(context.plugin(), pricer);
+        context.closeWith(() -> de.raindancer.core.social.economy.ItemPrices.retract(pricer));
         de.raindancer.modules.fishing.service.FishingBoards boards = new de.raindancer.modules.fishing.service
                 .FishingBoards(server, context.core().messages(), store, profiles, catalog);
         // Screens for /screen came with Core 2.10; the leaderboards with 2.23 — an older Core simply has neither.

@@ -41,6 +41,7 @@ fishing:
 
   dish:
     eaten: "<green>That <white><dish></white> was something else. You feel it already."
+    cook-a-dish: "<gray>A <white><fish></white> is too good for a campfire on its own — cook it into a dish. Your recipe book has them."
 
   rod:
     hold-a-rod: "<red>Hold the fishing rod you want to upgrade in your main hand."

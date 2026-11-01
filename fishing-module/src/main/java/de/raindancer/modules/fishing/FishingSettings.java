@@ -123,14 +123,21 @@ public record FishingSettings(
         @In("fishing/skills") @Title("Unlearning skills costs")
         @Describe("Money to take back every skill point and spend them again, such as 1k. 0 for free.")
         @Key("skills.reset-fee")
-        String skillResetFee) {
+        String skillResetFee,
+
+        @In("fishing/chests") @Title("A common fish sells for")
+        @Describe("What the shop pays for one common fish, such as 8; rarer fish fetch up to 75 times as much, a "
+                + "dish half again its fish. 0 and the shop takes no fish or dishes.")
+        @Key("market.fish-price")
+        String fishPrice) {
 
     public static final FishingSettings DEFAULTS = new FishingSettings(
             true,
             true, 2, 8, 12, 50,
             25, "100",
             40, 120, 100, 1500, 6000, 200, 5, 10, 25,
-            50, "1000");
+            50, "1000",
+            "8");
 
     /** What rod upgrades cost in fishing experience, for {@link UpgradeRule}. */
     public UpgradeRule.Costs costs() {
@@ -140,6 +147,10 @@ public record FishingSettings(
 
     public long chestMoneyMinor() {
         return minor(chestMoney);
+    }
+
+    public long fishPriceMinor() {
+        return minor(fishPrice);
     }
 
     private static long minor(String written) {

@@ -97,20 +97,27 @@ public final class SeaChestBlocks implements IFishingService {
 
     /** A chest item was just placed here by {@code owner}: it becomes a sea chest. */
     public void placed(Block block, UUID owner, Tier tier) {
-        BlockFace facing = block.getBlockData() instanceof org.bukkit.block.data.type.Chest data
-                ? data.getFacing() : BlockFace.SOUTH;
+        placed(block, owner, tier, block.getBlockData() instanceof org.bukkit.block.data.type.Chest data
+                ? data.getFacing() : BlockFace.SOUTH);
+    }
+
+    /** A sea chest is set down here by {@code owner}, its front towards {@code facing}. */
+    public void placed(Block block, UUID owner, Tier tier, BlockFace facing) {
         block.setType(Material.BARRIER, false);
         block.getChunk().getPersistentDataContainer().set(keyOf(block), PersistentDataType.STRING,
                 tier.id() + "|" + owner + "|" + facing.name());
         dress(block, tier, yaw(facing));
     }
 
-    /** Which way the chest looks, as the radians the model is turned by (its front is north). */
+    /**
+     * Which way the chest looks, as the radians the model is turned by. An item display turns an item model half
+     * round, so the model's front (north in Blockbench) shows to the south unturned.
+     */
     static float yaw(BlockFace facing) {
         return switch (facing) {
-            case SOUTH -> (float) Math.PI;
-            case EAST -> (float) (-Math.PI / 2);
-            case WEST -> (float) (Math.PI / 2);
+            case NORTH -> (float) Math.PI;
+            case EAST -> (float) (Math.PI / 2);
+            case WEST -> (float) (-Math.PI / 2);
             default -> 0f;
         };
     }

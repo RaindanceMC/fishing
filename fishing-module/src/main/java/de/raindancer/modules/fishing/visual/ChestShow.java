@@ -50,8 +50,11 @@ public final class ChestShow {
     static final int SINK = 7;
     static final int WOBBLE = 12;
     static final int VANISH = 10;
-    /** The lid's hinge, in the model's own units, from its centre. */
-    private static final Vector3f HINGE = new Vector3f(0f, 1f / 16f, 5f / 16f);
+    /**
+     * The lid's hinge at the back, from the model's centre, as the display shows it: an item display turns the model
+     * half round, so the back (south in Blockbench) is to the north.
+     */
+    private static final Vector3f HINGE = new Vector3f(0f, 1f / 16f, -5f / 16f);
     private static final float LID_OPEN = (float) Math.toRadians(110);
     private static final float HIGH = 1.35f;
     private static final float TURN = (float) (Math.PI * 2 / 3);
@@ -191,10 +194,10 @@ public final class ChestShow {
                              float open, int ticks) {
         Quaternionf turn = new Quaternionf().rotateY(yaw).rotateZ(shake);
         Transformation body = new Transformation(new Vector3f(0, lift, 0), turn, new Vector3f(scale), new Quaternionf());
-        Quaternionf hinged = new Quaternionf(turn).rotateX(open);
+        Quaternionf hinged = new Quaternionf(turn).rotateX(-open);
         Vector3f hinge = new Vector3f(HINGE).mul(scale);
         // Turning about the hinge rather than the centre: move the hinge back to where it was.
-        Vector3f swung = new Quaternionf().rotateX(open).transform(new Vector3f(hinge));
+        Vector3f swung = new Quaternionf().rotateX(-open).transform(new Vector3f(hinge));
         Vector3f offset = turn.transform(new Vector3f(hinge).sub(swung)).add(0, lift, 0);
         Transformation top = new Transformation(offset, hinged, new Vector3f(scale), new Quaternionf());
         for (ItemDisplay part : List.of(base, lid)) {
