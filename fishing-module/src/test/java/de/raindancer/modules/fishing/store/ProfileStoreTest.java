@@ -20,7 +20,8 @@ class ProfileStoreTest {
                 .withRod(de.raindancer.modules.fishing.model.RodTier.REEF)
                 .withRod(de.raindancer.modules.fishing.model.RodTier.VOID)
                 .withWeight("pebble_trout", 2.5).withWeight("pebble_trout", 1.0)
-                .withSkin(de.raindancer.modules.fishing.model.RodSkin.STARFALL);
+                .withSkin(de.raindancer.modules.fishing.model.RodSkin.STARFALL)
+                .withVoidCatch(Tier.LEGENDARY, 4);
         YamlConfiguration yaml = new YamlConfiguration();
         ProfileStore.write(yaml, "fishers.someone", profile);
         YamlConfiguration reread = new YamlConfiguration();

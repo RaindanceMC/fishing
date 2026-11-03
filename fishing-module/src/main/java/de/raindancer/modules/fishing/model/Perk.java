@@ -46,7 +46,8 @@ public enum Perk {
     VOID_SAFE("Slow falling while your line is over the void", false),
     CATCH_MONEY("Every fish pays you %s%% of its shop price at once", false),
     TRIPLE("%s%% chance two fish on one hook are three", false),
-    CHEST_BAIT("%s%% chance a sea chest holds a stack of bait more", false);
+    CHEST_BAIT("%s%% chance a sea chest holds a stack of bait more", false),
+    MYTHIC("Mythic catches come up %s%% more often", false);
 
     /** On or off: one rank is all there is, and the line has no number. */
     public boolean toggle() {

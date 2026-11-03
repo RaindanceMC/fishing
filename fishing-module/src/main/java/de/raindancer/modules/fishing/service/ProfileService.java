@@ -87,7 +87,10 @@ public final class ProfileService implements IFishingService {
     public void caught(Player player, String fishId, int amount, Tier tier, double kilos, Water water) {
         UUID id = player.getUniqueId();
         boolean first = of(id).caught(fishId) == 0;
-        reward(player, profile -> profile.withCatch(fishId, amount).withWeight(fishId, kilos),
+        reward(player, profile -> {
+                    FisherProfile changed = profile.withCatch(fishId, amount).withWeight(fishId, kilos);
+                    return water == Water.VOID ? changed.withVoidCatch(tier, amount) : changed;
+                },
                 BONUS.experience((long) tier.experience() * amount, perks(id), water, first));
     }
 

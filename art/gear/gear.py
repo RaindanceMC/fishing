@@ -1,5 +1,5 @@
 """
-Fishing gear as voxel item models: the five baits and the fishing net. Each is a handful of boxes, every material a
+Fishing gear as voxel item models: the six baits and the fishing net. Each is a handful of boxes, every material a
 small shaded swatch in one atlas per item (a net's mesh is a cut-out grid). `--render` photographs them in the running
 Blockbench (the shared client in ~/.claude/tools/bbmcp) and writes sheet.png.
 
@@ -170,6 +170,26 @@ def starlure():
     return p, m
 
 
+def voidlure():
+    # a pearl of the void held in an end-stone cage, ringed by a cold glow, sparks of the End about it
+    m = {"void": ("glass", "#140a24"), "void_core": ("glow", "#2a0f4a"), "ring": ("glow", "#7ff6ff"),
+         "cage": ("metal", "#e6e2a8"), "cage_dark": ("metal", "#b8b27a"), "spark": ("glow", "#c88aff"),
+         "hook": ("metal", "#9aa3ad")}
+    p = [("orb", (5.5, 3.5, 5.5), (10.5, 8.5, 10.5), "void_core"), ("orb_top", (6.5, 8.5, 6.5), (9.5, 9.3, 9.5), "void"),
+         ("orb_bot", (6.5, 2.7, 6.5), (9.5, 3.5, 9.5), "void"),
+         ("ring_n", (4.5, 5.6, 4.5), (11.5, 6.4, 5.1), "ring"), ("ring_s", (4.5, 5.6, 10.9), (11.5, 6.4, 11.5), "ring"),
+         ("ring_w", (4.5, 5.6, 5.1), (5.1, 6.4, 10.9), "ring"), ("ring_e", (10.9, 5.6, 5.1), (11.5, 6.4, 10.9), "ring"),
+         ("cage1", (5.2, 3, 5.2), (5.8, 9, 5.8), "cage"), ("cage2", (10.2, 3, 10.2), (10.8, 9, 10.8), "cage"),
+         ("cage3", (5.2, 3, 10.2), (5.8, 9, 10.8), "cage_dark"), ("cage4", (10.2, 3, 5.2), (10.8, 9, 5.8), "cage_dark"),
+         ("cap", (6.8, 9.3, 6.8), (9.2, 10.3, 9.2), "cage"),
+         ("chain1", (7.6, 10.3, 7.6), (8.4, 11.5, 8.4), "cage_dark"), ("chain2", (7.75, 11.5, 7.75), (8.25, 13, 8.25), "cage"),
+         ("chain3", (7.5, 13, 7.5), (8.5, 14, 8.5), "cage_dark"),
+         ("spark1", (3.6, 8.6, 7.75), (4.4, 9.4, 8.25), "spark"), ("spark2", (11.6, 2.6, 7.75), (12.4, 3.4, 8.25), "spark"),
+         ("spark3", (7.75, 10, 3.6), (8.25, 10.8, 4.4), "spark"),
+         ("hook_a", (7.75, 0.5, 7.75), (8.25, 2.7, 8.25), "hook"), ("hook_b", (8.25, 0.5, 7.75), (9.8, 1, 8.25), "hook")]
+    return p, m
+
+
 def net():
     m = {"mesh": ("mesh", "#d8c49a"), "rope": ("rope", "#c9a46a"), "knot": ("rope", "#a8844a"),
          "fish": ("metal", "#9fc4dc"), "fish_b": ("metal", "#e8a060"), "fin": ("glow", "#5a88a8")}
@@ -192,7 +212,8 @@ def net():
 
 
 ITEMS = {"bait/wriggler": can_with_worms, "bait/shimmer": lambda: jar("#cfe8ff", "#3a7aa8", "#8a6a44", "#a8fbff"),
-         "bait/gilded": spinner, "bait/abyss": abyss_lure, "bait/starlure": starlure, "net": net}
+         "bait/gilded": spinner, "bait/abyss": abyss_lure, "bait/starlure": starlure,
+         "bait/voidlure": voidlure, "net": net}
 
 
 def write():

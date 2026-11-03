@@ -71,7 +71,7 @@ nodes:
   jewel_eye: {branch: collector, at: [3, 2], title: Jewel Eye, icon: diamond, ranks: 3, requires: [sharp_eye, field_notes], perks: {epic: 6}}
   record_breaker: {branch: collector, at: [4, 0], title: Record Breaker, icon: gold_ingot, ranks: 2, requires: [giant_hunter], perks: {weight: 5}}
   legend_seeker: {branch: collector, at: [4, 1], title: Legend Seeker, icon: dragon_breath, capstone: true, cost: 3, level: 60, requires: [giant_hunter, legend_lure, jewel_eye], perks: {legend: 50, rare: 10}}
-  myth_lure: {branch: collector, at: [4, 2], title: Myth Lure, icon: end_crystal, ranks: 2, requires: [jewel_eye], perks: {legend: 8}}
+  myth_lure: {branch: collector, at: [4, 2], title: Myth Lure, icon: end_crystal, ranks: 2, requires: [jewel_eye], perks: {mythic: 25}}
   new_waters: {branch: collector, at: [1, 1], title: New Waters, icon: axolotl_bucket, ranks: 3, requires: [rare_instinct], perks: {new_kind: 15}}
   first_find: {branch: collector, at: [0, 0], title: First Find, icon: knowledge_book, ranks: 2, requires: [rare_instinct], perks: {first_xp: 50}}
   leviathan_arms: {branch: collector, at: [0, 2], title: Leviathan Arms, icon: netherite_ingot, ranks: 3, requires: [rare_instinct], perks: {big_weight: 5}}
@@ -87,8 +87,8 @@ nodes:
   nether_instinct: {branch: ember, at: [3, 1], title: Nether Instinct, icon: crimson_fungus, ranks: 3, requires: [hot_lore], perks: {hot_rare: 10}}
   star_lure: {branch: ember, at: [3, 2], title: Star Lure, icon: end_rod, ranks: 3, requires: [void_path, hot_lore], perks: {void_chest: 5}}
   lava_wader: {branch: ember, at: [4, 0], title: Lava Wader, icon: lava_bucket, ranks: 2, requires: [magma_lure], perks: {lava_wait: 5}}
-  abyss_walker: {branch: ember, at: [4, 1], title: Abyss Walker, icon: dragon_head, capstone: true, cost: 3, level: 60, requires: [magma_lure, nether_instinct, star_lure], perks: {hot_xp: 50, hot_rare: 20}}
-  void_drifter: {branch: ember, at: [4, 2], title: Void Drifter, icon: shulker_shell, ranks: 2, requires: [star_lure], perks: {void_wait: 5}}
+  abyss_walker: {branch: ember, at: [4, 1], title: Abyss Walker, icon: dragon_head, capstone: true, cost: 3, level: 60, requires: [magma_lure, nether_instinct, star_lure], perks: {hot_xp: 50, hot_rare: 20, mythic: 50}}
+  void_drifter: {branch: ember, at: [4, 2], title: Void Drifter, icon: shulker_shell, ranks: 2, requires: [star_lure], perks: {void_wait: 5, mythic: 15}}
   long_bite: {branch: ember, at: [1, 1], title: Long Bite, icon: slime_ball, ranks: 3, requires: [strange_waters], perks: {hot_window: 20}}
   magma_scales: {branch: ember, at: [0, 0], title: Magma Scales, icon: crying_obsidian, ranks: 3, requires: [strange_waters], perks: {hot_weight: 5}}
   void_anchor: {branch: ember, at: [0, 2], title: Void Anchor, icon: phantom_membrane, requires: [strange_waters], perks: {void_safe: 1}}

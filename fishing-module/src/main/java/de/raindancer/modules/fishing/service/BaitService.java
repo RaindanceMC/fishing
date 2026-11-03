@@ -42,7 +42,10 @@ public final class BaitService implements IFishingService {
             Bait.ABYSS, new Recipe(4, List.of("any:epic", "minecraft:prismarine_crystals", "minecraft:ink_sac",
                     "minecraft:ender_pearl")),
             Bait.STARLURE, new Recipe(2, List.of("any:legendary", "minecraft:amethyst_shard",
-                    "minecraft:chorus_fruit", "minecraft:phantom_membrane"))));
+                    "minecraft:chorus_fruit", "minecraft:phantom_membrane")),
+            // Made from a legendary, not a mythic: the bait is how a fisher gets to the mythics in the first place.
+            Bait.VOIDLURE, new Recipe(2, List.of("any:legendary", "minecraft:echo_shard",
+                    "minecraft:dragon_breath", "minecraft:ender_eye"))));
 
     private final Plugin plugin;
     private final Server server;

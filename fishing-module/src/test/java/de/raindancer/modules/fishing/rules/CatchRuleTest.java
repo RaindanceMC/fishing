@@ -235,4 +235,58 @@ class CatchRuleTest {
             }
         }
     }
+
+    /** Mythic against legendary fish over the void, out of many casts. */
+    private double mythicPerLegendary(FisherProfile profile, de.raindancer.modules.fishing.model.Bait bait) {
+        Random random = new Random(80);
+        int mythic = 0;
+        int legendary = 0;
+        for (int n = 0; n < 200000; n++) {
+            if (rule.roll(new CatchRule.Cast(Water.VOID, Rod.PLAIN, profile, false, 0, 0, true, null, bait), random)
+                    instanceof Catch.Fish fish) {
+                mythic += fish.tier() == Tier.MYTHIC ? 1 : 0;
+                legendary += fish.tier() == Tier.LEGENDARY ? 1 : 0;
+            }
+        }
+        return (double) mythic / legendary;
+    }
+
+    @Test
+    @DisplayName("Myth Lure, Void Drifter and Abyss Walker raise mythic catches alone, not legendary ones with them")
+    void mythicPerk() {
+        double plain = mythicPerLegendary(FisherProfile.NEW, null);
+        double lured = mythicPerLegendary(FisherProfile.NEW.withNode("myth_lure", 2), null);
+        assertThat(lured / plain).isBetween(1.35, 1.65);
+    }
+
+    @Test
+    @DisplayName("Voidlure makes mythic catches four times as likely and leaves the rest alone")
+    void voidlure() {
+        var voidlure = de.raindancer.modules.fishing.model.Bait.VOIDLURE;
+        assertThat(voidlure.tier()).isEqualTo(Tier.MYTHIC);
+        assertThat(voidlure.weight(Tier.MYTHIC)).isEqualTo(4.0);
+        assertThat(voidlure.weight(Tier.LEGENDARY)).isEqualTo(1.0);
+        double plain = mythicPerLegendary(FisherProfile.NEW, null);
+        assertThat(mythicPerLegendary(FisherProfile.NEW, voidlure) / plain).isBetween(3.4, 4.6);
+    }
+
+    @Test
+    @DisplayName("the void's debt: every void catch without a mythic makes the next mythic likelier, up to four times")
+    void voidDebt() {
+        assertThat(CatchRule.debtFactor(0)).isEqualTo(1.0);
+        assertThat(CatchRule.debtFactor(10)).isCloseTo(1.3, org.assertj.core.data.Offset.offset(1e-9));
+        assertThat(CatchRule.debtFactor(100)).isEqualTo(4.0);
+        assertThat(CatchRule.debtFactor(5000)).isEqualTo(4.0);
+        double plain = mythicPerLegendary(FisherProfile.NEW, null);
+        double owed = mythicPerLegendary(FisherProfile.NEW.withVoidDry(100), null);
+        assertThat(owed / plain).isBetween(3.4, 4.6);
+    }
+
+    @Test
+    @DisplayName("the debt grows with each void fish that is not mythic and is paid off by a mythic")
+    void debtCounting() {
+        FisherProfile profile = FisherProfile.NEW.withVoidCatch(Tier.EPIC, 1).withVoidCatch(Tier.LEGENDARY, 2);
+        assertThat(profile.voidDry()).isEqualTo(3);
+        assertThat(profile.withVoidCatch(Tier.MYTHIC, 1).voidDry()).isZero();
+    }
 }

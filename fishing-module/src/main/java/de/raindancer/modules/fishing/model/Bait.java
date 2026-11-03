@@ -11,6 +11,7 @@ import java.util.Optional;
  * @param rareFactor    weight of rare and better fish and chests
  * @param epicFactor    weight of epic and better
  * @param legendFactor  weight of legendary and better
+ * @param mythicFactor  weight of mythic alone
  */
 public enum Bait {
     WRIGGLER("Wriggler Bait", Tier.COMMON, 0.65, 0, 1.0, 1.0, 1.0, "Fish bite a third sooner."),
@@ -18,7 +19,9 @@ public enum Bait {
     GILDED("Gilded Bait", Tier.RARE, 1.0, 30, 1.0, 1.0, 1.0, "Sea chests bite far more often."),
     ABYSS("Abyss Bait", Tier.EPIC, 0.9, 0, 1.0, 2.5, 1.0, "Epic catches and better bite more than twice as often."),
     STARLURE("Starlure", Tier.LEGENDARY, 0.85, 10, 1.0, 1.0, 3.0,
-            "Legendary and mythic catches bite three times as often.");
+            "Legendary and mythic catches bite three times as often."),
+    VOIDLURE("Voidlure", Tier.MYTHIC, 1.0, 0, 1.0, 1.0, 1.0, 4.0,
+            "Mythic catches bite four times as often.");
 
     private final String title;
     private final Tier tier;
@@ -27,10 +30,11 @@ public enum Bait {
     private final double rareFactor;
     private final double epicFactor;
     private final double legendFactor;
+    private final double mythicFactor;
     private final String promise;
 
     Bait(String title, Tier tier, double waitFactor, int chestPermille, double rareFactor, double epicFactor,
-         double legendFactor, String promise) {
+         double legendFactor, double mythicFactor, String promise) {
         this.title = title;
         this.tier = tier;
         this.waitFactor = waitFactor;
@@ -38,7 +42,13 @@ public enum Bait {
         this.rareFactor = rareFactor;
         this.epicFactor = epicFactor;
         this.legendFactor = legendFactor;
+        this.mythicFactor = mythicFactor;
         this.promise = promise;
+    }
+
+    Bait(String title, Tier tier, double waitFactor, int chestPermille, double rareFactor, double epicFactor,
+         double legendFactor, String promise) {
+        this(title, tier, waitFactor, chestPermille, rareFactor, epicFactor, legendFactor, 1.0, promise);
     }
 
     public String title() {
@@ -69,6 +79,9 @@ public enum Bait {
         }
         if (catchTier.atLeast(Tier.LEGENDARY)) {
             weight *= legendFactor;
+        }
+        if (catchTier == Tier.MYTHIC) {
+            weight *= mythicFactor;
         }
         return weight;
     }

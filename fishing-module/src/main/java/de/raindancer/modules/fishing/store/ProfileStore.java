@@ -110,7 +110,7 @@ public final class ProfileStore {
             de.raindancer.modules.fishing.model.RodSkin.parse(skin).ifPresent(skins::add);
         }
         return new FisherProfile(entry.getLong("experience"), entry.getLong("spent"), nodes, caught, chests, rods,
-                heaviest, skins, freeUnlearn);
+                heaviest, skins, freeUnlearn, entry.getInt("void-dry"));
     }
 
     static void write(ConfigurationSection yaml, String path, FisherProfile profile) {
@@ -120,6 +120,9 @@ public final class ProfileStore {
         }
         yaml.set(path + ".tree-version", TREE_VERSION);
         profile.nodes().forEach((node, rank) -> yaml.set(path + ".tree." + node, rank));
+        if (profile.voidDry() > 0) {
+            yaml.set(path + ".void-dry", profile.voidDry());
+        }
         if (profile.freeUnlearn()) {
             yaml.set(path + ".free-unlearn", true);
         }

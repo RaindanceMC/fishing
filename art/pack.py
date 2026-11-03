@@ -70,7 +70,7 @@ def main():
             copy("rods/models/%s%s.json" % (rod, suffix), "models/item/rod/%s%s.json" % (rod, suffix))
         copy("rods/items/%s.json" % rod, "items/rod/%s.json" % rod)
 
-    for gear in ("bait_wriggler", "bait_shimmer", "bait_gilded", "bait_abyss", "bait_starlure", "net"):
+    for gear in ("bait_wriggler", "bait_shimmer", "bait_gilded", "bait_abyss", "bait_starlure", "bait_voidlure", "net"):
         copy("gear/textures/%s.png" % gear, "textures/item/gear/%s.png" % gear)
         copy("gear/models/%s.json" % gear, "models/item/gear/%s.json" % gear)
         item(gear.replace("bait_", "bait/"), "item/gear/" + gear)

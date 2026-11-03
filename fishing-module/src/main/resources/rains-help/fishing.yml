@@ -8,7 +8,7 @@ category: Progress & rewards
 order: 35
 module: fishing
 aliases: [fish, angling, rod, lootbox, sea chest, chests]
-keywords: [auto, afk, catch, tier, mythic, void, lava, spot, shoal, upgrade, skill, tree, perk, dish, sushi, recipe, bait, net, skin, sell]
+keywords: [voidlure, debt, auto, afk, catch, tier, mythic, void, lava, spot, shoal, upgrade, skill, tree, perk, dish, sushi, recipe, bait, net, skin, sell]
 commands: [fishing]
 sections:
   - question: What can I catch?
@@ -34,6 +34,7 @@ sections:
     title: Lava and the void
     text: |
       An ordinary line burns through in lava. Fit the <white>Ember Line</white> and your float rests on the lava like on water; watch for the wake of smoke coming at it before a bite.
+      The void keeps count: every fish it gives you that is not mythic makes the next mythic a little likelier, up to four times as likely, until one bites. Myth Lure, Void Drifter and Abyss Walker in the skill tree raise mythic catches too.
       For the void, fit the <white>Void Line</white> (fishing level {setting:fishing:rod.void-line-level|count}), stand on the edge of an End island and cast straight down into the nothing. The float hangs on a shimmering ring over the nothing; when the wake reaches it and it dips and flares, reel in.
   - question: Which rods are there?
     title: Rods
@@ -67,7 +68,7 @@ sections:
   - question: What does bait do?
     title: Bait
     text: |
-      Hold bait in your off hand: every cast takes one. <white>Wriggler Bait</white> makes fish bite a third sooner, <green>Shimmer Bait</green> brings rare fish more often, <aqua>Gilded Bait</aqua> sea chests, <light_purple>Abyss Bait</light_purple> epic catches and better, and the <gold>Starlure</gold> legendary and mythic ones.
+      Hold bait in your off hand: every cast takes one. <white>Wriggler Bait</white> makes fish bite a third sooner, <green>Shimmer Bait</green> brings rare fish more often, <aqua>Gilded Bait</aqua> sea chests, <light_purple>Abyss Bait</light_purple> epic catches and better, the <gold>Starlure</gold> legendary and mythic ones, and the <aqua>Voidlure</aqua> mythic ones alone, four times as often.
       Each is crafted from a fish of its tier and a few things from the larder; every recipe is in your recipe book.
   - question: What is a fishing net?
     title: Fishing net

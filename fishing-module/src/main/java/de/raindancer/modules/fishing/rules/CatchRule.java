@@ -175,6 +175,16 @@ public final class CatchRule implements IFishingRule {
         return band.getLast();
     }
 
+    /** What the void owes for each fish it gave up that was not mythic, as a share of a mythic's weight. */
+    static final double DEBT_STEP = 0.03;
+    /** The most the debt ever multiplies a mythic's weight by. */
+    static final double DEBT_MOST = 4.0;
+
+    /** The void's debt: a mythic's weight after {@code dry} void fish in a row that were not mythic. */
+    public static double debtFactor(int dry) {
+        return Math.min(DEBT_MOST, 1.0 + DEBT_STEP * Math.max(0, dry));
+    }
+
     /** Evenly among the kinds, except that New Waters leans toward the ones the fisher has never caught. */
     private FishKind pickKind(List<FishKind> kinds, Cast cast, Random random) {
         double unseen = perks(cast).more(Perk.NEW_KIND);
@@ -215,6 +225,9 @@ public final class CatchRule implements IFishingRule {
             }
             if (tier.atLeast(Tier.LEGENDARY)) {
                 weight *= perks.more(Perk.LEGEND);
+            }
+            if (tier == Tier.MYTHIC) {
+                weight *= perks.more(Perk.MYTHIC) * debtFactor(cast.profile().voidDry());
             }
             if (cast.inSpot() && tier.atLeast(Tier.UNCOMMON)) {
                 weight *= 1.5;

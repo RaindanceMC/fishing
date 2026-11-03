@@ -109,6 +109,7 @@ public final class ChestLootRule implements IFishingRule {
             item(Tier.LEGENDARY, 4, "netherite_upgrade_smithing_template", 1, 1),
             item(Tier.LEGENDARY, 3, "enchanted_golden_apple", 1, 1),
             book(Tier.LEGENDARY, 12, 30),
+            bait(Bait.VOIDLURE, 6, 1, 2),
             item(Tier.MYTHIC, 10, "netherite_ingot", 1, 2),
             item(Tier.MYTHIC, 8, "diamond_block", 2, 5),
             item(Tier.MYTHIC, 6, "netherite_scrap", 3, 6),
