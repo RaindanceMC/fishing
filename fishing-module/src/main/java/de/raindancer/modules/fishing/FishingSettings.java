@@ -137,7 +137,7 @@ public record FishingSettings(
             true, 2, 8, 12, 50,
             25, "100",
             40, 120, 100, 1500, 6000, 200, 5, 10, 25,
-            50, "1000",
+            100, "1000",
             "8");
 
     /** What rod upgrades cost in fishing experience, for {@link UpgradeRule}. */

@@ -1,6 +1,6 @@
 id: fishing
 title: Fishing
-summary: Thirty-odd fish in six tiers, sea chests that bite now and then, fishing spots, rod upgrades and skills — and fishing in lava and the void.
+summary: Forty fish in six tiers, sea chests, fishing spots, rod upgrades and a skill tree — and fishing in lava and the void.
 intro: |
   Throw a line anywhere and something better than cod can come up. Every kind of water has its own fish, from a <white>Pebble Trout</white> in a stream to an <white>Astral Leviathan</white> hanging in the void under the End.
 icon: FISHING_ROD
@@ -8,7 +8,7 @@ category: Progress & rewards
 order: 35
 module: fishing
 aliases: [fish, angling, rod, lootbox, sea chest, chests]
-keywords: [catch, tier, mythic, void, lava, spot, shoal, upgrade, skill, dish, sushi, recipe, bait, net, skin, sell]
+keywords: [catch, tier, mythic, void, lava, spot, shoal, upgrade, skill, tree, perk, dish, sushi, recipe, bait, net, skin, sell]
 commands: [fishing]
 sections:
   - question: What can I catch?
@@ -51,11 +51,11 @@ sections:
       Upgrades are <i>earned</i>, not bought: they cost the fishing experience you have caught your way to, and each rank needs a fishing level. Spending experience never lowers your level.
       Hold the rod and open {run:/fishing rod}. The <white>Hook</white> makes fish bite sooner, the <white>Chest Lure</white> brings more sea chests, the <white>Reel</white> brings double catches, and the <white>Line</white> opens lava and the void.
       Hook I costs {setting:fishing:rod.hook-cost|count} experience, and each further rank costs {setting:fishing:rod.cost-growth-percent|count}% of the one before, {setting:fishing:rod.levels-per-rank|count} fishing levels after the last. The Ember Line costs {setting:fishing:rod.ember-line-cost|count} (level {setting:fishing:rod.ember-line-level|count}), the Void Line {setting:fishing:rod.void-line-cost|count} (level {setting:fishing:rod.void-line-level|count}). Upgrades are written onto that rod and go wherever it goes.
-  - question: How do levels and skills work?
-    title: Levels and skills
+  - question: How do levels and the skill tree work?
+    title: Levels and the skill tree
     text: |
-      Every catch earns fishing experience, more for rarer fish and for opening chests. Levels go up to {setting:fishing:levels.highest|count}, and every level is one skill point.
-      Spend them in {run:/fishing skills}: <white>Quick Bite</white>, <white>Treasure Sense</white>, <white>Rare Instinct</white> and <white>Double Catch</white>, five ranks each. Unlearning them all costs {setting:fishing:skills.reset-fee|money} and gives every point back.
+      Every catch earns fishing experience, more for rarer fish and for opening chests. Levels go up to {setting:fishing:levels.highest|count}, and every level is one skill point; so is every sea chest tier you open for the first time and every ten kinds of fish you have caught.
+      Spend them in the skill tree, {run:/fishing skills}: five branches — <white>Tidecaller</white> (quicker bites), <white>Treasure Hunter</white> (better sea chests), <white>Collector</white> (rarer, heavier fish), <white>Ember & Void</white> (lava and the void) and <white>Fishmonger</white> (double catches, bait, the kitchen). A node needs one next to it first; each branch has one choice between two nodes (taking one shuts the other), and ends in a capstone at fishing level 60. There are more nodes than points, so pick a path. Unlearning the whole tree costs {setting:fishing:skills.reset-fee|money} and gives every point back.
   - question: What can I cook?
     title: Dishes
     text: |

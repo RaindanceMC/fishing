@@ -107,10 +107,16 @@ public final class BaitService implements IFishingService {
 
     /** A cast: one bait comes off the off hand onto this hook, if there is any. Call on the player's thread. */
     public Optional<Bait> castWith(Player player, FishHook hook) {
+        return castWith(player, hook, 0);
+    }
+
+    /** @param savePercent the chance, in percent, that the bait goes on the hook without being used up */
+    public Optional<Bait> castWith(Player player, FishHook hook, double savePercent) {
         ItemStack held = player.getInventory().getItemInOffHand();
         Optional<Bait> bait = forge.baitOf(held);
         bait.ifPresent(on -> {
-            if (player.getGameMode() != GameMode.CREATIVE) {
+            boolean saved = java.util.concurrent.ThreadLocalRandom.current().nextDouble() * 100 < savePercent;
+            if (player.getGameMode() != GameMode.CREATIVE && !saved) {
                 held.setAmount(held.getAmount() - 1);
             }
             onHooks.put(hook.getUniqueId(), on);

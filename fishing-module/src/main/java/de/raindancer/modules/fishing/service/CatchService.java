@@ -151,12 +151,18 @@ public final class CatchService implements IFishingService {
 
     /** Puts it on the player's record and tells them — and, for a whopper of a rare fish or any mythic, everybody. */
     public void credit(Player player, Catch caught) {
+        credit(player, caught, null);
+    }
+
+    /** @param water where it was caught, for the skill tree's lava and void experience; null for anywhere */
+    public void credit(Player player, Catch caught, Water water) {
         switch (caught) {
             case Catch.Fish fish -> {
-                WeightRule.Weighing weighing = weights.weigh(fish.kind(), random);
+                WeightRule.Weighing weighing = weights.weigh(fish.kind(), random,
+                        profiles.perks(player.getUniqueId()).more(de.raindancer.modules.fishing.model.Perk.WEIGHT));
                 String weight = WeightRule.format(weighing.kilos());
                 double best = profiles.of(player.getUniqueId()).heaviest(fish.kind().id());
-                profiles.caught(player, fish.kind().id(), fish.amount(), fish.tier(), weighing.kilos());
+                profiles.caught(player, fish.kind().id(), fish.amount(), fish.tier(), weighing.kilos(), water);
                 core.actionBars().show(player.getUniqueId(), "fishing", messages.get("fishing.caught.weighed",
                                 "fish", fish.kind().name(), "weight", weight)
                         .colorIfAbsent(net.kyori.adventure.text.format.TextColor.color(fish.tier().colour())),

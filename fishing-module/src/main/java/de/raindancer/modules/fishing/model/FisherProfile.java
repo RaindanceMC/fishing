@@ -11,36 +11,42 @@ import java.util.Set;
  *
  * @param experience fishing experience ever earned; the level follows from it and never goes down
  * @param spent      of that, what has gone on rod upgrades; the rest is {@link #available()}
- * @param skills     ranks bought, each 1..{@link Skill#MOST}
+ * @param nodes      skill tree ranks taken, by node id
+ * @param freeUnlearn the next unlearning costs nothing — given once to everybody whose old skills became the tree
  * @param caught     how many of each fish id they have landed
  * @param chests     how many sea chests of each tier they have opened
  * @param rods       the rod tiers they have unlocked, which they may craft and cast
  * @param heaviest   the heaviest of each fish id they have landed, in kilograms
  * @param skins      the rod skins they got from sea chest tokens (the ones earned by fishing follow from the rest)
  */
-public record FisherProfile(long experience, long spent, Map<Skill, Integer> skills, Map<String, Integer> caught,
+public record FisherProfile(long experience, long spent, Map<String, Integer> nodes, Map<String, Integer> caught,
                             Map<Tier, Integer> chests, Set<RodTier> rods,
-                            Map<String, Double> heaviest, Set<RodSkin> skins) {
+                            Map<String, Double> heaviest, Set<RodSkin> skins, boolean freeUnlearn) {
 
     public static final FisherProfile NEW = new FisherProfile(0, 0, Map.of(), Map.of(), Map.of(), Set.of(), Map.of(),
-            Set.of());
+            Set.of(), false);
 
-    public FisherProfile(long experience, long spent, Map<Skill, Integer> skills, Map<String, Integer> caught,
+    public FisherProfile(long experience, long spent, Map<String, Integer> nodes, Map<String, Integer> caught,
                          Map<Tier, Integer> chests, Set<RodTier> rods, Map<String, Double> heaviest) {
-        this(experience, spent, skills, caught, chests, rods, heaviest, Set.of());
+        this(experience, spent, nodes, caught, chests, rods, heaviest, Set.of(), false);
+    }
+
+    public FisherProfile(long experience, long spent, Map<String, Integer> nodes, Map<String, Integer> caught,
+                         Map<Tier, Integer> chests, Set<RodTier> rods, Map<String, Double> heaviest,
+                         Set<RodSkin> skins) {
+        this(experience, spent, nodes, caught, chests, rods, heaviest, skins, false);
     }
 
     public FisherProfile {
         experience = Math.max(0, experience);
         spent = Math.max(0, Math.min(experience, spent));
-        EnumMap<Skill, Integer> ranks = new EnumMap<>(Skill.class);
-        skills.forEach((skill, rank) -> {
-            int value = Math.max(0, Math.min(Skill.MOST, rank == null ? 0 : rank));
-            if (value > 0) {
-                ranks.put(skill, value);
+        Map<String, Integer> ranks = new HashMap<>();
+        nodes.forEach((node, rank) -> {
+            if (node != null && rank != null && rank > 0) {
+                ranks.put(node, rank);
             }
         });
-        skills = Map.copyOf(ranks);
+        nodes = Map.copyOf(ranks);
         Map<String, Integer> counted = new HashMap<>();
         caught.forEach((id, count) -> {
             if (count != null && count > 0) {
@@ -67,15 +73,11 @@ public record FisherProfile(long experience, long spent, Map<Skill, Integer> ski
 
     /** {@code total} spent in all; never more than was earned. */
     public FisherProfile withSpent(long total) {
-        return new FisherProfile(experience, total, skills, caught, chests, rods, heaviest, skins);
+        return new FisherProfile(experience, total, nodes, caught, chests, rods, heaviest, skins, freeUnlearn);
     }
 
-    public int rank(Skill skill) {
-        return skills.getOrDefault(skill, 0);
-    }
-
-    public int pointsSpent() {
-        return skills.values().stream().mapToInt(Integer::intValue).sum();
+    public int rank(String node) {
+        return nodes.getOrDefault(node, 0);
     }
 
     public int caught(String fishId) {
@@ -91,24 +93,29 @@ public record FisherProfile(long experience, long spent, Map<Skill, Integer> ski
     }
 
     public FisherProfile withExperience(long more) {
-        return new FisherProfile(experience + Math.max(0, more), spent, skills, caught, chests, rods, heaviest, skins);
+        return new FisherProfile(experience + Math.max(0, more), spent, nodes, caught, chests, rods, heaviest, skins,
+                freeUnlearn);
     }
 
-    public FisherProfile withSkill(Skill skill, int rank) {
-        EnumMap<Skill, Integer> changed = new EnumMap<>(Skill.class);
-        changed.putAll(skills);
-        changed.put(skill, rank);
-        return new FisherProfile(experience, spent, changed, caught, chests, rods, heaviest, skins);
+    public FisherProfile withNode(String node, int rank) {
+        Map<String, Integer> changed = new HashMap<>(nodes);
+        changed.put(node, rank);
+        return new FisherProfile(experience, spent, changed, caught, chests, rods, heaviest, skins, freeUnlearn);
     }
 
-    public FisherProfile withoutSkills() {
-        return new FisherProfile(experience, spent, Map.of(), caught, chests, rods, heaviest, skins);
+    /** Every node given back; a free unlearning is used up by it. */
+    public FisherProfile withoutNodes() {
+        return new FisherProfile(experience, spent, Map.of(), caught, chests, rods, heaviest, skins, false);
+    }
+
+    public FisherProfile withFreeUnlearn(boolean free) {
+        return new FisherProfile(experience, spent, nodes, caught, chests, rods, heaviest, skins, free);
     }
 
     public FisherProfile withCatch(String fishId, int amount) {
         Map<String, Integer> changed = new HashMap<>(caught);
         changed.merge(fishId, Math.max(0, amount), Integer::sum);
-        return new FisherProfile(experience, spent, skills, changed, chests, rods, heaviest, skins);
+        return new FisherProfile(experience, spent, nodes, changed, chests, rods, heaviest, skins, freeUnlearn);
     }
 
     public double heaviest(String fishId) {
@@ -122,7 +129,7 @@ public record FisherProfile(long experience, long spent, Map<Skill, Integer> ski
         }
         Map<String, Double> changed = new HashMap<>(heaviest);
         changed.put(fishId, kilos);
-        return new FisherProfile(experience, spent, skills, caught, chests, rods, changed, skins);
+        return new FisherProfile(experience, spent, nodes, caught, chests, rods, changed, skins, freeUnlearn);
     }
 
     public boolean hasUnlocked(RodTier rod) {
@@ -132,14 +139,14 @@ public record FisherProfile(long experience, long spent, Map<Skill, Integer> ski
     public FisherProfile withRod(RodTier rod) {
         EnumSet<RodTier> changed = rods.isEmpty() ? EnumSet.noneOf(RodTier.class) : EnumSet.copyOf(rods);
         changed.add(rod);
-        return new FisherProfile(experience, spent, skills, caught, chests, changed, heaviest, skins);
+        return new FisherProfile(experience, spent, nodes, caught, chests, changed, heaviest, skins, freeUnlearn);
     }
 
     public FisherProfile withChestOpened(Tier tier) {
         EnumMap<Tier, Integer> changed = new EnumMap<>(Tier.class);
         changed.putAll(chests);
         changed.merge(tier, 1, Integer::sum);
-        return new FisherProfile(experience, spent, skills, caught, changed, rods, heaviest, skins);
+        return new FisherProfile(experience, spent, nodes, caught, changed, rods, heaviest, skins, freeUnlearn);
     }
 
     public boolean hasSkin(RodSkin skin) {
@@ -149,6 +156,6 @@ public record FisherProfile(long experience, long spent, Map<Skill, Integer> ski
     public FisherProfile withSkin(RodSkin skin) {
         EnumSet<RodSkin> changed = skins.isEmpty() ? EnumSet.noneOf(RodSkin.class) : EnumSet.copyOf(skins);
         changed.add(skin);
-        return new FisherProfile(experience, spent, skills, caught, chests, rods, heaviest, changed);
+        return new FisherProfile(experience, spent, nodes, caught, chests, rods, heaviest, changed, freeUnlearn);
     }
 }

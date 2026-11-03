@@ -155,4 +155,33 @@ class ChestLootRuleTest {
         assertThat(ingots / 1000).isGreaterThanOrEqualTo(1.0);
         assertThat(diamonds / 1000).isGreaterThanOrEqualTo(6.0);
     }
+
+    @Test
+    @DisplayName("the opener's tree: Heavy Purse pays more, Lucky Lid now and then finds one thing more")
+    void treePerks() {
+        var tree = de.raindancer.modules.fishing.model.SkillTree.shipped();
+        var purse = tree.perks(java.util.Map.of("heavy_purse", 3));
+        Random a = new Random(40);
+        Random b = new Random(40);
+        long plain = 0;
+        long rich = 0;
+        for (int n = 0; n < 300; n++) {
+            plain += money(rule.open(Tier.RARE, 100, a));
+            rich += money(rule.open(Tier.RARE, 100, b, purse));
+        }
+        assertThat((double) rich / plain).isCloseTo(1.24, org.assertj.core.data.Offset.offset(0.02));
+
+        var lid = tree.perks(java.util.Map.of("gambler", 1, "lucky_lid", 3));
+        Random random = new Random(41);
+        int extra = 0;
+        for (int n = 0; n < 2000; n++) {
+            extra += ChestLootRule.extraRolls(lid, random);
+        }
+        assertThat(extra).isBetween(1300, 1500);
+        assertThat(ChestLootRule.extraRolls(tree.perks(java.util.Map.of("hoarder", 1)), random)).isZero();
+    }
+
+    private static long money(List<Reward> rewards) {
+        return rewards.stream().filter(Reward.Money.class::isInstance).mapToLong(r -> ((Reward.Money) r).amount()).sum();
+    }
 }

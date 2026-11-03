@@ -18,6 +18,13 @@ import java.util.List;
 public final class FishingPack {
 
     public static final String NAMESPACE = "rainsfishing";
+    /** The skill tree's frames and lines: portholes and fishing line, painted in art/tree. */
+    public static final de.raindancer.core.ui.tree.TreeLook TREE_LOOK =
+            new de.raindancer.core.ui.tree.TreeLook(net.kyori.adventure.key.Key.key(NAMESPACE, "tree"));
+    /** The branches' paintings, in this order from U+E000 in the font rainsfishing:tree_scene. */
+    static final List<String> SCENES = List.of("tidecaller", "treasure", "collector", "ember", "monger");
+    private static final net.kyori.adventure.text.format.TextColor TREE_INK =
+            net.kyori.adventure.text.format.TextColor.color(0xEAF6F2);
     static final String ROOT = "/de/raindancer/modules/fishing/pack/";
     private static final String OWNER = "Fishing";
     private static final String NAME = "looks";
@@ -49,6 +56,16 @@ public final class FishingPack {
     }
 
     /** The item model of a sea chest: whole, or the body and lid the opening animates apart. */
+    /** The painting behind a skill tree branch; the house's for a branch without one. */
+    public static de.raindancer.core.ui.menu.Backdrop treeBackdrop(String branch) {
+        int index = SCENES.indexOf(branch);
+        if (index < 0) {
+            return null;
+        }
+        return new de.raindancer.core.ui.menu.Backdrop(net.kyori.adventure.key.Key.key(NAMESPACE, "tree_scene"),
+                "\uF808" + (char) (0xE000 + index) + "\uF8A9", TREE_INK);
+    }
+
     public static String chestModel(String chest, String part) {
         return NAMESPACE + ":chest/" + chest + (part.isEmpty() ? "" : "_" + part);
     }

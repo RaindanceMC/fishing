@@ -7,6 +7,7 @@ import de.raindancer.core.ui.messages.Messages;
 import de.raindancer.modules.fishing.FishingSettings;
 import de.raindancer.modules.fishing.model.Catch;
 import de.raindancer.modules.fishing.model.Rod;
+import de.raindancer.modules.fishing.model.Perk;
 import de.raindancer.modules.fishing.model.Water;
 import de.raindancer.modules.fishing.rules.BiteRule;
 import de.raindancer.modules.fishing.rules.VoidSurfaceRule;
@@ -119,7 +120,7 @@ public final class LineService implements IFishingService {
                 flare(hook.getLocation(), line.water, 2);
                 if (line.ticks <= 0) {
                     line.phase = Phase.WAITING;
-                    line.ticks = wait(player, hook);
+                    line.ticks = wait(player, hook, line.water);
                     if (line.visual != null) {
                         line.visual.missed();
                     }
@@ -164,12 +165,20 @@ public final class LineService implements IFishingService {
             return;
         }
         line.phase = Phase.WAITING;
-        line.ticks = wait(player, hook);
+        line.ticks = wait(player, hook, line.water);
     }
 
-    private int wait(Player player, FishHook hook) {
-        return bites.customWait(catches.rodOf(player), profiles.of(player.getUniqueId()),
-                catches.inSpot(hook.getLocation()), baits.on(hook.getUniqueId()), random);
+    private int wait(Player player, FishHook hook, Water water) {
+        int ticks = bites.customWait(catches.rodOf(player), profiles.of(player.getUniqueId()),
+                catches.inSpot(hook.getLocation()), baits.on(hook.getUniqueId()), water,
+                hook.getWorld().hasStorm(), random);
+        if (water == Water.LAVA && profiles.perks(player.getUniqueId()).has(Perk.FIREPROOF)) {
+            // Fireproof: no burning while the line is in, through the wait and the bite after it.
+            int lasts = ticks + bites.biteWindowTicks() + 100;
+            Scheduling.entity(plugin, player, () -> player.addPotionEffect(new org.bukkit.potion.PotionEffect(
+                    org.bukkit.potion.PotionEffectType.FIRE_RESISTANCE, lasts, 0, true, false, true)));
+        }
+        return ticks;
     }
 
     private static boolean overVoid(Location at) {
@@ -230,7 +239,7 @@ public final class LineService implements IFishingService {
             Optional<ItemStack> stack = catches.stack(caught);
             stack.ifPresent(item -> catches.bringUp(player, at, line.water, item));
             flare(at, line.water, 20);
-            catches.credit(player, caught);
+            catches.credit(player, caught, line.water);
             player.giveExp(1 + random.nextInt(6));
         }
         return true;

@@ -95,7 +95,8 @@ public final class ChestService implements IFishingService {
             effects.play(player.getUniqueId(), Cues.NO);
             return;
         }
-        List<Reward> rewards = loot.open(tier, settings.chestMoneyMinor(), random);
+        List<Reward> rewards = loot.open(tier, settings.chestMoneyMinor(), random,
+                profiles.perks(player.getUniqueId()));
         List<ItemStack> items = new ArrayList<>();
         long money = 0;
         for (Reward reward : rewards) {

@@ -18,7 +18,7 @@ import de.raindancer.modules.fishing.rules.WaterRule;
 import de.raindancer.modules.fishing.screen.CollectionMenu;
 import de.raindancer.modules.fishing.screen.FishingRootMenu;
 import de.raindancer.modules.fishing.screen.RodMenu;
-import de.raindancer.modules.fishing.screen.SkillsMenu;
+import de.raindancer.modules.fishing.screen.SkillTreeMenu;
 import de.raindancer.modules.fishing.service.CatchService;
 import de.raindancer.modules.fishing.service.ChestService;
 import de.raindancer.modules.fishing.service.DishService;
@@ -51,7 +51,7 @@ import java.util.Random;
  */
 public final class FishingModule implements FlexModule {
 
-    private static final ModuleInfo INFO = ModuleInfo.of("fishing", "Fishing", "0.3.3")
+    private static final ModuleInfo INFO = ModuleInfo.of("fishing", "Fishing", "0.4.0")
             .describedAs("New fish in six tiers, sea chests, fishing spots, rod upgrades and skills, lava and "
                     + "void fishing, and dishes cooked from the catch.")
             .by("Raindancer118");
@@ -122,6 +122,7 @@ public final class FishingModule implements FlexModule {
         ChestService chests = new ChestService(context.plugin(), server, context.core().messages(),
                 context.core().effects(), forge, profiles, seaChests, new ChestLootRule(catalog), random, now);
         dishes = new DishService(context.plugin(), server, log, context.core().messages(), catalog, forge);
+        dishes.lastingFor(player -> profiles.perks(player).more(de.raindancer.modules.fishing.model.Perk.DISH));
         workshop = new de.raindancer.modules.fishing.service.RodWorkshopService(context.plugin(), server,
                 context.core().messages(), context.core().effects(), profiles, store, forge, catalog);
 
@@ -215,7 +216,7 @@ public final class FishingModule implements FlexModule {
 
         @Override
         public void skills(Player viewer) {
-            new SkillsMenu(services, viewer, new FishingRootMenu(services, viewer)).open();
+            new SkillTreeMenu(services, viewer, new FishingRootMenu(services, viewer)).open();
         }
 
         @Override

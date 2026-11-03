@@ -46,6 +46,13 @@ public final class DishService implements IFishingService {
     private final Catalog catalog;
     private final FishForge forge;
     private final List<NamespacedKey> registered = new ArrayList<>();
+    /** How much longer a player's dishes last, from their skill tree: 1.5 for half again. */
+    private volatile java.util.function.ToDoubleFunction<java.util.UUID> longer = player -> 1.0;
+
+    /** The Cook's perks: what makes a player's dishes last longer. */
+    public void lastingFor(java.util.function.ToDoubleFunction<java.util.UUID> longer) {
+        this.longer = longer;
+    }
 
     public DishService(Plugin plugin, Server server, LogChannel log, Messages messages, Catalog catalog,
                        FishForge forge) {
@@ -147,7 +154,8 @@ public final class DishService implements IFishingService {
                 PotionEffectType type = Registry.EFFECT.get(NamespacedKey.minecraft(
                         effect.effect().toLowerCase(Locale.ROOT)));
                 if (type != null) {
-                    player.addPotionEffect(new PotionEffect(type, effect.seconds() * 20, effect.amplifier()));
+                    int ticks = (int) Math.round(effect.seconds() * 20 * longer.applyAsDouble(player.getUniqueId()));
+                    player.addPotionEffect(new PotionEffect(type, ticks, effect.amplifier()));
                 }
             }
             if (dish.tier().atLeast(Tier.EPIC)) {

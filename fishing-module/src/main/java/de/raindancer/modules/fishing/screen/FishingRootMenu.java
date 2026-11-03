@@ -49,7 +49,7 @@ public final class FishingRootMenu extends Menu implements IFishingScreen {
         set(MenuLayout.HEADER_LEFT, Icons.of(Material.EXPERIENCE_BOTTLE,
                 "<green>Fishing level <white>" + level,
                 "<gray>" + percent + "% of the way to the next level",
-                "<gray>Skill points to spend: <white>" + services.profiles().skills().pointsLeft(profile),
+                "<gray>Skill points to spend: <white>" + services.profiles().tree().left(profile),
                 "<gray>Fishing experience to spend: <white>" + profile.available()));
 
         Rod rod = services.rods().held(viewer);
@@ -74,9 +74,12 @@ public final class FishingRootMenu extends Menu implements IFishingScreen {
         band(MenuLayout.RULES, 1, Icons.of(Material.FISHING_ROD, "<green>Rods",
                 "<gray>Six rods, one per tier. Unlock them with",
                 "<gray>fishing experience, then craft them."), click -> services.screens().rods(viewer));
-        band(MenuLayout.RULES, 3, Icons.of(Material.ENCHANTED_BOOK, "<green>Skills",
-                "<gray>Spend skill points on quicker bites,",
-                "<gray>more chests, rarer fish and double catches."), click -> services.screens().skills(viewer));
+        band(MenuLayout.RULES, 3, Icons.of(Material.ENCHANTED_BOOK, "<green>Skill tree",
+                "<gray>Five branches, sixty nodes: quicker bites,",
+                "<gray>better chests, rarer and heavier fish,",
+                "<gray>lava and the void, bait and the kitchen.",
+                "<gray>Skill points to spend: <white>" + services.profiles().tree().left(profile)),
+                click -> services.screens().skills(viewer));
         band(MenuLayout.RULES, 5, Icons.of(Material.STRING, "<green>Rod upgrades",
                 "<gray>Hook, chest lure, reel and line —",
                 "<gray>the Ember Line fishes lava, the Void Line the void."), click -> services.screens().rod(viewer));
@@ -97,7 +100,7 @@ public final class FishingRootMenu extends Menu implements IFishingScreen {
                 "Fishing spots — ripples and a big bobber on the water —",
                 "bite sooner and give better catches until they are fished out.",
                 "",
-                "Catching earns fishing experience; every level is a skill point.");
+                "Catching earns fishing experience; every level is a skill point for the skill tree.");
     }
 
     @Override

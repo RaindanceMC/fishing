@@ -20,12 +20,17 @@ public final class WeightRule implements IFishingRule {
             {0.3, 4}, {1, 10}, {3, 28}, {8, 70}, {30, 260}, {150, 1200}};
 
     public Weighing weigh(FishKind kind, Random random) {
+        return weigh(kind, random, 1.0);
+    }
+
+    /** @param heavier what the fisher's skill tree makes every fish weigh, 1.2 for a fifth more */
+    public Weighing weigh(FishKind kind, Random random, double heavier) {
         double[] range = RANGE[kind.tier().ordinal()];
         // each kind its own build: up to a fifth lighter or heavier than its tier
         double build = 0.8 + 0.4 * ((kind.id().hashCode() & 0xff) / 255.0);
         double roll = random.nextDouble();
         double kilos = (range[0] + (range[1] - range[0]) * Math.pow(roll, 2.2)) * build;
-        return new Weighing(kilos, roll >= 0.9);
+        return new Weighing(kilos * Math.max(0.1, heavier), roll >= 0.9);
     }
 
     /** What everybody hears of a catch: a rare-or-better whopper as a whopper, and every mythic fish. */

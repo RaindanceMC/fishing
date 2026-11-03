@@ -127,15 +127,31 @@ public final class ChestLootRule implements IFishingRule {
         return 2 + tier.ordinal();
     }
 
+    /** A chance of an extra find per hundred percent of it: 140 is one for sure and a 40% chance of a second. */
+    static int extraRolls(de.raindancer.modules.fishing.model.Perks perks, Random random) {
+        double chance = perks.get(de.raindancer.modules.fishing.model.Perk.CHEST_ROLL) / 100.0;
+        if (chance <= 0) {
+            return 0;
+        }
+        int sure = (int) chance;
+        return sure + (random.nextDouble() < chance - sure ? 1 : 0);
+    }
+
     /**
      * Opens a chest.
      *
      * @param moneyBase what a Driftwood chest pays, about; zero for no money at all
      */
     public List<Reward> open(Tier tier, long moneyBase, Random random) {
+        return open(tier, moneyBase, random, de.raindancer.modules.fishing.model.Perks.NONE);
+    }
+
+    /** @param perks the opener's skill tree: more money, and a chance of extra finds */
+    public List<Reward> open(Tier tier, long moneyBase, Random random, de.raindancer.modules.fishing.model.Perks perks) {
         List<Reward> rewards = new ArrayList<>();
         if (moneyBase > 0) {
-            long money = Math.round(moneyBase * MONEY[tier.ordinal()] * (0.8 + random.nextDouble() * 0.4));
+            long money = Math.round(moneyBase * MONEY[tier.ordinal()] * (0.8 + random.nextDouble() * 0.4)
+                    * perks.more(de.raindancer.modules.fishing.model.Perk.CHEST_MONEY));
             rewards.add(new Reward.Money(Math.max(1, money)));
         }
         List<FishKind> fish = catalog.fish().stream().filter(kind -> !kind.tier().atLeast(tier)
@@ -150,7 +166,7 @@ public final class ChestLootRule implements IFishingRule {
         }
         List<Entry> pool = POOL.stream().filter(entry -> entry.in(tier)).toList();
         int total = pool.stream().mapToInt(entry -> entry.weightIn(tier)).sum();
-        for (int n = 0; n < rolls(tier); n++) {
+        for (int n = 0; n < rolls(tier) + extraRolls(perks, random); n++) {
             int point = random.nextInt(total);
             for (Entry entry : pool) {
                 point -= entry.weightIn(tier);

@@ -10,6 +10,7 @@ fishing_spot/bobber.py); this only copies what they wrote.
 import json
 import os
 import shutil
+import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 PACK = os.path.join(HERE, "..", "fishing-module", "src", "main", "resources", "de", "raindancer", "modules",
@@ -84,6 +85,11 @@ def main():
         copy("fishing_spot/textures/bobber_%s.png" % kind, "textures/item/fishing_spot/bobber_%s.png" % kind)
         copy("fishing_spot/models/bobber_%s.json" % kind, "models/item/fishing_spot/bobber_%s.json" % kind)
         item("spot/bobber_" + kind, "item/fishing_spot/bobber_" + kind)
+
+    # the skill tree's portholes, fishing line and branch paintings
+    sys.path.insert(0, os.path.join(HERE, "tree"))
+    import skilltree_art
+    skilltree_art.paint()
 
     with open(os.path.join(PACK, "pack.mcmeta"), "w") as out:
         json.dump({"pack": {"description": "Rain's Fishing — fish, dishes, sea chests and fishing spots", "min_format": 88, "max_format": 97}}, out, indent=1)

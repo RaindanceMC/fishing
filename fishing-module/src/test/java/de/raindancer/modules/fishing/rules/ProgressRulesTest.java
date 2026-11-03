@@ -3,7 +3,6 @@ package de.raindancer.modules.fishing.rules;
 import de.raindancer.modules.fishing.model.FisherProfile;
 import de.raindancer.modules.fishing.model.Rod;
 import de.raindancer.modules.fishing.model.RodPart;
-import de.raindancer.modules.fishing.model.Skill;
 import de.raindancer.modules.fishing.rules.UpgradeRule.Costs;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -30,22 +29,6 @@ class ProgressRulesTest {
     }
 
     @Test
-    @DisplayName("one skill point per level, five ranks per skill at most")
-    void skillPoints() {
-        SkillRule skills = new SkillRule(levels);
-        FisherProfile fresh = FisherProfile.NEW;
-        assertThat(skills.refusal(fresh, Skill.QUICK_BITE)).contains(SkillRule.Refusal.NO_POINTS);
-
-        FisherProfile levelled = FisherProfile.NEW.withExperience(levels.experienceFor(10));
-        assertThat(skills.pointsLeft(levelled)).isEqualTo(10);
-        assertThat(skills.refusal(levelled, Skill.QUICK_BITE)).isEmpty();
-
-        FisherProfile maxed = levelled.withSkill(Skill.QUICK_BITE, 5);
-        assertThat(skills.refusal(maxed, Skill.QUICK_BITE)).contains(SkillRule.Refusal.MAXED);
-        assertThat(skills.pointsLeft(maxed)).isEqualTo(5);
-    }
-
-    @Test
     @DisplayName("waiting shrinks with the hook, quick bite and a spot, but never below a third")
     void biteTime() {
         BiteRule bite = new BiteRule();
@@ -53,8 +36,29 @@ class ProgressRulesTest {
         double hooked = bite.waitFactor(Rod.PLAIN.with(RodPart.HOOK, 5), FisherProfile.NEW, false);
         assertThat(hooked).isCloseTo(0.6, org.assertj.core.data.Offset.offset(1e-9));
         double everything = bite.waitFactor(Rod.PLAIN.with(RodPart.HOOK, 5),
-                FisherProfile.NEW.withSkill(Skill.QUICK_BITE, 5), true);
+                FisherProfile.NEW.withNode("quick_bite", 5), true);
         assertThat(everything).isGreaterThanOrEqualTo(BiteRule.FASTEST);
+    }
+
+    @Test
+    @DisplayName("the tree's waits: everywhere, in a spot, in the rain, in lava and over the void; patience waits longer")
+    void treeWaits() {
+        BiteRule bite = new BiteRule();
+        org.assertj.core.data.Offset<Double> near = org.assertj.core.data.Offset.offset(1e-9);
+        FisherProfile quick = FisherProfile.NEW.withNode("quick_bite", 5);
+        assertThat(bite.waitFactor(Rod.PLAIN, quick, false)).isCloseTo(0.7, near);
+        FisherProfile storm = FisherProfile.NEW.withNode("rain_dancer", 3);
+        assertThat(bite.waitFactor(Rod.PLAIN, storm, false, null, null, true)).isCloseTo(0.7, near);
+        assertThat(bite.waitFactor(Rod.PLAIN, storm, false, null, null, false)).isCloseTo(1.0, near);
+        FisherProfile hot = FisherProfile.NEW.withNode("strange_waters", 2);
+        assertThat(bite.waitFactor(Rod.PLAIN, hot, false, null, de.raindancer.modules.fishing.model.Water.LAVA, false))
+                .isCloseTo(0.9, near);
+        assertThat(bite.waitFactor(Rod.PLAIN, hot, false, null, de.raindancer.modules.fishing.model.Water.RIVER, false))
+                .isCloseTo(1.0, near);
+        FisherProfile patient = FisherProfile.NEW.withNode("patience", 1);
+        assertThat(bite.waitFactor(Rod.PLAIN, patient, false)).isCloseTo(1.2, near);
+        FisherProfile spotter = FisherProfile.NEW.withNode("spot_reader", 3);
+        assertThat(bite.waitFactor(Rod.PLAIN, spotter, true)).isCloseTo(0.8 * 0.76, near);
     }
 
     @Test

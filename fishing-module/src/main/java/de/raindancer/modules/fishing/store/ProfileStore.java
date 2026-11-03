@@ -3,7 +3,6 @@ package de.raindancer.modules.fishing.store;
 import de.raindancer.core.data.store.KeyedDocument;
 import de.raindancer.core.data.store.YamlStore;
 import de.raindancer.modules.fishing.model.FisherProfile;
-import de.raindancer.modules.fishing.model.Skill;
 import de.raindancer.modules.fishing.model.Tier;
 import org.bukkit.configuration.ConfigurationSection;
 
@@ -22,6 +21,8 @@ import java.util.function.UnaryOperator;
 public final class ProfileStore {
 
     private static final String SECTION = "fishers";
+    /** Written with every entry: its ranks are under "tree", not the old "skills". */
+    static final int TREE_VERSION = 2;
 
     private final KeyedDocument<FisherProfile> document;
 
@@ -68,13 +69,17 @@ public final class ProfileStore {
         if (entry == null) {
             return null;
         }
-        Map<Skill, Integer> skills = new EnumMap<>(Skill.class);
-        ConfigurationSection skillSection = entry.getConfigurationSection("skills");
-        if (skillSection != null) {
-            for (String key : skillSection.getKeys(false)) {
-                Skill.parse(key).ifPresent(skill -> skills.put(skill, skillSection.getInt(key)));
+        // Before the skill tree (Fishing 0.4.0) there were four skills under "skills"; each became the tree node of
+        // the same name, and their owners get one free unlearning to spend their points on the new tree.
+        boolean tree = entry.getInt("tree-version") >= TREE_VERSION;
+        Map<String, Integer> nodes = new HashMap<>();
+        ConfigurationSection nodeSection = entry.getConfigurationSection(tree ? "tree" : "skills");
+        if (nodeSection != null) {
+            for (String key : nodeSection.getKeys(false)) {
+                nodes.put(key, nodeSection.getInt(key));
             }
         }
+        boolean freeUnlearn = tree ? entry.getBoolean("free-unlearn") : !nodes.isEmpty();
         Map<String, Integer> caught = new HashMap<>();
         ConfigurationSection caughtSection = entry.getConfigurationSection("caught");
         if (caughtSection != null) {
@@ -104,8 +109,8 @@ public final class ProfileStore {
         for (String skin : entry.getStringList("skins")) {
             de.raindancer.modules.fishing.model.RodSkin.parse(skin).ifPresent(skins::add);
         }
-        return new FisherProfile(entry.getLong("experience"), entry.getLong("spent"), skills, caught, chests, rods,
-                heaviest, skins);
+        return new FisherProfile(entry.getLong("experience"), entry.getLong("spent"), nodes, caught, chests, rods,
+                heaviest, skins, freeUnlearn);
     }
 
     static void write(ConfigurationSection yaml, String path, FisherProfile profile) {
@@ -113,7 +118,11 @@ public final class ProfileStore {
         if (profile.spent() > 0) {
             yaml.set(path + ".spent", profile.spent());
         }
-        profile.skills().forEach((skill, rank) -> yaml.set(path + ".skills." + skill.id(), rank));
+        yaml.set(path + ".tree-version", TREE_VERSION);
+        profile.nodes().forEach((node, rank) -> yaml.set(path + ".tree." + node, rank));
+        if (profile.freeUnlearn()) {
+            yaml.set(path + ".free-unlearn", true);
+        }
         profile.caught().forEach((fish, count) -> yaml.set(path + ".caught." + fish, count));
         profile.chests().forEach((tier, count) -> yaml.set(path + ".chests." + tier.id(), count));
         profile.heaviest().forEach((fish, kilos) -> yaml.set(path + ".heaviest." + fish, kilos));

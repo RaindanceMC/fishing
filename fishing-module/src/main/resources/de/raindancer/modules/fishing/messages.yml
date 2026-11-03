@@ -63,6 +63,10 @@ fishing:
     not-enough: "<red>The <white><rod></white> needs <white><cost></white> fishing experience, and you have <white><have></white> to spend."
     not-yours: "<red>The <white><rod></white> is not unlocked for you yet — see <white>/fishing rods</white>."
 
+  tree:
+    learnt: "<green><white><node></white> is now rank <white><rank></white>."
+    refused: "<red><white><node></white>: <reason>"
+
   skills:
     learnt: "<green><white><skill></white> is now rank <white><rank></white>."
     maxed: "<red><white><skill></white> is at its highest rank already."
@@ -70,7 +74,7 @@ fishing:
     nothing-to-unlearn: "<red>You have not learnt any fishing skill yet."
     reset-not-paid: "<red>Unlearning costs <white><price></white>, and it could not be taken."
     reset-failed: "<red>Your skills could not be reset just now; your money went back to you."
-    reset: "<green>Every skill unlearnt. <white><points></white> point(s) to spend again."
+    reset: "<green>The whole skill tree unlearnt. <white><points></white> point(s) to spend again."
 
   screen:
     you: "<aqua><bold>Your fishing</bold></aqua><newline><gray>Level <white><level></white> · <white><next></white> experience to the next<newline><gray>Fish landed: <white><landed></white> · kinds <white><kinds></white>/<white><of></white><newline><gray>Heaviest: <white><best></white><newline><gray>Sea chests opened: <white><chests></white>"

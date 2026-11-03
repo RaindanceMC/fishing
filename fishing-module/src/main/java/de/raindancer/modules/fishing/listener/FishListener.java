@@ -65,9 +65,10 @@ public final class FishListener implements IFishingListener {
     private void cast(Player player, FishHook hook) {
         // An anvil may have put a fishing enchantment on since: the lore says what the rod does now.
         services.forge().describe(services.catches().rodStack(player));
-        Bait bait = services.baits().castWith(player, hook).orElse(null);
+        Bait bait = services.baits().castWith(player, hook, services.profiles().perks(player.getUniqueId())
+                .get(de.raindancer.modules.fishing.model.Perk.BAIT_SAVE)).orElse(null);
         double factor = bites.waitFactor(services.catches().rodOf(player),
-                services.profiles().of(player.getUniqueId()), false, bait);
+                services.profiles().of(player.getUniqueId()), false, bait, null, player.getWorld().hasStorm());
         if (factor < 1.0) {
             int least = Math.max(1, (int) Math.round(hook.getMinWaitTime() * factor));
             int most = Math.max(least, (int) Math.round(hook.getMaxWaitTime() * factor));
@@ -92,7 +93,7 @@ public final class FishListener implements IFishingListener {
         // never into a neighbour's hands; a full bag puts the rest at the fisher's feet.
         item.remove();
         services.catches().bringUp(player, hook.getLocation(), water, landed);
-        services.catches().credit(player, caught);
+        services.catches().credit(player, caught, water);
     }
 
     @EventHandler

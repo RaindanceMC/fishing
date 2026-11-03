@@ -66,4 +66,14 @@ class WeightRuleTest {
         assertThat(WeightRule.format(312.47)).isEqualTo("312.5 kg");
         assertThat(WeightRule.format(0.08)).isEqualTo("80 g");
     }
+
+    @Test
+    @DisplayName("Heavy Hands makes the same fish heavier, without making it a whopper any more often")
+    void heavier() {
+        var kind = de.raindancer.modules.fishing.store.CatalogReader.shipped().fish().getFirst();
+        var plain = rule.weigh(kind, new java.util.Random(3));
+        var heavy = rule.weigh(kind, new java.util.Random(3), 1.12);
+        assertThat(heavy.kilos()).isCloseTo(plain.kilos() * 1.12, org.assertj.core.data.Offset.offset(1e-9));
+        assertThat(heavy.whopper()).isEqualTo(plain.whopper());
+    }
 }

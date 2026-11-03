@@ -30,7 +30,7 @@ class FishingSettingsTest {
         assertThat(defaults.levelsPerRank()).isEqualTo(5);
         assertThat(defaults.emberLineLevel()).isEqualTo(10);
         assertThat(defaults.voidLineLevel()).isEqualTo(25);
-        assertThat(defaults.highestLevel()).isEqualTo(50);
+        assertThat(defaults.highestLevel()).isEqualTo(100);
         assertThat(defaults.skillResetFee()).isEqualTo("1000");
     }
 

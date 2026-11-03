@@ -1,0 +1,56 @@
+{
+ "providers": [
+  {
+   "type": "bitmap",
+   "file": "rainsfishing:font/tree_scene/tidecaller.png",
+   "ascent": 13,
+   "height": 222,
+   "chars": [
+    "\ue000"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "rainsfishing:font/tree_scene/treasure.png",
+   "ascent": 13,
+   "height": 222,
+   "chars": [
+    "\ue001"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "rainsfishing:font/tree_scene/collector.png",
+   "ascent": 13,
+   "height": 222,
+   "chars": [
+    "\ue002"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "rainsfishing:font/tree_scene/ember.png",
+   "ascent": 13,
+   "height": 222,
+   "chars": [
+    "\ue003"
+   ]
+  },
+  {
+   "type": "bitmap",
+   "file": "rainsfishing:font/tree_scene/monger.png",
+   "ascent": 13,
+   "height": 222,
+   "chars": [
+    "\ue004"
+   ]
+  },
+  {
+   "type": "space",
+   "advances": {
+    "\uf808": -8,
+    "\uf8a9": -169
+   }
+  }
+ ]
+}

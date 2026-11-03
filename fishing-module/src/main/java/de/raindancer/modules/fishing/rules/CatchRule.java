@@ -7,7 +7,9 @@ import de.raindancer.modules.fishing.model.FishKind;
 import de.raindancer.modules.fishing.model.FisherProfile;
 import de.raindancer.modules.fishing.model.Rod;
 import de.raindancer.modules.fishing.model.RodPart;
-import de.raindancer.modules.fishing.model.Skill;
+import de.raindancer.modules.fishing.model.Perk;
+import de.raindancer.modules.fishing.model.Perks;
+import de.raindancer.modules.fishing.model.SkillTree;
 import de.raindancer.modules.fishing.model.Tier;
 import de.raindancer.modules.fishing.model.Water;
 
@@ -61,15 +63,30 @@ public final class CatchRule implements IFishingRule {
     }
 
     private final Catalog catalog;
+    private final SkillTree tree;
 
     public CatchRule(Catalog catalog) {
+        this(catalog, SkillTree.shipped());
+    }
+
+    public CatchRule(Catalog catalog, SkillTree tree) {
         this.catalog = catalog;
+        this.tree = tree;
+    }
+
+    private Perks perks(Cast cast) {
+        return tree.perks(cast.profile().nodes());
     }
 
     public Catch roll(Cast cast, Random random) {
         if (random.nextInt(1000) < chestPermille(cast)) {
             List<Tier> band = chestBand(cast.water(), cast.spotTier());
-            return new Catch.Chest(pickTier(band, cast, random));
+            Tier tier = pickTier(band, cast, random);
+            int at = band.indexOf(tier);
+            if (at + 1 < band.size() && random.nextDouble() * 100 < perks(cast).get(Perk.CHEST_UP)) {
+                tier = band.get(at + 1);
+            }
+            return new Catch.Chest(tier);
         }
         if (!cast.vanillaWasFish() && !cast.water().needsSpecialLine()) {
             return new Catch.Vanilla();
@@ -87,10 +104,14 @@ public final class CatchRule implements IFishingRule {
 
     /** The chance of a sea chest on this cast, out of 1000. */
     public int chestPermille(Cast cast) {
+        Perks perks = perks(cast);
         int chance = Math.max(0, cast.chestPermille())
                 + cast.rod().rank(RodPart.LURE) * 15
                 + cast.rod().ownChestPermille()
-                + cast.profile().rank(Skill.TREASURE_SENSE) * 10
+                + (int) Math.round(perks.get(Perk.CHEST)
+                + (cast.inSpot() ? perks.get(Perk.SPOT_CHEST) : 0)
+                + (cast.water() == Water.LAVA ? perks.get(Perk.LAVA_CHEST) : 0)
+                + (cast.water() == Water.VOID ? perks.get(Perk.VOID_CHEST) : 0))
                 + (cast.inSpot() ? Math.max(0, cast.spotChestPermille()) : 0)
                 + (cast.bait() == null ? 0 : cast.bait().chestPermille());
         return Math.min(1000, chance);
@@ -98,8 +119,8 @@ public final class CatchRule implements IFishingRule {
 
     /** The chance a fish comes up as two, out of 1000. */
     public int doublePermille(Cast cast) {
-        return Math.min(1000, cast.rod().rank(RodPart.REEL) * 50 + cast.rod().ownDoublePermille()
-                + cast.profile().rank(Skill.DOUBLE_CATCH) * 40);
+        return Math.max(0, Math.min(1000, cast.rod().rank(RodPart.REEL) * 50 + cast.rod().ownDoublePermille()
+                + (int) Math.round(perks(cast).get(Perk.DOUBLE))));
     }
 
     /** Which sea chests can bite in a water, lowest first. */
@@ -152,7 +173,10 @@ public final class CatchRule implements IFishingRule {
     }
 
     private Tier pickTier(List<Tier> allowed, Cast cast, Random random) {
-        double instinct = 1.0 + 0.10 * cast.profile().rank(Skill.RARE_INSTINCT) + cast.rod().ownRareBonus();
+        Perks perks = perks(cast);
+        boolean hot = cast.water() == Water.LAVA || cast.water() == Water.VOID;
+        double instinct = Math.max(0.1, 1.0 + (perks.get(Perk.RARE) + (cast.inSpot() ? perks.get(Perk.SPOT_RARE) : 0)
+                + (hot ? perks.get(Perk.HOT_RARE) : 0)) / 100.0 + cast.rod().ownRareBonus());
         double total = 0;
         double[] weights = new double[allowed.size()];
         for (int n = 0; n < allowed.size(); n++) {
@@ -160,6 +184,12 @@ public final class CatchRule implements IFishingRule {
             double weight = WEIGHTS.get(tier);
             if (tier.atLeast(Tier.RARE)) {
                 weight *= instinct;
+            }
+            if (tier.atLeast(Tier.EPIC)) {
+                weight *= perks.more(Perk.EPIC);
+            }
+            if (tier.atLeast(Tier.LEGENDARY)) {
+                weight *= perks.more(Perk.LEGEND);
             }
             if (cast.inSpot() && tier.atLeast(Tier.UNCOMMON)) {
                 weight *= 1.5;

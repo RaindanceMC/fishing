@@ -9,10 +9,14 @@ import de.raindancer.core.ui.effect.Effects;
 import de.raindancer.core.ui.messages.Messages;
 import de.raindancer.modules.fishing.FishingSettings;
 import de.raindancer.modules.fishing.model.FisherProfile;
-import de.raindancer.modules.fishing.model.Skill;
+import de.raindancer.modules.fishing.model.Perk;
+import de.raindancer.modules.fishing.model.Perks;
+import de.raindancer.modules.fishing.model.SkillTree;
+import de.raindancer.modules.fishing.model.TreeNode;
+import de.raindancer.modules.fishing.model.Water;
 import de.raindancer.modules.fishing.model.Tier;
 import de.raindancer.modules.fishing.rules.LevelRule;
-import de.raindancer.modules.fishing.rules.SkillRule;
+import de.raindancer.modules.fishing.rules.TreeRule;
 import de.raindancer.modules.fishing.store.ProfileStore;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -35,7 +39,7 @@ public final class ProfileService implements IFishingService {
     private final Messages messages;
     private final Effects effects;
     private volatile LevelRule levels;
-    private volatile SkillRule skills;
+    private volatile TreeRule tree;
 
     public ProfileService(Plugin plugin, ProfileStore store, Messages messages, Effects effects,
                           FishingSettings settings) {
@@ -49,15 +53,19 @@ public final class ProfileService implements IFishingService {
     @Override
     public void settings(FishingSettings settings) {
         levels = new LevelRule(settings.highestLevel());
-        skills = new SkillRule(levels);
+        tree = new TreeRule(levels, SkillTree.shipped());
     }
 
     public LevelRule levels() {
         return levels;
     }
 
-    public SkillRule skills() {
-        return skills;
+    public TreeRule tree() {
+        return tree;
+    }
+
+    public Perks perks(UUID player) {
+        return tree.perks(of(player));
     }
 
     public FisherProfile of(UUID player) {
@@ -70,8 +78,20 @@ public final class ProfileService implements IFishingService {
 
     /** Records a catch of fish and its experience, and announces a level reached. */
     public void caught(Player player, String fishId, int amount, Tier tier, double kilos) {
+        caught(player, fishId, amount, tier, kilos, null);
+    }
+
+    /** @param water where it was caught, for the tree's lava and void experience; null for anywhere */
+    public void caught(Player player, String fishId, int amount, Tier tier, double kilos, Water water) {
         reward(player, profile -> profile.withCatch(fishId, amount).withWeight(fishId, kilos),
-                (long) tier.experience() * amount);
+                experience(player.getUniqueId(), (long) tier.experience() * amount, water));
+    }
+
+    /** Experience after the tree's perks. */
+    long experience(UUID player, long plain, Water water) {
+        Perks perks = perks(player);
+        boolean hot = water == Water.LAVA || water == Water.VOID;
+        return Math.round(plain * perks.more(Perk.XP) * (hot ? perks.more(Perk.HOT_XP) : 1.0));
     }
 
     /** Staff granting fishing experience by hand. */
@@ -80,7 +100,8 @@ public final class ProfileService implements IFishingService {
     }
 
     public void openedChest(Player player, Tier tier) {
-        reward(player, profile -> profile.withChestOpened(tier), tier.experience() * 2L);
+        reward(player, profile -> profile.withChestOpened(tier),
+                experience(player.getUniqueId(), tier.experience() * 2L, null));
     }
 
     private void reward(Player player, UnaryOperator<FisherProfile> change, long experience) {
@@ -93,7 +114,7 @@ public final class ProfileService implements IFishingService {
                 back(player, () -> {
                     effects.play(id, Cues.EARNED);
                     messages.send(player, "fishing.level-up", "level", String.valueOf(after),
-                            "points", String.valueOf(skills.pointsLeft(of(id))));
+                            "points", String.valueOf(tree.left(of(id))));
                 });
             }
         });
@@ -112,17 +133,22 @@ public final class ProfileService implements IFishingService {
         });
     }
 
-    public void learn(Player player, Skill skill, Consumer<Optional<SkillRule.Refusal>> then) {
+    /**
+     * Takes another rank of a skill tree node. {@code then} hears, on the player's thread, empty when it went
+     * through, else why not.
+     */
+    public void learn(Player player, TreeNode node, Consumer<Optional<TreeRule.Refusal>> then) {
         UUID id = player.getUniqueId();
-        Optional<SkillRule.Refusal> refusal = skills.refusal(of(id), skill);
+        TreeRule rule = tree;
+        Optional<TreeRule.Refusal> refusal = rule.refusal(of(id), node);
         if (refusal.isPresent()) {
             then.accept(refusal);
             return;
         }
         Scheduling.async(plugin, () -> {
-            boolean written = store.change(id, profile -> skills.refusal(profile, skill).isPresent()
-                    ? profile : profile.withSkill(skill, profile.rank(skill) + 1));
-            Optional<SkillRule.Refusal> outcome = written ? Optional.empty() : Optional.of(SkillRule.Refusal.NO_POINTS);
+            boolean written = store.change(id, profile -> rule.refusal(profile, node).isPresent()
+                    ? profile : profile.withNode(node.id(), profile.rank(node.id()) + 1));
+            Optional<TreeRule.Refusal> outcome = written ? Optional.empty() : Optional.of(TreeRule.Refusal.NO_POINTS);
             back(player, () -> then.accept(outcome));
         });
     }
@@ -130,13 +156,15 @@ public final class ProfileService implements IFishingService {
     /** Takes every skill point back for the fee; tells the player how it went, then runs {@code then}. */
     public void unlearnAll(Player player, String fee, Runnable then) {
         UUID id = player.getUniqueId();
-        if (of(id).pointsSpent() == 0) {
+        FisherProfile before = of(id);
+        if (before.nodes().isEmpty()) {
             messages.send(player, "fishing.skills.nothing-to-unlearn");
             effects.play(id, Cues.NO);
             then.run();
             return;
         }
-        Money price = Fees.amount(fee);
+        // Once for everybody whose four old skills became the tree: their points are theirs to place anew.
+        Money price = before.freeUnlearn() ? Fees.amount("0") : Fees.amount(fee);
         Scheduling.async(plugin, () -> {
             EconomyResult paid = Fees.charge(id, price, "Unlearning fishing skills", "fishing.skill-reset");
             if (!paid.succeeded()) {
@@ -147,7 +175,7 @@ public final class ProfileService implements IFishingService {
                 });
                 return;
             }
-            if (!store.change(id, FisherProfile::withoutSkills)) {
+            if (!store.change(id, FisherProfile::withoutNodes)) {
                 Fees.refund(id, paid.amount(), "Unlearning fishing skills", "fishing.skill-reset");
                 back(player, () -> {
                     messages.send(player, "fishing.skills.reset-failed");
@@ -158,7 +186,7 @@ public final class ProfileService implements IFishingService {
             back(player, () -> {
                 effects.play(id, Cues.OK);
                 messages.send(player, "fishing.skills.reset", "points",
-                        String.valueOf(skills.pointsLeft(of(id))));
+                        String.valueOf(tree.left(of(id))));
                 then.run();
             });
         });
