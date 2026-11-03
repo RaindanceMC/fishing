@@ -2,8 +2,10 @@ package de.raindancer.modules.fishing.rules;
 
 import de.raindancer.core.ui.tree.TreeGrid;
 import de.raindancer.modules.fishing.model.Perk;
-import de.raindancer.modules.fishing.model.SkillTree;
-import de.raindancer.modules.fishing.model.TreeNode;
+import de.raindancer.core.ui.tree.SkillTree;
+import de.raindancer.modules.fishing.model.FishingTree;
+import de.raindancer.core.ui.tree.TreeNode;
+import de.raindancer.modules.fishing.model.Perks;
 import org.bukkit.Material;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,7 +20,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class SkillTreeTest {
 
-    private final SkillTree tree = SkillTree.shipped();
+    private final SkillTree tree = FishingTree.shipped();
 
     @Test
     @DisplayName("five branches of fifteen nodes, filling their branch's five by three grid")
@@ -72,16 +74,16 @@ class SkillTreeTest {
             assertThat(node.ranks()).isEqualTo(1);
             assertThat(node.level()).isPositive();
         }
-        assertThat(tree.perks(Map.of("auto_reel", 1)).has(Perk.AUTO_REEL)).isTrue();
-        assertThat(tree.perks(Map.of("auto_rethrow", 1)).has(Perk.AUTO_RETHROW)).isTrue();
-        assertThat(tree.perks(Map.of("auto_reel", 1)).has(Perk.AUTO_RETHROW)).isFalse();
+        assertThat(Perks.from(tree, Map.of("auto_reel", 1)).has(Perk.AUTO_REEL)).isTrue();
+        assertThat(Perks.from(tree, Map.of("auto_rethrow", 1)).has(Perk.AUTO_RETHROW)).isTrue();
+        assertThat(Perks.from(tree, Map.of("auto_reel", 1)).has(Perk.AUTO_RETHROW)).isFalse();
     }
 
     @Test
     @DisplayName("every perk there is is given by some node, so none is dead code")
     void everyPerkIsUsed() {
         Set<Perk> given = new HashSet<>();
-        tree.nodes().forEach(node -> given.addAll(node.perks().keySet()));
+        tree.nodes().forEach(node -> node.effects().keySet().forEach(id -> given.add(Perk.parse(id).orElseThrow())));
         assertThat(given).containsExactlyInAnyOrder(Perk.values());
     }
 
@@ -133,7 +135,7 @@ class SkillTreeTest {
     void iconsAndPerks() {
         for (TreeNode node : tree.nodes()) {
             assertThat(Material.matchMaterial(node.icon())).as(node.id() + " " + node.icon()).isNotNull();
-            assertThat(node.perks()).as(node.id()).isNotEmpty();
+            assertThat(node.effects()).as(node.id()).isNotEmpty();
         }
         assertThat(tree.branches()).allSatisfy(branch ->
                 assertThat(Material.matchMaterial(branch.icon())).as(branch.id()).isNotNull());
@@ -153,11 +155,19 @@ class SkillTreeTest {
     @Test
     @DisplayName("perks add up rank by rank across the tree")
     void perksAddUp() {
-        var perks = tree.perks(Map.of("quick_bite", 3, "patience", 1, "rare_instinct", 2));
+        var perks = Perks.from(tree, Map.of("quick_bite", 3, "patience", 1, "rare_instinct", 2));
         assertThat(perks.get(Perk.WAIT)).isEqualTo(18 - 20);
         assertThat(perks.get(Perk.RARE)).isEqualTo(25 + 20);
         assertThat(perks.get(Perk.CHEST)).isZero();
-        assertThat(tree.perks(Map.of("gone", 3, "quick_bite", 9)).get(Perk.WAIT)).isEqualTo(30);
+        assertThat(Perks.from(tree, Map.of("gone", 3, "quick_bite", 9)).get(Perk.WAIT)).isEqualTo(30);
+    }
+
+    @Test
+    @DisplayName("effects become perks by id; an id that is no perk counts for nothing")
+    void effectsToPerks() {
+        Perks perks = Perks.of(Map.of("wait", 5.0, "Chest", 20.0, "nonsense", 9.0));
+        assertThat(perks.values()).containsOnlyKeys(Perk.WAIT, Perk.CHEST);
+        assertThat(perks.get(Perk.CHEST)).isEqualTo(20);
     }
 
     @Test
@@ -166,13 +176,13 @@ class SkillTreeTest {
         assertThatThrownBy(() -> SkillTree.read("""
                 branches: {a: {title: A, icon: stone}}
                 nodes:
-                  x: {branch: a, at: [0, 0], title: X, icon: stone, perks: {wait: 1}}
-                  y: {branch: a, at: [2, 0], title: Y, icon: stone, requires: [x], perks: {wait: 1}}
-                """)).hasMessageContaining("y");
+                  x: {branch: a, at: [0, 0], title: X, icon: stone, effects: {wait: 1}}
+                  y: {branch: a, at: [2, 0], title: Y, icon: stone, requires: [x], effects: {wait: 1}}
+                """, Perk::known)).hasMessageContaining("y");
         assertThatThrownBy(() -> SkillTree.read("""
                 branches: {a: {title: A, icon: stone}}
                 nodes:
-                  x: {branch: a, at: [0, 0], title: X, icon: stone, perks: {nonsense: 1}}
-                """)).hasMessageContaining("nonsense");
+                  x: {branch: a, at: [0, 0], title: X, icon: stone, effects: {nonsense: 1}}
+                """, Perk::known)).hasMessageContaining("nonsense");
     }
 }

@@ -7,11 +7,12 @@ import de.raindancer.core.social.economy.Money;
 import de.raindancer.core.ui.effect.Cues;
 import de.raindancer.core.ui.effect.Effects;
 import de.raindancer.core.ui.messages.Messages;
+import de.raindancer.core.ui.tree.SkillTree;
+import de.raindancer.core.ui.tree.TreeNode;
 import de.raindancer.modules.fishing.FishingSettings;
 import de.raindancer.modules.fishing.model.FisherProfile;
+import de.raindancer.modules.fishing.model.FishingTree;
 import de.raindancer.modules.fishing.model.Perks;
-import de.raindancer.modules.fishing.model.SkillTree;
-import de.raindancer.modules.fishing.model.TreeNode;
 import de.raindancer.modules.fishing.model.Water;
 import de.raindancer.modules.fishing.model.Tier;
 import de.raindancer.modules.fishing.rules.LevelRule;
@@ -55,7 +56,7 @@ public final class ProfileService implements IFishingService {
     @Override
     public void settings(FishingSettings settings) {
         levels = new LevelRule(settings.highestLevel());
-        tree = new TreeRule(levels, SkillTree.shipped());
+        tree = new TreeRule(levels, FishingTree.shipped());
     }
 
     public LevelRule levels() {
@@ -137,10 +138,10 @@ public final class ProfileService implements IFishingService {
      * Takes another rank of a skill tree node. {@code then} hears, on the player's thread, empty when it went
      * through, else why not.
      */
-    public void learn(Player player, TreeNode node, Consumer<Optional<TreeRule.Refusal>> then) {
+    public void learn(Player player, TreeNode node, Consumer<Optional<SkillTree.Refusal>> then) {
         UUID id = player.getUniqueId();
         TreeRule rule = tree;
-        Optional<TreeRule.Refusal> refusal = rule.refusal(of(id), node);
+        Optional<SkillTree.Refusal> refusal = rule.refusal(of(id), node);
         if (refusal.isPresent()) {
             then.accept(refusal);
             return;
@@ -148,7 +149,7 @@ public final class ProfileService implements IFishingService {
         Scheduling.async(plugin, () -> {
             boolean written = store.change(id, profile -> rule.refusal(profile, node).isPresent()
                     ? profile : profile.withNode(node.id(), profile.rank(node.id()) + 1));
-            Optional<TreeRule.Refusal> outcome = written ? Optional.empty() : Optional.of(TreeRule.Refusal.NO_POINTS);
+            Optional<SkillTree.Refusal> outcome = written ? Optional.empty() : Optional.of(SkillTree.Refusal.NO_POINTS);
             back(player, () -> then.accept(outcome));
         });
     }

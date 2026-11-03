@@ -1,6 +1,6 @@
 # The fishing skill tree. Five branches, each filling five columns by three rows (at: [column, row]); a node needs ONE of
 # what it `requires` (a neighbour in its branch, which the menu joins with a line) and is shut while one of what it
-# `excludes` is taken. `perks` are per rank (see Perk.java for what each means); `cost` is skill points per rank.
+# `excludes` is taken. `effects` are per rank, by perk id (see Perk.java for what each means); `cost` is skill points per rank.
 # `legacy` carries the old skill of that name over, rank for rank.
 branches:
   tidecaller:
@@ -26,86 +26,86 @@ branches:
 
 nodes:
   # ---------------------------------------------------------------- Tidecaller
-  quick_bite: {branch: tidecaller, at: [0, 1], title: Quick Bite, icon: clock, ranks: 5, perks: {wait: 6}, legacy: quick_bite}
-  swift_reel: {branch: tidecaller, at: [1, 0], title: Swift Reel, icon: fishing_rod, ranks: 3, requires: [quick_bite], perks: {wait: 3}}
-  spot_reader: {branch: tidecaller, at: [1, 2], title: Spot Reader, icon: spyglass, ranks: 3, requires: [quick_bite], perks: {spot_wait: 8}}
-  shoal_sense: {branch: tidecaller, at: [2, 1], title: Shoal Sense, icon: prismarine_crystals, ranks: 3, requires: [swift_reel, spot_reader], perks: {spot_rare: 10}}
-  patience: {branch: tidecaller, at: [2, 0], title: Patience, icon: recovery_compass, choice: true, cost: 2, requires: [swift_reel], excludes: [frenzy], perks: {wait: -20, rare: 25}}
-  frenzy: {branch: tidecaller, at: [2, 2], title: Frenzy, icon: blaze_powder, choice: true, cost: 2, requires: [spot_reader], excludes: [patience], perks: {wait: 20, rare: -10}}
-  rain_dancer: {branch: tidecaller, at: [3, 0], title: Rain Dancer, icon: water_bucket, ranks: 3, requires: [patience, shoal_sense], perks: {storm_wait: 10}}
-  tide_lore: {branch: tidecaller, at: [3, 1], title: Tide Lore, icon: book, ranks: 3, requires: [shoal_sense], perks: {xp: 5}}
-  quick_hands: {branch: tidecaller, at: [3, 2], title: Quick Hands, icon: lead, ranks: 3, requires: [frenzy, shoal_sense], perks: {double: 20}}
-  deep_current: {branch: tidecaller, at: [4, 0], title: Deep Current, icon: nautilus_shell, ranks: 2, requires: [rain_dancer], perks: {rare: 5}}
-  stormcaller: {branch: tidecaller, at: [4, 1], title: Stormcaller, icon: trident, capstone: true, cost: 3, level: 60, requires: [rain_dancer, tide_lore, quick_hands], perks: {wait: 15, storm_wait: 25}}
-  twin_tides: {branch: tidecaller, at: [4, 2], title: Twin Tides, icon: lily_pad, ranks: 2, requires: [quick_hands], perks: {double: 30}}
-  auto_reel: {branch: tidecaller, at: [1, 1], title: Auto-Reel, icon: tripwire_hook, cost: 2, level: 25, requires: [quick_bite], perks: {auto_reel: 1}}
-  auto_rethrow: {branch: tidecaller, at: [0, 0], title: Auto-Rethrow, icon: dispenser, cost: 2, level: 35, requires: [quick_bite], perks: {auto_rethrow: 1}}
-  night_owl: {branch: tidecaller, at: [0, 2], title: Night Owl, icon: lantern, ranks: 3, requires: [quick_bite], perks: {night_wait: 8}}
+  quick_bite: {branch: tidecaller, at: [0, 1], title: Quick Bite, icon: clock, ranks: 5, effects: {wait: 6}, legacy: quick_bite}
+  swift_reel: {branch: tidecaller, at: [1, 0], title: Swift Reel, icon: fishing_rod, ranks: 3, requires: [quick_bite], effects: {wait: 3}}
+  spot_reader: {branch: tidecaller, at: [1, 2], title: Spot Reader, icon: spyglass, ranks: 3, requires: [quick_bite], effects: {spot_wait: 8}}
+  shoal_sense: {branch: tidecaller, at: [2, 1], title: Shoal Sense, icon: prismarine_crystals, ranks: 3, requires: [swift_reel, spot_reader], effects: {spot_rare: 10}}
+  patience: {branch: tidecaller, at: [2, 0], title: Patience, icon: recovery_compass, choice: true, cost: 2, requires: [swift_reel], excludes: [frenzy], effects: {wait: -20, rare: 25}}
+  frenzy: {branch: tidecaller, at: [2, 2], title: Frenzy, icon: blaze_powder, choice: true, cost: 2, requires: [spot_reader], excludes: [patience], effects: {wait: 20, rare: -10}}
+  rain_dancer: {branch: tidecaller, at: [3, 0], title: Rain Dancer, icon: water_bucket, ranks: 3, requires: [patience, shoal_sense], effects: {storm_wait: 10}}
+  tide_lore: {branch: tidecaller, at: [3, 1], title: Tide Lore, icon: book, ranks: 3, requires: [shoal_sense], effects: {xp: 5}}
+  quick_hands: {branch: tidecaller, at: [3, 2], title: Quick Hands, icon: lead, ranks: 3, requires: [frenzy, shoal_sense], effects: {double: 20}}
+  deep_current: {branch: tidecaller, at: [4, 0], title: Deep Current, icon: nautilus_shell, ranks: 2, requires: [rain_dancer], effects: {rare: 5}}
+  stormcaller: {branch: tidecaller, at: [4, 1], title: Stormcaller, icon: trident, capstone: true, cost: 3, level: 60, requires: [rain_dancer, tide_lore, quick_hands], effects: {wait: 15, storm_wait: 25}}
+  twin_tides: {branch: tidecaller, at: [4, 2], title: Twin Tides, icon: lily_pad, ranks: 2, requires: [quick_hands], effects: {double: 30}}
+  auto_reel: {branch: tidecaller, at: [1, 1], title: Auto-Reel, icon: tripwire_hook, cost: 2, level: 25, requires: [quick_bite], effects: {auto_reel: 1}}
+  auto_rethrow: {branch: tidecaller, at: [0, 0], title: Auto-Rethrow, icon: dispenser, cost: 2, level: 35, requires: [quick_bite], effects: {auto_rethrow: 1}}
+  night_owl: {branch: tidecaller, at: [0, 2], title: Night Owl, icon: lantern, ranks: 3, requires: [quick_bite], effects: {night_wait: 8}}
 
   # ---------------------------------------------------------------- Treasure Hunter
-  treasure_sense: {branch: treasure, at: [0, 1], title: Treasure Sense, icon: compass, ranks: 5, perks: {chest: 10}, legacy: treasure_sense}
-  lucky_lid: {branch: treasure, at: [1, 0], title: Lucky Lid, icon: rabbit_foot, ranks: 3, requires: [treasure_sense], perks: {chest_roll: 10}}
-  heavy_purse: {branch: treasure, at: [1, 2], title: Heavy Purse, icon: bundle, ranks: 3, requires: [treasure_sense], perks: {chest_money: 8}}
-  better_chests: {branch: treasure, at: [2, 1], title: Better Chests, icon: ender_chest, ranks: 3, requires: [lucky_lid, heavy_purse], perks: {chest_up: 4}}
-  gambler: {branch: treasure, at: [2, 0], title: Gambler, icon: dropper, choice: true, cost: 2, requires: [lucky_lid], excludes: [hoarder], perks: {chest_roll: 40, chest_money: -20}}
-  hoarder: {branch: treasure, at: [2, 2], title: Hoarder, icon: gold_block, choice: true, cost: 2, requires: [heavy_purse], excludes: [gambler], perks: {chest_money: 40, chest_roll: -10}}
-  deep_lure: {branch: treasure, at: [3, 0], title: Deep Lure, icon: prismarine_shard, ranks: 3, requires: [gambler, better_chests], perks: {chest: 5}}
-  spot_treasure: {branch: treasure, at: [3, 1], title: Treasure Spots, icon: map, ranks: 3, requires: [better_chests], perks: {spot_chest: 10}}
-  gilded_coins: {branch: treasure, at: [3, 2], title: Gilded Coins, icon: gold_nugget, ranks: 3, requires: [hoarder, better_chests], perks: {chest_money: 5}}
-  map_reader: {branch: treasure, at: [4, 0], title: Map Reader, icon: filled_map, ranks: 2, requires: [deep_lure], perks: {chest_roll: 10}}
-  krakens_hoard: {branch: treasure, at: [4, 1], title: "Kraken's Hoard", icon: heart_of_the_sea, capstone: true, cost: 3, level: 60, requires: [deep_lure, spot_treasure, gilded_coins], perks: {chest_up: 10, chest: 10}}
-  golden_hook: {branch: treasure, at: [4, 2], title: Golden Hook, icon: golden_apple, ranks: 2, requires: [gilded_coins], perks: {chest_money: 10}}
-  chest_lore: {branch: treasure, at: [1, 1], title: Chest Lore, icon: experience_bottle, ranks: 3, requires: [treasure_sense], perks: {chest_xp: 15}}
-  lucky_shine: {branch: treasure, at: [0, 0], title: Lucky Shine, icon: glow_ink_sac, ranks: 2, requires: [treasure_sense], perks: {skin_luck: 25}}
-  deep_pockets: {branch: treasure, at: [0, 2], title: Deep Pockets, icon: barrel, ranks: 2, requires: [treasure_sense], perks: {chest_fish: 25}}
+  treasure_sense: {branch: treasure, at: [0, 1], title: Treasure Sense, icon: compass, ranks: 5, effects: {chest: 10}, legacy: treasure_sense}
+  lucky_lid: {branch: treasure, at: [1, 0], title: Lucky Lid, icon: rabbit_foot, ranks: 3, requires: [treasure_sense], effects: {chest_roll: 10}}
+  heavy_purse: {branch: treasure, at: [1, 2], title: Heavy Purse, icon: bundle, ranks: 3, requires: [treasure_sense], effects: {chest_money: 8}}
+  better_chests: {branch: treasure, at: [2, 1], title: Better Chests, icon: ender_chest, ranks: 3, requires: [lucky_lid, heavy_purse], effects: {chest_up: 4}}
+  gambler: {branch: treasure, at: [2, 0], title: Gambler, icon: dropper, choice: true, cost: 2, requires: [lucky_lid], excludes: [hoarder], effects: {chest_roll: 40, chest_money: -20}}
+  hoarder: {branch: treasure, at: [2, 2], title: Hoarder, icon: gold_block, choice: true, cost: 2, requires: [heavy_purse], excludes: [gambler], effects: {chest_money: 40, chest_roll: -10}}
+  deep_lure: {branch: treasure, at: [3, 0], title: Deep Lure, icon: prismarine_shard, ranks: 3, requires: [gambler, better_chests], effects: {chest: 5}}
+  spot_treasure: {branch: treasure, at: [3, 1], title: Treasure Spots, icon: map, ranks: 3, requires: [better_chests], effects: {spot_chest: 10}}
+  gilded_coins: {branch: treasure, at: [3, 2], title: Gilded Coins, icon: gold_nugget, ranks: 3, requires: [hoarder, better_chests], effects: {chest_money: 5}}
+  map_reader: {branch: treasure, at: [4, 0], title: Map Reader, icon: filled_map, ranks: 2, requires: [deep_lure], effects: {chest_roll: 10}}
+  krakens_hoard: {branch: treasure, at: [4, 1], title: "Kraken's Hoard", icon: heart_of_the_sea, capstone: true, cost: 3, level: 60, requires: [deep_lure, spot_treasure, gilded_coins], effects: {chest_up: 10, chest: 10}}
+  golden_hook: {branch: treasure, at: [4, 2], title: Golden Hook, icon: golden_apple, ranks: 2, requires: [gilded_coins], effects: {chest_money: 10}}
+  chest_lore: {branch: treasure, at: [1, 1], title: Chest Lore, icon: experience_bottle, ranks: 3, requires: [treasure_sense], effects: {chest_xp: 15}}
+  lucky_shine: {branch: treasure, at: [0, 0], title: Lucky Shine, icon: glow_ink_sac, ranks: 2, requires: [treasure_sense], effects: {skin_luck: 25}}
+  deep_pockets: {branch: treasure, at: [0, 2], title: Deep Pockets, icon: barrel, ranks: 2, requires: [treasure_sense], effects: {chest_fish: 25}}
 
   # ---------------------------------------------------------------- Collector
-  rare_instinct: {branch: collector, at: [0, 1], title: Rare Instinct, icon: amethyst_shard, ranks: 5, perks: {rare: 10}, legacy: rare_instinct}
-  heavy_hands: {branch: collector, at: [1, 0], title: Heavy Hands, icon: anvil, ranks: 3, requires: [rare_instinct], perks: {weight: 4}}
-  keen_eye: {branch: collector, at: [1, 2], title: Keen Eye, icon: ender_eye, ranks: 3, requires: [rare_instinct], perks: {epic: 8}}
-  field_notes: {branch: collector, at: [2, 1], title: Field Notes, icon: writable_book, ranks: 3, requires: [heavy_hands, keen_eye], perks: {xp: 6}}
-  trophy_hunter: {branch: collector, at: [2, 0], title: Trophy Hunter, icon: item_frame, choice: true, cost: 2, requires: [heavy_hands], excludes: [sharp_eye], perks: {weight: 20}}
-  sharp_eye: {branch: collector, at: [2, 2], title: Sharp Eye, icon: spyglass, choice: true, cost: 2, requires: [keen_eye], excludes: [trophy_hunter], perks: {rare: 20, epic: 10}}
-  giant_hunter: {branch: collector, at: [3, 0], title: Giant Hunter, icon: iron_block, ranks: 3, requires: [trophy_hunter, field_notes], perks: {weight: 4}}
-  legend_lure: {branch: collector, at: [3, 1], title: Legend Lure, icon: nether_star, ranks: 3, requires: [field_notes], perks: {legend: 10}}
-  jewel_eye: {branch: collector, at: [3, 2], title: Jewel Eye, icon: diamond, ranks: 3, requires: [sharp_eye, field_notes], perks: {epic: 6}}
-  record_breaker: {branch: collector, at: [4, 0], title: Record Breaker, icon: gold_ingot, ranks: 2, requires: [giant_hunter], perks: {weight: 5}}
-  legend_seeker: {branch: collector, at: [4, 1], title: Legend Seeker, icon: dragon_breath, capstone: true, cost: 3, level: 60, requires: [giant_hunter, legend_lure, jewel_eye], perks: {legend: 50, rare: 10}}
-  myth_lure: {branch: collector, at: [4, 2], title: Myth Lure, icon: end_crystal, ranks: 2, requires: [jewel_eye], perks: {mythic: 25}}
-  new_waters: {branch: collector, at: [1, 1], title: New Waters, icon: axolotl_bucket, ranks: 3, requires: [rare_instinct], perks: {new_kind: 15}}
-  first_find: {branch: collector, at: [0, 0], title: First Find, icon: knowledge_book, ranks: 2, requires: [rare_instinct], perks: {first_xp: 50}}
-  leviathan_arms: {branch: collector, at: [0, 2], title: Leviathan Arms, icon: netherite_ingot, ranks: 3, requires: [rare_instinct], perks: {big_weight: 5}}
+  rare_instinct: {branch: collector, at: [0, 1], title: Rare Instinct, icon: amethyst_shard, ranks: 5, effects: {rare: 10}, legacy: rare_instinct}
+  heavy_hands: {branch: collector, at: [1, 0], title: Heavy Hands, icon: anvil, ranks: 3, requires: [rare_instinct], effects: {weight: 4}}
+  keen_eye: {branch: collector, at: [1, 2], title: Keen Eye, icon: ender_eye, ranks: 3, requires: [rare_instinct], effects: {epic: 8}}
+  field_notes: {branch: collector, at: [2, 1], title: Field Notes, icon: writable_book, ranks: 3, requires: [heavy_hands, keen_eye], effects: {xp: 6}}
+  trophy_hunter: {branch: collector, at: [2, 0], title: Trophy Hunter, icon: item_frame, choice: true, cost: 2, requires: [heavy_hands], excludes: [sharp_eye], effects: {weight: 20}}
+  sharp_eye: {branch: collector, at: [2, 2], title: Sharp Eye, icon: spyglass, choice: true, cost: 2, requires: [keen_eye], excludes: [trophy_hunter], effects: {rare: 20, epic: 10}}
+  giant_hunter: {branch: collector, at: [3, 0], title: Giant Hunter, icon: iron_block, ranks: 3, requires: [trophy_hunter, field_notes], effects: {weight: 4}}
+  legend_lure: {branch: collector, at: [3, 1], title: Legend Lure, icon: nether_star, ranks: 3, requires: [field_notes], effects: {legend: 10}}
+  jewel_eye: {branch: collector, at: [3, 2], title: Jewel Eye, icon: diamond, ranks: 3, requires: [sharp_eye, field_notes], effects: {epic: 6}}
+  record_breaker: {branch: collector, at: [4, 0], title: Record Breaker, icon: gold_ingot, ranks: 2, requires: [giant_hunter], effects: {weight: 5}}
+  legend_seeker: {branch: collector, at: [4, 1], title: Legend Seeker, icon: dragon_breath, capstone: true, cost: 3, level: 60, requires: [giant_hunter, legend_lure, jewel_eye], effects: {legend: 50, rare: 10}}
+  myth_lure: {branch: collector, at: [4, 2], title: Myth Lure, icon: end_crystal, ranks: 2, requires: [jewel_eye], effects: {mythic: 25}}
+  new_waters: {branch: collector, at: [1, 1], title: New Waters, icon: axolotl_bucket, ranks: 3, requires: [rare_instinct], effects: {new_kind: 15}}
+  first_find: {branch: collector, at: [0, 0], title: First Find, icon: knowledge_book, ranks: 2, requires: [rare_instinct], effects: {first_xp: 50}}
+  leviathan_arms: {branch: collector, at: [0, 2], title: Leviathan Arms, icon: netherite_ingot, ranks: 3, requires: [rare_instinct], effects: {big_weight: 5}}
 
   # ---------------------------------------------------------------- Ember & Void
-  strange_waters: {branch: ember, at: [0, 1], title: Strange Waters, icon: magma_cream, ranks: 3, perks: {lava_wait: 5, void_wait: 5}}
-  fireproof: {branch: ember, at: [1, 0], title: Fireproof, icon: fire_charge, requires: [strange_waters], perks: {fireproof: 1}}
-  void_sight: {branch: ember, at: [1, 2], title: Void Sight, icon: ender_pearl, ranks: 3, requires: [strange_waters], perks: {void_wait: 6}}
-  hot_lore: {branch: ember, at: [2, 1], title: Hot Lore, icon: enchanted_book, ranks: 3, requires: [fireproof, void_sight], perks: {hot_xp: 10}}
-  ember_path: {branch: ember, at: [2, 0], title: Ember Path, icon: blaze_rod, choice: true, cost: 2, requires: [fireproof], excludes: [void_path], perks: {lava_wait: 20, lava_chest: 15}}
-  void_path: {branch: ember, at: [2, 2], title: Void Path, icon: chorus_fruit, choice: true, cost: 2, requires: [void_sight], excludes: [ember_path], perks: {void_wait: 20, void_chest: 15}}
-  magma_lure: {branch: ember, at: [3, 0], title: Magma Lure, icon: magma_block, ranks: 3, requires: [ember_path, hot_lore], perks: {lava_chest: 5}}
-  nether_instinct: {branch: ember, at: [3, 1], title: Nether Instinct, icon: crimson_fungus, ranks: 3, requires: [hot_lore], perks: {hot_rare: 10}}
-  star_lure: {branch: ember, at: [3, 2], title: Star Lure, icon: end_rod, ranks: 3, requires: [void_path, hot_lore], perks: {void_chest: 5}}
-  lava_wader: {branch: ember, at: [4, 0], title: Lava Wader, icon: lava_bucket, ranks: 2, requires: [magma_lure], perks: {lava_wait: 5}}
-  abyss_walker: {branch: ember, at: [4, 1], title: Abyss Walker, icon: dragon_head, capstone: true, cost: 3, level: 60, requires: [magma_lure, nether_instinct, star_lure], perks: {hot_xp: 50, hot_rare: 20, mythic: 50}}
-  void_drifter: {branch: ember, at: [4, 2], title: Void Drifter, icon: shulker_shell, ranks: 2, requires: [star_lure], perks: {void_wait: 5, mythic: 15}}
-  long_bite: {branch: ember, at: [1, 1], title: Long Bite, icon: slime_ball, ranks: 3, requires: [strange_waters], perks: {hot_window: 20}}
-  magma_scales: {branch: ember, at: [0, 0], title: Magma Scales, icon: crying_obsidian, ranks: 3, requires: [strange_waters], perks: {hot_weight: 5}}
-  void_anchor: {branch: ember, at: [0, 2], title: Void Anchor, icon: phantom_membrane, requires: [strange_waters], perks: {void_safe: 1}}
+  strange_waters: {branch: ember, at: [0, 1], title: Strange Waters, icon: magma_cream, ranks: 3, effects: {lava_wait: 5, void_wait: 5}}
+  fireproof: {branch: ember, at: [1, 0], title: Fireproof, icon: fire_charge, requires: [strange_waters], effects: {fireproof: 1}}
+  void_sight: {branch: ember, at: [1, 2], title: Void Sight, icon: ender_pearl, ranks: 3, requires: [strange_waters], effects: {void_wait: 6}}
+  hot_lore: {branch: ember, at: [2, 1], title: Hot Lore, icon: enchanted_book, ranks: 3, requires: [fireproof, void_sight], effects: {hot_xp: 10}}
+  ember_path: {branch: ember, at: [2, 0], title: Ember Path, icon: blaze_rod, choice: true, cost: 2, requires: [fireproof], excludes: [void_path], effects: {lava_wait: 20, lava_chest: 15}}
+  void_path: {branch: ember, at: [2, 2], title: Void Path, icon: chorus_fruit, choice: true, cost: 2, requires: [void_sight], excludes: [ember_path], effects: {void_wait: 20, void_chest: 15}}
+  magma_lure: {branch: ember, at: [3, 0], title: Magma Lure, icon: magma_block, ranks: 3, requires: [ember_path, hot_lore], effects: {lava_chest: 5}}
+  nether_instinct: {branch: ember, at: [3, 1], title: Nether Instinct, icon: crimson_fungus, ranks: 3, requires: [hot_lore], effects: {hot_rare: 10}}
+  star_lure: {branch: ember, at: [3, 2], title: Star Lure, icon: end_rod, ranks: 3, requires: [void_path, hot_lore], effects: {void_chest: 5}}
+  lava_wader: {branch: ember, at: [4, 0], title: Lava Wader, icon: lava_bucket, ranks: 2, requires: [magma_lure], effects: {lava_wait: 5}}
+  abyss_walker: {branch: ember, at: [4, 1], title: Abyss Walker, icon: dragon_head, capstone: true, cost: 3, level: 60, requires: [magma_lure, nether_instinct, star_lure], effects: {hot_xp: 50, hot_rare: 20, mythic: 50}}
+  void_drifter: {branch: ember, at: [4, 2], title: Void Drifter, icon: shulker_shell, ranks: 2, requires: [star_lure], effects: {void_wait: 5, mythic: 15}}
+  long_bite: {branch: ember, at: [1, 1], title: Long Bite, icon: slime_ball, ranks: 3, requires: [strange_waters], effects: {hot_window: 20}}
+  magma_scales: {branch: ember, at: [0, 0], title: Magma Scales, icon: crying_obsidian, ranks: 3, requires: [strange_waters], effects: {hot_weight: 5}}
+  void_anchor: {branch: ember, at: [0, 2], title: Void Anchor, icon: phantom_membrane, requires: [strange_waters], effects: {void_safe: 1}}
 
   # ---------------------------------------------------------------- Fishmonger
-  double_catch: {branch: monger, at: [0, 1], title: Double Catch, icon: cod, ranks: 5, perks: {double: 40}, legacy: double_catch}
-  bait_saver: {branch: monger, at: [1, 0], title: Bait Saver, icon: wheat_seeds, ranks: 3, requires: [double_catch], perks: {bait_save: 8}}
-  cook: {branch: monger, at: [1, 2], title: Cook, icon: smoker, ranks: 3, requires: [double_catch], perks: {dish: 10}}
-  market_sense: {branch: monger, at: [2, 1], title: Market Sense, icon: emerald, ranks: 3, requires: [bait_saver, cook], perks: {chest_money: 5}}
-  trader: {branch: monger, at: [2, 0], title: Trader, icon: villager_spawn_egg, choice: true, cost: 2, requires: [bait_saver], excludes: [chef], perks: {bait_save: 25, chest_money: 15}}
-  chef: {branch: monger, at: [2, 2], title: Chef, icon: cake, choice: true, cost: 2, requires: [cook], excludes: [trader], perks: {dish: 50}}
-  bait_whisperer: {branch: monger, at: [3, 0], title: Bait Whisperer, icon: glow_berries, ranks: 3, requires: [trader, market_sense], perks: {bait_save: 5}}
-  busy_hands: {branch: monger, at: [3, 1], title: Busy Hands, icon: salmon, ranks: 3, requires: [market_sense], perks: {double: 15}}
-  gourmet: {branch: monger, at: [3, 2], title: Gourmet, icon: rabbit_stew, ranks: 3, requires: [chef, market_sense], perks: {dish: 10}}
-  thrifty: {branch: monger, at: [4, 0], title: Thrifty, icon: hopper, ranks: 2, requires: [bait_whisperer], perks: {bait_save: 5}}
-  master_angler: {branch: monger, at: [4, 1], title: Master Angler, icon: totem_of_undying, capstone: true, cost: 3, level: 60, requires: [bait_whisperer, busy_hands, gourmet], perks: {double: 50, xp: 20}}
-  feast: {branch: monger, at: [4, 2], title: Feast, icon: golden_carrot, ranks: 2, requires: [gourmet], perks: {dish: 15}}
-  market_stall: {branch: monger, at: [1, 1], title: Market Stall, icon: bell, ranks: 3, requires: [double_catch], perks: {catch_money: 5}}
-  triple_haul: {branch: monger, at: [0, 0], title: Triple Haul, icon: cod_bucket, ranks: 2, requires: [double_catch], perks: {triple: 15}}
-  bait_box: {branch: monger, at: [0, 2], title: Bait Box, icon: composter, ranks: 3, requires: [double_catch], perks: {chest_bait: 15}}
+  double_catch: {branch: monger, at: [0, 1], title: Double Catch, icon: cod, ranks: 5, effects: {double: 40}, legacy: double_catch}
+  bait_saver: {branch: monger, at: [1, 0], title: Bait Saver, icon: wheat_seeds, ranks: 3, requires: [double_catch], effects: {bait_save: 8}}
+  cook: {branch: monger, at: [1, 2], title: Cook, icon: smoker, ranks: 3, requires: [double_catch], effects: {dish: 10}}
+  market_sense: {branch: monger, at: [2, 1], title: Market Sense, icon: emerald, ranks: 3, requires: [bait_saver, cook], effects: {chest_money: 5}}
+  trader: {branch: monger, at: [2, 0], title: Trader, icon: villager_spawn_egg, choice: true, cost: 2, requires: [bait_saver], excludes: [chef], effects: {bait_save: 25, chest_money: 15}}
+  chef: {branch: monger, at: [2, 2], title: Chef, icon: cake, choice: true, cost: 2, requires: [cook], excludes: [trader], effects: {dish: 50}}
+  bait_whisperer: {branch: monger, at: [3, 0], title: Bait Whisperer, icon: glow_berries, ranks: 3, requires: [trader, market_sense], effects: {bait_save: 5}}
+  busy_hands: {branch: monger, at: [3, 1], title: Busy Hands, icon: salmon, ranks: 3, requires: [market_sense], effects: {double: 15}}
+  gourmet: {branch: monger, at: [3, 2], title: Gourmet, icon: rabbit_stew, ranks: 3, requires: [chef, market_sense], effects: {dish: 10}}
+  thrifty: {branch: monger, at: [4, 0], title: Thrifty, icon: hopper, ranks: 2, requires: [bait_whisperer], effects: {bait_save: 5}}
+  master_angler: {branch: monger, at: [4, 1], title: Master Angler, icon: totem_of_undying, capstone: true, cost: 3, level: 60, requires: [bait_whisperer, busy_hands, gourmet], effects: {double: 50, xp: 20}}
+  feast: {branch: monger, at: [4, 2], title: Feast, icon: golden_carrot, ranks: 2, requires: [gourmet], effects: {dish: 15}}
+  market_stall: {branch: monger, at: [1, 1], title: Market Stall, icon: bell, ranks: 3, requires: [double_catch], effects: {catch_money: 5}}
+  triple_haul: {branch: monger, at: [0, 0], title: Triple Haul, icon: cod_bucket, ranks: 2, requires: [double_catch], effects: {triple: 15}}
+  bait_box: {branch: monger, at: [0, 2], title: Bait Box, icon: composter, ranks: 3, requires: [double_catch], effects: {chest_bait: 15}}

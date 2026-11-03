@@ -1,12 +1,13 @@
 package de.raindancer.modules.fishing.rules;
 
+import de.raindancer.core.ui.tree.SkillTree;
 import de.raindancer.modules.fishing.model.Bait;
 import de.raindancer.modules.fishing.model.FisherProfile;
 import de.raindancer.modules.fishing.model.Rod;
 import de.raindancer.modules.fishing.model.RodPart;
 import de.raindancer.modules.fishing.model.Perk;
+import de.raindancer.modules.fishing.model.FishingTree;
 import de.raindancer.modules.fishing.model.Perks;
-import de.raindancer.modules.fishing.model.SkillTree;
 import de.raindancer.modules.fishing.model.Water;
 
 import java.util.Random;
@@ -26,7 +27,7 @@ public final class BiteRule implements IFishingRule {
     private final SkillTree tree;
 
     public BiteRule() {
-        this(SkillTree.shipped());
+        this(FishingTree.shipped());
     }
 
     public BiteRule(SkillTree tree) {
@@ -54,7 +55,7 @@ public final class BiteRule implements IFishingRule {
     /** @param night it is night where the hook is */
     public double waitFactor(Rod rod, FisherProfile profile, boolean inSpot, Bait bait, Water water,
                              boolean raining, boolean night) {
-        Perks perks = tree.perks(profile.nodes());
+        Perks perks = Perks.from(tree, profile.nodes());
         double factor = (1.0 - 0.08 * rod.rank(RodPart.HOOK))
                 * rod.ownWaitFactor()
                 * perks.sooner(Perk.WAIT)

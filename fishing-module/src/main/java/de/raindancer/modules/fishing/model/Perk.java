@@ -90,4 +90,8 @@ public enum Perk {
             return Optional.empty();
         }
     }
+
+    public static boolean known(String id) {
+        return parse(id).isPresent();
+    }
 }

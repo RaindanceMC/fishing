@@ -1,7 +1,8 @@
 package de.raindancer.modules.fishing.rules;
 
+import de.raindancer.core.ui.tree.SkillTree;
+import de.raindancer.modules.fishing.model.FishingTree;
 import de.raindancer.modules.fishing.model.Perks;
-import de.raindancer.modules.fishing.model.SkillTree;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -13,15 +14,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 class AutoRuleTest {
 
     private final AutoRule rule = new AutoRule();
-    private final SkillTree tree = SkillTree.shipped();
+    private final SkillTree tree = FishingTree.shipped();
 
     @Test
     @DisplayName("auto-reel and auto-rethrow come from their nodes alone")
     void fromTheTree() {
         assertThat(rule.reels(Perks.NONE)).isFalse();
         assertThat(rule.rethrows(Perks.NONE)).isFalse();
-        assertThat(rule.reels(tree.perks(Map.of("auto_reel", 1)))).isTrue();
-        assertThat(rule.rethrows(tree.perks(Map.of("auto_rethrow", 1)))).isTrue();
+        assertThat(rule.reels(Perks.from(tree, Map.of("auto_reel", 1)))).isTrue();
+        assertThat(rule.rethrows(Perks.from(tree, Map.of("auto_rethrow", 1)))).isTrue();
     }
 
     @Test

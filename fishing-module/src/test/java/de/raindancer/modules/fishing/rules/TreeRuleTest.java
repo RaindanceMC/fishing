@@ -2,9 +2,10 @@ package de.raindancer.modules.fishing.rules;
 
 import de.raindancer.core.ui.tree.NodeState;
 import de.raindancer.modules.fishing.model.FisherProfile;
-import de.raindancer.modules.fishing.model.SkillTree;
+import de.raindancer.core.ui.tree.SkillTree;
+import de.raindancer.modules.fishing.model.FishingTree;
 import de.raindancer.modules.fishing.model.Tier;
-import de.raindancer.modules.fishing.model.TreeNode;
+import de.raindancer.core.ui.tree.TreeNode;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -15,7 +16,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class TreeRuleTest {
 
     private final LevelRule levels = new LevelRule(100);
-    private final SkillTree tree = SkillTree.shipped();
+    private final SkillTree tree = FishingTree.shipped();
     private final TreeRule rule = new TreeRule(levels, tree);
 
     private FisherProfile atLevel(int level) {
@@ -66,22 +67,22 @@ class TreeRuleTest {
         FisherProfile profile = atLevel(20).withNode("quick_bite", 1).withNode("swift_reel", 1)
                 .withNode("spot_reader", 1).withNode("patience", 1);
         assertThat(rule.state(profile, node("frenzy"))).isEqualTo(NodeState.BARRED);
-        assertThat(rule.refusal(profile, node("frenzy"))).contains(TreeRule.Refusal.BARRED);
+        assertThat(rule.refusal(profile, node("frenzy"))).contains(SkillTree.Refusal.BARRED);
     }
 
     @Test
     @DisplayName("refusals: no points, needs, level, maxed — and none when it can be taken")
     void refusals() {
-        assertThat(rule.refusal(FisherProfile.NEW, node("quick_bite"))).contains(TreeRule.Refusal.NO_POINTS);
-        assertThat(rule.refusal(atLevel(5), node("swift_reel"))).contains(TreeRule.Refusal.NEEDS);
+        assertThat(rule.refusal(FisherProfile.NEW, node("quick_bite"))).contains(SkillTree.Refusal.NO_POINTS);
+        assertThat(rule.refusal(atLevel(5), node("swift_reel"))).contains(SkillTree.Refusal.NEEDS);
         assertThat(rule.refusal(atLevel(5), node("quick_bite"))).isEqualTo(Optional.empty());
         FisherProfile almost = atLevel(59).withNode("quick_bite", 1).withNode("swift_reel", 1)
                 .withNode("shoal_sense", 1).withNode("tide_lore", 1);
-        assertThat(rule.refusal(almost, node("stormcaller"))).contains(TreeRule.Refusal.LEVEL);
+        assertThat(rule.refusal(almost, node("stormcaller"))).contains(SkillTree.Refusal.LEVEL);
         assertThat(rule.refusal(atLevel(10).withNode("quick_bite", 5), node("quick_bite")))
-                .contains(TreeRule.Refusal.MAXED);
+                .contains(SkillTree.Refusal.MAXED);
         FisherProfile poor = atLevel(2).withNode("quick_bite", 1).withNode("swift_reel", 1);
-        assertThat(rule.refusal(poor, node("patience"))).contains(TreeRule.Refusal.NO_POINTS);
+        assertThat(rule.refusal(poor, node("patience"))).contains(SkillTree.Refusal.NO_POINTS);
     }
 
     @Test

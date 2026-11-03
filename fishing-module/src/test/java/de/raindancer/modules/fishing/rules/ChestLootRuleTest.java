@@ -163,8 +163,8 @@ class ChestLootRuleTest {
     @Test
     @DisplayName("the opener's tree: Heavy Purse pays more, Lucky Lid now and then finds one thing more")
     void treePerks() {
-        var tree = de.raindancer.modules.fishing.model.SkillTree.shipped();
-        var purse = tree.perks(java.util.Map.of("heavy_purse", 3));
+        var tree = de.raindancer.modules.fishing.model.FishingTree.shipped();
+        var purse = de.raindancer.modules.fishing.model.Perks.from(tree, java.util.Map.of("heavy_purse", 3));
         Random a = new Random(40);
         Random b = new Random(40);
         long plain = 0;
@@ -175,14 +175,14 @@ class ChestLootRuleTest {
         }
         assertThat((double) rich / plain).isCloseTo(1.24, org.assertj.core.data.Offset.offset(0.02));
 
-        var lid = tree.perks(java.util.Map.of("gambler", 1, "lucky_lid", 3));
+        var lid = de.raindancer.modules.fishing.model.Perks.from(tree, java.util.Map.of("gambler", 1, "lucky_lid", 3));
         Random random = new Random(41);
         int extra = 0;
         for (int n = 0; n < 2000; n++) {
             extra += ChestLootRule.extraRolls(lid, random);
         }
         assertThat(extra).isBetween(1300, 1500);
-        assertThat(ChestLootRule.extraRolls(tree.perks(java.util.Map.of("hoarder", 1)), random)).isZero();
+        assertThat(ChestLootRule.extraRolls(de.raindancer.modules.fishing.model.Perks.from(tree, java.util.Map.of("hoarder", 1)), random)).isZero();
     }
 
     private static final java.util.Set<String> TRASH = java.util.Set.of("string", "lily_pad", "iron_ingot",
@@ -230,13 +230,13 @@ class ChestLootRuleTest {
     @Test
     @DisplayName("Lucky Shine finds more skin tokens, Deep Pockets more fish, Bait Box more bait")
     void newChestPerks() {
-        var tree = de.raindancer.modules.fishing.model.SkillTree.shipped();
+        var tree = de.raindancer.modules.fishing.model.FishingTree.shipped();
         var none = de.raindancer.modules.fishing.model.Perks.NONE;
-        assertThat(countOf(Reward.Skin.class, tree.perks(java.util.Map.of("lucky_shine", 2)), Tier.EPIC, 60))
+        assertThat(countOf(Reward.Skin.class, de.raindancer.modules.fishing.model.Perks.from(tree, java.util.Map.of("lucky_shine", 2)), Tier.EPIC, 60))
                 .isGreaterThan(countOf(Reward.Skin.class, none, Tier.EPIC, 60) * 13 / 10);
-        assertThat(countOf(Reward.Fish.class, tree.perks(java.util.Map.of("deep_pockets", 2)), Tier.RARE, 61))
+        assertThat(countOf(Reward.Fish.class, de.raindancer.modules.fishing.model.Perks.from(tree, java.util.Map.of("deep_pockets", 2)), Tier.RARE, 61))
                 .isGreaterThan(countOf(Reward.Fish.class, none, Tier.RARE, 61) * 13 / 10);
-        assertThat(countOf(Reward.Bait.class, tree.perks(java.util.Map.of("bait_box", 3)), Tier.EPIC, 62))
+        assertThat(countOf(Reward.Bait.class, de.raindancer.modules.fishing.model.Perks.from(tree, java.util.Map.of("bait_box", 3)), Tier.EPIC, 62))
                 .isGreaterThan(countOf(Reward.Bait.class, none, Tier.EPIC, 62) + 1000);
     }
 
