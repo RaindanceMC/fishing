@@ -9,6 +9,7 @@ import de.raindancer.modules.fishing.model.Catch;
 import de.raindancer.modules.fishing.model.Rod;
 import de.raindancer.modules.fishing.model.Water;
 import de.raindancer.modules.fishing.rules.BiteRule;
+import de.raindancer.modules.fishing.rules.VoidSurfaceRule;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -50,6 +51,7 @@ public final class LineService implements IFishingService {
     }
 
     private static final long PERIOD = 2L;
+    private static final VoidSurfaceRule VOID = new VoidSurfaceRule();
 
     private final Plugin plugin;
     private final Messages messages;
@@ -144,8 +146,8 @@ public final class LineService implements IFishingService {
             hold(hook, surface);
             line.water = Water.LAVA;
             line.visual = de.raindancer.modules.fishing.visual.LineVisual.settle(hook, Water.LAVA, surface);
-        } else if (world.getEnvironment() == World.Environment.THE_END && overVoid(at)
-                && at.getY() < player.getLocation().getY() - 3) {
+        } else if (world.getEnvironment() == World.Environment.THE_END
+                && VOID.restAt(true, overVoid(at), at.getY()).isPresent()) {
             if (!rod.fishes(Water.VOID)) {
                 if (!line.warned) {
                     line.warned = true;
@@ -153,9 +155,11 @@ public final class LineService implements IFishingService {
                 }
                 return;
             }
-            hold(hook, at);
+            // The void's surface: the float rests on it like on water, however far past it the hook fell.
+            Location surface = new Location(world, at.getX(), VoidSurfaceRule.SURFACE, at.getZ());
+            hold(hook, surface);
             line.water = Water.VOID;
-            line.visual = de.raindancer.modules.fishing.visual.LineVisual.settle(hook, Water.VOID, at.clone());
+            line.visual = de.raindancer.modules.fishing.visual.LineVisual.settle(hook, Water.VOID, surface);
         } else {
             return;
         }

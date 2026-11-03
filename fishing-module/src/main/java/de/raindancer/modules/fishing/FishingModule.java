@@ -51,7 +51,7 @@ import java.util.Random;
  */
 public final class FishingModule implements FlexModule {
 
-    private static final ModuleInfo INFO = ModuleInfo.of("fishing", "Fishing", "0.3.0")
+    private static final ModuleInfo INFO = ModuleInfo.of("fishing", "Fishing", "0.3.1")
             .describedAs("New fish in six tiers, sea chests, fishing spots, rod upgrades and skills, lava and "
                     + "void fishing, and dishes cooked from the catch.")
             .by("Raindancer118");
@@ -172,6 +172,14 @@ public final class FishingModule implements FlexModule {
         };
         de.raindancer.core.social.economy.ItemPrices.provide(context.plugin(), pricer);
         context.closeWith(() -> de.raindancer.core.social.economy.ItemPrices.retract(pricer));
+        // Rod skins are a thank-you for supporters: wearing one hangs off Core's rains.supporter.
+        try {
+            var supporter = de.raindancer.core.social.support.SupporterPermission.permission(server.getPluginManager());
+            supporter.getChildren().put(de.raindancer.modules.fishing.util.PermissionNodes.SKINS, true);
+            supporter.recalculatePermissibles();
+        } catch (LinkageError olderCore) {
+            log.info("RainsCore knows no supporters yet; rod skins are worn by whoever is given rainsfishing.skins.");
+        }
         de.raindancer.modules.fishing.service.FishingBoards boards = new de.raindancer.modules.fishing.service
                 .FishingBoards(server, context.core().messages(), store, profiles, catalog);
         // Screens for /screen came with Core 2.10; the leaderboards with 2.23 — an older Core simply has neither.

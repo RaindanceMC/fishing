@@ -62,9 +62,10 @@ public final class SkinsMenu extends PaginatedMenu<RodSkin> implements IFishingS
         }
         ItemStack rod = held();
         boolean wearing = rod != null && services.forge().skinOf(rod).filter(skin::equals).isPresent();
-        return Icons.showing(services.forge().skinToken(skin), colour + skin.title(), List.of(
-                wearing ? "<green>Your rod wears it." : rod == null ? "<gray>Hold a rod to put it on."
-                        : "<yellow>Click to put it on the rod in your hand.",
+        String state = !supporter() ? "<light_purple>Yours — wearing it is a thank-you for supporters."
+                : wearing ? "<green>Your rod wears it." : rod == null ? "<gray>Hold a rod to put it on."
+                : "<yellow>Click to put it on the rod in your hand.";
+        return Icons.showing(services.forge().skinToken(skin), colour + skin.title(), List.of(state,
                 "<dark_gray>Only a look: the rod fishes as itself."));
     }
 
@@ -84,7 +85,15 @@ public final class SkinsMenu extends PaginatedMenu<RodSkin> implements IFishingS
                 "<dark_gray>The rod in your hand shows as itself again."), click -> wear(null));
     }
 
+    private boolean supporter() {
+        return viewer.hasPermission(de.raindancer.modules.fishing.util.PermissionNodes.SKINS);
+    }
+
     private void wear(RodSkin skin) {
+        if (skin != null && !supporter()) {
+            services.messages().send(viewer, "fishing.skin.supporters");
+            return;
+        }
         ItemStack rod = held();
         if (rod == null) {
             services.messages().send(viewer, "fishing.skin.hold-a-rod");
@@ -100,7 +109,8 @@ public final class SkinsMenu extends PaginatedMenu<RodSkin> implements IFishingS
     @Override
     protected List<String> helpLines() {
         return List.of(
-                "A skin is a look for a rod; it fishes as itself.",
+                "A skin is a look for a rod; it fishes as itself —",
+                "and wearing one is a thank-you for supporters.",
                 "Most are earned by fishing — a level, or every",
                 "fish of one water. The rarest come out of sea",
                 "chests as tokens: right click one to keep it.");

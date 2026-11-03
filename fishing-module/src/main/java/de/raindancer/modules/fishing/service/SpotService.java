@@ -135,7 +135,9 @@ public final class SpotService implements IFishingService {
                     return Optional.empty();
                 }
             }
-            return Optional.of(new Found(new Location(world, x + 0.5, top - 5, z + 0.5), Water.VOID));
+            // On the void's surface, where a float rests (VoidSurfaceRule).
+            return Optional.of(new Found(new Location(world, x + 0.5,
+                    de.raindancer.modules.fishing.rules.VoidSurfaceRule.SURFACE, z + 0.5), Water.VOID));
         }
         int from = (int) Math.floor(playerY) + 8;
         int to = Math.max(world.getMinHeight() + 1, (int) Math.floor(playerY) - 16);

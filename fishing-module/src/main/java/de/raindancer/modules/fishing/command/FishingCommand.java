@@ -110,7 +110,8 @@ public final class FishingCommand implements IFishingCommand {
             at = target.getLocation().add(0.5, 0.9, 0.5);
             water = live.spots().waterAt(target.getLocation(), target.getType() == Material.LAVA, false);
         } else if (target == null && viewer.getWorld().getEnvironment() == org.bukkit.World.Environment.THE_END) {
-            at = viewer.getEyeLocation().add(viewer.getLocation().getDirection().multiply(8)).add(0, -6, 0);
+            at = viewer.getEyeLocation().add(viewer.getLocation().getDirection().multiply(8));
+            at.setY(de.raindancer.modules.fishing.rules.VoidSurfaceRule.SURFACE);
             water = Optional.of(Water.VOID);
         } else {
             water = Optional.empty();

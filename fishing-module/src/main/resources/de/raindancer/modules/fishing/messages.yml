@@ -101,6 +101,7 @@ fishing:
     unlocked: "<gold>The <white><skin></white> rod skin is yours! <gray>Put it on in /fishing rod."
     already: "<gray>You already have the <white><skin></white> skin; keep the token to trade it."
     try-again: "<red>That did not go through just now — your token is back. Try again in a moment."
+    supporters: "<light_purple>Wearing a rod skin is a thank-you for supporters. <gray>You keep every skin you earn — wear them once you support the server."
 
   net:
     only-fish: "<red>Only fish go into a fishing net."

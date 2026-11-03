@@ -28,8 +28,9 @@
              0.1.1: a catch comes up out of the water — from under the surface, through it with a splash.
              0.1.2: a fishing spot reaches four blocks around its centre, and its ripples show as far, at half the speed.
              0.2.0: bait, a fishing net, rod skins, fixed spots admins put down; no spot comes up inside another.
-             0.3.0: the nether's biomes have lava fish of their own (nine new); the float shows on lava and in the void. -->
-        <plugin.version>0.3.0</plugin.version>
+             0.3.0: the nether's biomes have lava fish of their own (nine new); the float shows on lava and in the void.
+             0.3.1: wearing a rod skin is for supporters (rainsfishing.skins under rains.supporter). -->
+        <plugin.version>0.3.1</plugin.version>
     </properties>
 
     <dependencies>
