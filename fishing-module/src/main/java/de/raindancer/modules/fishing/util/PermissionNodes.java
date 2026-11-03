@@ -16,6 +16,8 @@ public final class PermissionNodes {
     public static final String SPOT = "rainsfishing.spot";
     /** Wearing a rod skin: a thank-you for supporters (a child of Core's rains.supporter). */
     public static final String SKINS = "rainsfishing.skins";
+    /** Auto-Rethrow never rests: no AFK guard, for staff and trusted fishers. */
+    public static final String AUTO_UNGUARDED = "rainsfishing.auto.unguarded";
 
     private PermissionNodes() {
     }
@@ -27,7 +29,9 @@ public final class PermissionNodes {
                 new Permission(UPGRADE, "Upgrade a fishing rod", PermissionDefault.TRUE),
                 new Permission(GIVE, "Give somebody fish, dishes or sea chests", PermissionDefault.OP),
                 new Permission(SPOT, "Put a fishing spot where you are looking", PermissionDefault.OP),
-                new Permission(SKINS, "Put a rod skin on a rod — supporters and operators", PermissionDefault.OP));
+                new Permission(SKINS, "Put a rod skin on a rod — supporters and operators", PermissionDefault.OP),
+                new Permission(AUTO_UNGUARDED, "Auto-Rethrow keeps going while you are away or never look around",
+                        PermissionDefault.OP));
     }
 
     public static int register(Server server) {

@@ -15,8 +15,10 @@ fishing:
   caught:
     fish: "<green>You landed a <white><fish></white> of <white><weight></white> <gray>(<tier>)</gray>. Nice one."
     weighed: "<fish> <gray>·</gray> <white><weight></white>"
+    weighed-stall: "<fish> <gray>·</gray> <white><weight></white> <gray>·</gray> <gold>+<money></gold>"
     record: "<gold>New personal best: a <white><weight></white> <white><fish></white>!"
     double: "<green>Two <white><fish></white> on one hook. The water likes you today."
+    triple: "<green>Three <white><fish></white> on one hook! Somebody up there is feeding you."
     chest: "<gold>A <white><chest></white> came up on your line! Place it somewhere and right click it to open it."
 
   mythic:
@@ -29,6 +31,9 @@ fishing:
     got-w: "<green><white><player></white> gave you a <bold>W</bold> for that <white><fish></white>."
     gave-w: "<gray>You gave <white><player></white> a <bold>W</bold>."
 
+  auto:
+    away: "<gray>Auto-Rethrow rests while you are away. Cast by hand to start it again."
+    still: "<gray>Auto-Rethrow rests: thirty casts and you never looked up. Look around or cast by hand to go on."
   line:
     burnt: "<red>Your Silk Line burnt through in the lava. Fit an <white>Ember Line</white> to fish lava."
     void-needed: "<gray>Only a <white>Void Line</white> holds down there. This one just keeps falling."

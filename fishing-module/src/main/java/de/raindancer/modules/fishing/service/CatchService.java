@@ -42,6 +42,12 @@ public final class CatchService implements IFishingService {
     private final Random random;
     private final de.raindancer.core.RainsCore core;
     private final WeightRule weights = new WeightRule();
+    private static final de.raindancer.modules.fishing.rules.BonusRule BONUS =
+            new de.raindancer.modules.fishing.rules.BonusRule();
+    private static final de.raindancer.modules.fishing.rules.PriceRule PRICES =
+            new de.raindancer.modules.fishing.rules.PriceRule();
+    /** Where Market Stall's money comes from, for the economy's books. */
+    public static final String STALL = "fishing.market-stall";
     private volatile FishingSettings settings;
 
     public CatchService(org.bukkit.plugin.Plugin plugin, Server server, de.raindancer.core.RainsCore core,
@@ -158,16 +164,30 @@ public final class CatchService implements IFishingService {
     public void credit(Player player, Catch caught, Water water) {
         switch (caught) {
             case Catch.Fish fish -> {
+                de.raindancer.modules.fishing.model.Perks perks = profiles.perks(player.getUniqueId());
                 WeightRule.Weighing weighing = weights.weigh(fish.kind(), random,
-                        profiles.perks(player.getUniqueId()).more(de.raindancer.modules.fishing.model.Perk.WEIGHT));
+                        BONUS.heavier(perks, fish.tier(), water));
+                long stall = BONUS.catchMoney(PRICES.fish(fish.tier(), settings.fishPriceMinor()) * fish.amount(),
+                        perks);
                 String weight = WeightRule.format(weighing.kilos());
                 double best = profiles.of(player.getUniqueId()).heaviest(fish.kind().id());
                 profiles.caught(player, fish.kind().id(), fish.amount(), fish.tier(), weighing.kilos(), water);
-                core.actionBars().show(player.getUniqueId(), "fishing", messages.get("fishing.caught.weighed",
-                                "fish", fish.kind().name(), "weight", weight)
+                core.actionBars().show(player.getUniqueId(), "fishing", (stall > 0
+                                ? messages.get("fishing.caught.weighed-stall", "fish", fish.kind().name(),
+                                "weight", weight, "money", de.raindancer.core.social.economy.Fees.format(
+                                        de.raindancer.core.social.economy.Money.of(stall)))
+                                : messages.get("fishing.caught.weighed", "fish", fish.kind().name(), "weight", weight))
                         .colorIfAbsent(net.kyori.adventure.text.format.TextColor.color(fish.tier().colour())),
                         java.time.Duration.ofSeconds(4), de.raindancer.core.ui.actionbar.ActionBarPriority.NORMAL);
-                if (fish.amount() > 1) {
+                if (stall > 0) {
+                    UUID seller = player.getUniqueId();
+                    de.raindancer.core.platform.util.Scheduling.async(plugin, () ->
+                            de.raindancer.core.social.economy.Fees.pay(seller,
+                                    de.raindancer.core.social.economy.Money.of(stall), "Market Stall", STALL));
+                }
+                if (fish.amount() > 2) {
+                    messages.send(player, "fishing.caught.triple", "fish", fish.kind().name());
+                } else if (fish.amount() > 1) {
                     messages.send(player, "fishing.caught.double", "fish", fish.kind().name());
                 }
                 if (fish.tier().atLeast(Tier.RARE)) {

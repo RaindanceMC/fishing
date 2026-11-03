@@ -54,6 +54,10 @@ public final class FishListener implements IFishingListener {
                 cast(player, hook);
             }
             case CAUGHT_FISH -> caught(event, player, hook);
+            // A fish on its way or on the hook: nothing is landed or lost yet, and the bait stays on.
+            case LURED -> {
+            }
+            case BITE -> services.auto().bitten(player, hook);
             default -> {
                 services.lines().reeled(player, hook);
                 // Reeled in empty, or the line came in some other way: the bait went with the cast.
@@ -68,13 +72,19 @@ public final class FishListener implements IFishingListener {
         Bait bait = services.baits().castWith(player, hook, services.profiles().perks(player.getUniqueId())
                 .get(de.raindancer.modules.fishing.model.Perk.BAIT_SAVE)).orElse(null);
         double factor = bites.waitFactor(services.catches().rodOf(player),
-                services.profiles().of(player.getUniqueId()), false, bait, null, player.getWorld().hasStorm());
+                services.profiles().of(player.getUniqueId()), false, bait, null, player.getWorld().hasStorm(),
+                night(player.getWorld()));
         if (factor < 1.0) {
             int least = Math.max(1, (int) Math.round(hook.getMinWaitTime() * factor));
             int most = Math.max(least, (int) Math.round(hook.getMaxWaitTime() * factor));
             hook.setWaitTime(least, most);
         }
         services.lines().cast(player, hook);
+        services.auto().cast(player);
+    }
+
+    static boolean night(org.bukkit.World world) {
+        return world.getEnvironment() == org.bukkit.World.Environment.NORMAL && BiteRule.night(world.getTime());
     }
 
     private void caught(PlayerFishEvent event, Player player, FishHook hook) {
@@ -94,6 +104,7 @@ public final class FishListener implements IFishingListener {
         item.remove();
         services.catches().bringUp(player, hook.getLocation(), water, landed);
         services.catches().credit(player, caught, water);
+        services.auto().landed(player);
     }
 
     @EventHandler
@@ -104,5 +115,6 @@ public final class FishListener implements IFishingListener {
     @Override
     public void forget(UUID player) {
         services.lines().forget(player);
+        services.auto().forget(player);
     }
 }

@@ -1,4 +1,4 @@
-# The fishing skill tree. Five branches, each five columns by three rows (at: [column, row]); a node needs ONE of
+# The fishing skill tree. Five branches, each filling five columns by three rows (at: [column, row]); a node needs ONE of
 # what it `requires` (a neighbour in its branch, which the menu joins with a line) and is shut while one of what it
 # `excludes` is taken. `perks` are per rank (see Perk.java for what each means); `cost` is skill points per rank.
 # `legacy` carries the old skill of that name over, rank for rank.
@@ -38,6 +38,9 @@ nodes:
   deep_current: {branch: tidecaller, at: [4, 0], title: Deep Current, icon: nautilus_shell, ranks: 2, requires: [rain_dancer], perks: {rare: 5}}
   stormcaller: {branch: tidecaller, at: [4, 1], title: Stormcaller, icon: trident, capstone: true, cost: 3, level: 60, requires: [rain_dancer, tide_lore, quick_hands], perks: {wait: 15, storm_wait: 25}}
   twin_tides: {branch: tidecaller, at: [4, 2], title: Twin Tides, icon: lily_pad, ranks: 2, requires: [quick_hands], perks: {double: 30}}
+  auto_reel: {branch: tidecaller, at: [1, 1], title: Auto-Reel, icon: tripwire_hook, cost: 2, level: 25, requires: [quick_bite], perks: {auto_reel: 1}}
+  auto_rethrow: {branch: tidecaller, at: [0, 0], title: Auto-Rethrow, icon: dispenser, cost: 2, level: 35, requires: [quick_bite], perks: {auto_rethrow: 1}}
+  night_owl: {branch: tidecaller, at: [0, 2], title: Night Owl, icon: lantern, ranks: 3, requires: [quick_bite], perks: {night_wait: 8}}
 
   # ---------------------------------------------------------------- Treasure Hunter
   treasure_sense: {branch: treasure, at: [0, 1], title: Treasure Sense, icon: compass, ranks: 5, perks: {chest: 10}, legacy: treasure_sense}
@@ -52,6 +55,9 @@ nodes:
   map_reader: {branch: treasure, at: [4, 0], title: Map Reader, icon: filled_map, ranks: 2, requires: [deep_lure], perks: {chest_roll: 10}}
   krakens_hoard: {branch: treasure, at: [4, 1], title: "Kraken's Hoard", icon: heart_of_the_sea, capstone: true, cost: 3, level: 60, requires: [deep_lure, spot_treasure, gilded_coins], perks: {chest_up: 10, chest: 10}}
   golden_hook: {branch: treasure, at: [4, 2], title: Golden Hook, icon: golden_apple, ranks: 2, requires: [gilded_coins], perks: {chest_money: 10}}
+  chest_lore: {branch: treasure, at: [1, 1], title: Chest Lore, icon: experience_bottle, ranks: 3, requires: [treasure_sense], perks: {chest_xp: 15}}
+  lucky_shine: {branch: treasure, at: [0, 0], title: Lucky Shine, icon: glow_ink_sac, ranks: 2, requires: [treasure_sense], perks: {skin_luck: 25}}
+  deep_pockets: {branch: treasure, at: [0, 2], title: Deep Pockets, icon: barrel, ranks: 2, requires: [treasure_sense], perks: {chest_fish: 25}}
 
   # ---------------------------------------------------------------- Collector
   rare_instinct: {branch: collector, at: [0, 1], title: Rare Instinct, icon: amethyst_shard, ranks: 5, perks: {rare: 10}, legacy: rare_instinct}
@@ -66,6 +72,9 @@ nodes:
   record_breaker: {branch: collector, at: [4, 0], title: Record Breaker, icon: gold_ingot, ranks: 2, requires: [giant_hunter], perks: {weight: 5}}
   legend_seeker: {branch: collector, at: [4, 1], title: Legend Seeker, icon: dragon_breath, capstone: true, cost: 3, level: 60, requires: [giant_hunter, legend_lure, jewel_eye], perks: {legend: 50, rare: 10}}
   myth_lure: {branch: collector, at: [4, 2], title: Myth Lure, icon: end_crystal, ranks: 2, requires: [jewel_eye], perks: {legend: 8}}
+  new_waters: {branch: collector, at: [1, 1], title: New Waters, icon: axolotl_bucket, ranks: 3, requires: [rare_instinct], perks: {new_kind: 15}}
+  first_find: {branch: collector, at: [0, 0], title: First Find, icon: knowledge_book, ranks: 2, requires: [rare_instinct], perks: {first_xp: 50}}
+  leviathan_arms: {branch: collector, at: [0, 2], title: Leviathan Arms, icon: netherite_ingot, ranks: 3, requires: [rare_instinct], perks: {big_weight: 5}}
 
   # ---------------------------------------------------------------- Ember & Void
   strange_waters: {branch: ember, at: [0, 1], title: Strange Waters, icon: magma_cream, ranks: 3, perks: {lava_wait: 5, void_wait: 5}}
@@ -80,6 +89,9 @@ nodes:
   lava_wader: {branch: ember, at: [4, 0], title: Lava Wader, icon: lava_bucket, ranks: 2, requires: [magma_lure], perks: {lava_wait: 5}}
   abyss_walker: {branch: ember, at: [4, 1], title: Abyss Walker, icon: dragon_head, capstone: true, cost: 3, level: 60, requires: [magma_lure, nether_instinct, star_lure], perks: {hot_xp: 50, hot_rare: 20}}
   void_drifter: {branch: ember, at: [4, 2], title: Void Drifter, icon: shulker_shell, ranks: 2, requires: [star_lure], perks: {void_wait: 5}}
+  long_bite: {branch: ember, at: [1, 1], title: Long Bite, icon: slime_ball, ranks: 3, requires: [strange_waters], perks: {hot_window: 20}}
+  magma_scales: {branch: ember, at: [0, 0], title: Magma Scales, icon: crying_obsidian, ranks: 3, requires: [strange_waters], perks: {hot_weight: 5}}
+  void_anchor: {branch: ember, at: [0, 2], title: Void Anchor, icon: phantom_membrane, requires: [strange_waters], perks: {void_safe: 1}}
 
   # ---------------------------------------------------------------- Fishmonger
   double_catch: {branch: monger, at: [0, 1], title: Double Catch, icon: cod, ranks: 5, perks: {double: 40}, legacy: double_catch}
@@ -94,3 +106,6 @@ nodes:
   thrifty: {branch: monger, at: [4, 0], title: Thrifty, icon: hopper, ranks: 2, requires: [bait_whisperer], perks: {bait_save: 5}}
   master_angler: {branch: monger, at: [4, 1], title: Master Angler, icon: totem_of_undying, capstone: true, cost: 3, level: 60, requires: [bait_whisperer, busy_hands, gourmet], perks: {double: 50, xp: 20}}
   feast: {branch: monger, at: [4, 2], title: Feast, icon: golden_carrot, ranks: 2, requires: [gourmet], perks: {dish: 15}}
+  market_stall: {branch: monger, at: [1, 1], title: Market Stall, icon: bell, ranks: 3, requires: [double_catch], perks: {catch_money: 5}}
+  triple_haul: {branch: monger, at: [0, 0], title: Triple Haul, icon: cod_bucket, ranks: 2, requires: [double_catch], perks: {triple: 15}}
+  bait_box: {branch: monger, at: [0, 2], title: Bait Box, icon: composter, ranks: 3, requires: [double_catch], perks: {chest_bait: 15}}

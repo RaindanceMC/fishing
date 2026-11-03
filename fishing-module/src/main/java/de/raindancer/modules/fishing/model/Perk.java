@@ -31,7 +31,27 @@ public enum Perk {
     HOT_XP("%s%% more fishing experience in lava and over the void", false),
     BAIT_SAVE("%s%% chance bait is not used up", false),
     DISH("Dishes last %s%% longer", false),
-    FIREPROOF("Fire resistance while your line is in lava", false);
+    FIREPROOF("Fire resistance while your line is in lava", false),
+    AUTO_REEL("A bite reels itself in", false),
+    AUTO_RETHROW("After a catch the line goes back out by itself", false),
+    NIGHT_WAIT("At night, fish bite %s%% sooner", false),
+    CHEST_XP("Sea chests give %s%% more fishing experience", false),
+    SKIN_LUCK("Rod skin tokens turn up %s%% more often in sea chests", false),
+    CHEST_FISH("Sea chests hold %s%% more fish", false),
+    NEW_KIND("Kinds you have never caught bite %s%% more often", false),
+    FIRST_XP("The first catch of a kind gives %s%% more experience", false),
+    BIG_WEIGHT("Legendary and mythic fish weigh %s%% more", false),
+    HOT_WEIGHT("Fish from lava and the void weigh %s%% more", false),
+    HOT_WINDOW("A bite in lava or the void lasts %s%% longer", false),
+    VOID_SAFE("Slow falling while your line is over the void", false),
+    CATCH_MONEY("Every fish pays you %s%% of its shop price at once", false),
+    TRIPLE("%s%% chance two fish on one hook are three", false),
+    CHEST_BAIT("%s%% chance a sea chest holds a stack of bait more", false);
+
+    /** On or off: one rank is all there is, and the line has no number. */
+    public boolean toggle() {
+        return this == FIREPROOF || this == AUTO_REEL || this == AUTO_RETHROW || this == VOID_SAFE;
+    }
 
     private final String text;
     /** Counted out of a thousand, shown as a percentage. */
@@ -48,7 +68,7 @@ public enum Perk {
 
     /** "Fish bite 6% sooner"; a negative value reads as the opposite: "Fish bite 20% later". */
     public String describe(double value) {
-        if (this == FIREPROOF) {
+        if (toggle()) {
             return text;
         }
         double shown = permille ? value / 10.0 : value;

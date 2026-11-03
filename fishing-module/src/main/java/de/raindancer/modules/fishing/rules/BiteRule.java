@@ -48,12 +48,19 @@ public final class BiteRule implements IFishingRule {
      */
     public double waitFactor(Rod rod, FisherProfile profile, boolean inSpot, Bait bait, Water water,
                              boolean raining) {
+        return waitFactor(rod, profile, inSpot, bait, water, raining, false);
+    }
+
+    /** @param night it is night where the hook is */
+    public double waitFactor(Rod rod, FisherProfile profile, boolean inSpot, Bait bait, Water water,
+                             boolean raining, boolean night) {
         Perks perks = tree.perks(profile.nodes());
         double factor = (1.0 - 0.08 * rod.rank(RodPart.HOOK))
                 * rod.ownWaitFactor()
                 * perks.sooner(Perk.WAIT)
                 * (inSpot ? 0.8 * perks.sooner(Perk.SPOT_WAIT) : 1.0)
                 * (raining ? perks.sooner(Perk.STORM_WAIT) : 1.0)
+                * (night ? perks.sooner(Perk.NIGHT_WAIT) : 1.0)
                 * (water == Water.LAVA ? perks.sooner(Perk.LAVA_WAIT) : 1.0)
                 * (water == Water.VOID ? perks.sooner(Perk.VOID_WAIT) : 1.0)
                 * (bait == null ? 1.0 : bait.waitFactor());
@@ -71,8 +78,19 @@ public final class BiteRule implements IFishingRule {
 
     public int customWait(Rod rod, FisherProfile profile, boolean inSpot, Bait bait, Water water, boolean raining,
                           Random random) {
+        return customWait(rod, profile, inSpot, bait, water, raining, false, random);
+    }
+
+    public int customWait(Rod rod, FisherProfile profile, boolean inSpot, Bait bait, Water water, boolean raining,
+                          boolean night, Random random) {
         int plain = QUICKEST_TICKS + random.nextInt(SLOWEST_TICKS - QUICKEST_TICKS + 1);
-        return Math.max(20, (int) Math.round(plain * waitFactor(rod, profile, inSpot, bait, water, raining)));
+        return Math.max(20, (int) Math.round(plain * waitFactor(rod, profile, inSpot, bait, water, raining, night)));
+    }
+
+    /** Night by the world's clock: from dusk (13000) until dawn (23000), when monsters are about too. */
+    public static boolean night(long worldTime) {
+        long time = Math.floorMod(worldTime, 24000L);
+        return time >= 13000 && time < 23000;
     }
 
     /** How long a bite in lava or the void lasts before the fish is gone again. */

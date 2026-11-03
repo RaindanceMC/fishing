@@ -93,4 +93,14 @@ class ProgressRulesTest {
         assertThat(upgrades.refusal(Rod.PLAIN, RodPart.HOOK, spent, costs))
                 .contains(UpgradeRule.Refusal.NOT_ENOUGH_EXPERIENCE);
     }
+
+    @Test
+    @DisplayName("Night Owl: fish bite sooner at night, and only then")
+    void nightOwl() {
+        BiteRule bite = new BiteRule();
+        FisherProfile owl = FisherProfile.NEW.withNode("night_owl", 3);
+        org.assertj.core.data.Offset<Double> near = org.assertj.core.data.Offset.offset(0.001);
+        assertThat(bite.waitFactor(Rod.PLAIN, owl, false, null, null, false, true)).isCloseTo(0.76, near);
+        assertThat(bite.waitFactor(Rod.PLAIN, owl, false, null, null, false, false)).isCloseTo(1.0, near);
+    }
 }

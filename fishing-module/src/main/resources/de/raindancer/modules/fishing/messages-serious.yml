@@ -7,6 +7,9 @@ fishing:
   caught:
     fish: "<green>Caught: <white><fish></white>, <white><weight></white> <gray>(<tier>)</gray>."
     double: "<green>Double catch: <white><fish></white>."
+    triple: "<green>Triple catch: <white><fish></white>."
+  auto:
+    still: "<gray>Auto-Rethrow paused after 30 casts without looking around. Look around or cast by hand to resume."
   chest:
     one-at-a-time: "<red>Wait until the current chest has opened."
     place-it: "<gray>Place the chest first, then right click it to open it."

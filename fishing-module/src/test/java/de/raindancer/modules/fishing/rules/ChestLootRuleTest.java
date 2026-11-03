@@ -55,6 +55,10 @@ class ChestLootRuleTest {
                         case Reward.Fish fish -> assertThat(fish.amount()).isPositive();
                         case Reward.Shard shard -> assertThat(shard.amount()).isPositive();
                         case Reward.Skin token -> assertThat(token.skin().chest()).isEqualTo(tier);
+                        case Reward.Bait bait -> {
+                            assertThat(bait.amount()).isPositive();
+                            assertThat(tier.atLeast(bait.bait().tier())).as(tier + " " + bait).isTrue();
+                        }
                     }
                 }
             }
@@ -179,6 +183,61 @@ class ChestLootRuleTest {
         }
         assertThat(extra).isBetween(1300, 1500);
         assertThat(ChestLootRule.extraRolls(tree.perks(java.util.Map.of("hoarder", 1)), random)).isZero();
+    }
+
+    private static final java.util.Set<String> TRASH = java.util.Set.of("string", "lily_pad", "iron_ingot",
+            "gold_nugget", "lapis_lazuli", "emerald", "prismarine_crystals");
+
+    @Test
+    @DisplayName("no chest, not even a Driftwood one, holds trash: string, lily pads, nuggets, iron, lapis, a few emeralds")
+    void noTrash() {
+        Random random = new Random(50);
+        for (Tier tier : Tier.values()) {
+            for (int n = 0; n < 1000; n++) {
+                assertThat(rule.open(tier, 100, random)).as(tier.name()).noneMatch(reward ->
+                        reward instanceof Reward.Item item && TRASH.contains(item.material()));
+            }
+        }
+    }
+
+    @Test
+    @DisplayName("every chest tier can hold bait, of its own tier or below")
+    void baitInChests() {
+        Random random = new Random(51);
+        for (Tier tier : Tier.values()) {
+            boolean seen = false;
+            for (int n = 0; n < 500 && !seen; n++) {
+                seen = rule.open(tier, 100, random).stream().anyMatch(Reward.Bait.class::isInstance);
+            }
+            assertThat(seen).as(tier.name()).isTrue();
+        }
+    }
+
+    private int countOf(Class<? extends Reward> type, de.raindancer.modules.fishing.model.Perks perks, Tier tier,
+                        long seed) {
+        Random random = new Random(seed);
+        int total = 0;
+        for (int n = 0; n < 4000; n++) {
+            for (Reward reward : rule.open(tier, 100, random, perks)) {
+                if (type.isInstance(reward)) {
+                    total += reward instanceof Reward.Fish fish ? fish.amount() : 1;
+                }
+            }
+        }
+        return total;
+    }
+
+    @Test
+    @DisplayName("Lucky Shine finds more skin tokens, Deep Pockets more fish, Bait Box more bait")
+    void newChestPerks() {
+        var tree = de.raindancer.modules.fishing.model.SkillTree.shipped();
+        var none = de.raindancer.modules.fishing.model.Perks.NONE;
+        assertThat(countOf(Reward.Skin.class, tree.perks(java.util.Map.of("lucky_shine", 2)), Tier.EPIC, 60))
+                .isGreaterThan(countOf(Reward.Skin.class, none, Tier.EPIC, 60) * 13 / 10);
+        assertThat(countOf(Reward.Fish.class, tree.perks(java.util.Map.of("deep_pockets", 2)), Tier.RARE, 61))
+                .isGreaterThan(countOf(Reward.Fish.class, none, Tier.RARE, 61) * 13 / 10);
+        assertThat(countOf(Reward.Bait.class, tree.perks(java.util.Map.of("bait_box", 3)), Tier.EPIC, 62))
+                .isGreaterThan(countOf(Reward.Bait.class, none, Tier.EPIC, 62) + 1000);
     }
 
     private static long money(List<Reward> rewards) {

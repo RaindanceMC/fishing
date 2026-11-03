@@ -64,10 +64,14 @@ public final class LineService implements IFishingService {
     private final Map<UUID, Line> lines = new ConcurrentHashMap<>();
 
     private final BaitService baits;
+    private final AutoService auto;
+    private static final de.raindancer.modules.fishing.rules.BonusRule BONUS =
+            new de.raindancer.modules.fishing.rules.BonusRule();
 
     public LineService(Plugin plugin, Messages messages, Effects effects, CatchService catches,
-                       ProfileService profiles, BiteRule bites, Random random, BaitService baits) {
+                       ProfileService profiles, BiteRule bites, Random random, BaitService baits, AutoService auto) {
         this.baits = baits;
+        this.auto = auto;
         this.plugin = plugin;
         this.messages = messages;
         this.effects = effects;
@@ -111,7 +115,7 @@ public final class LineService implements IFishingService {
                 }
                 if (line.ticks <= 0) {
                     line.phase = Phase.BITING;
-                    line.ticks = bites.biteWindowTicks();
+                    line.ticks = BONUS.biteWindow(bites.biteWindowTicks(), profiles.perks(player.getUniqueId()));
                     bite(player, hook, line);
                 }
             }
@@ -171,12 +175,17 @@ public final class LineService implements IFishingService {
     private int wait(Player player, FishHook hook, Water water) {
         int ticks = bites.customWait(catches.rodOf(player), profiles.of(player.getUniqueId()),
                 catches.inSpot(hook.getLocation()), baits.on(hook.getUniqueId()), water,
-                hook.getWorld().hasStorm(), random);
-        if (water == Water.LAVA && profiles.perks(player.getUniqueId()).has(Perk.FIREPROOF)) {
-            // Fireproof: no burning while the line is in, through the wait and the bite after it.
-            int lasts = ticks + bites.biteWindowTicks() + 100;
+                hook.getWorld().hasStorm(), hook.getWorld().getEnvironment() == World.Environment.NORMAL && BiteRule.night(hook.getWorld().getTime()), random);
+        de.raindancer.modules.fishing.model.Perks perks = profiles.perks(player.getUniqueId());
+        // Fireproof and Void Anchor: safe while the line is in, through the wait and the bite after it.
+        int lasts = ticks + BONUS.biteWindow(bites.biteWindowTicks(), perks) + 100;
+        org.bukkit.potion.PotionEffectType keeps = water == Water.LAVA && perks.has(Perk.FIREPROOF)
+                ? org.bukkit.potion.PotionEffectType.FIRE_RESISTANCE
+                : water == Water.VOID && perks.has(Perk.VOID_SAFE) ? org.bukkit.potion.PotionEffectType.SLOW_FALLING
+                : null;
+        if (keeps != null) {
             Scheduling.entity(plugin, player, () -> player.addPotionEffect(new org.bukkit.potion.PotionEffect(
-                    org.bukkit.potion.PotionEffectType.FIRE_RESISTANCE, lasts, 0, true, false, true)));
+                    keeps, lasts, 0, true, false, true)));
         }
         return ticks;
     }
@@ -208,6 +217,7 @@ public final class LineService implements IFishingService {
         }
         flare(hook.getLocation(), water, 12);
         effects.play(player.getUniqueId(), Cues.NOTIFY);
+        auto.bitten(player, hook);
     }
 
     private static void flare(Location at, Water water, int amount) {
@@ -241,6 +251,7 @@ public final class LineService implements IFishingService {
             flare(at, line.water, 20);
             catches.credit(player, caught, line.water);
             player.giveExp(1 + random.nextInt(6));
+            auto.landed(player);
         }
         return true;
     }

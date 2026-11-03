@@ -186,4 +186,53 @@ class CatchRuleTest {
         Map<Tier, Integer> lured = chestTiers(FisherProfile.NEW.withNode("legend_seeker", 1), 40000);
         assertThat(lured.getOrDefault(Tier.LEGENDARY, 0)).isGreaterThan(plain.getOrDefault(Tier.LEGENDARY, 0) * 13 / 10);
     }
+
+    @Test
+    @DisplayName("New Waters: a kind never caught bites more often than the ones on the record already")
+    void newWaters() {
+        FisherProfile seenOne = FisherProfile.NEW;
+        java.util.List<de.raindancer.modules.fishing.model.FishKind> commons = CATALOG.in(Water.FROZEN, null, Tier.COMMON);
+        assertThat(commons.size()).isGreaterThan(1);
+        String known = commons.getFirst().id();
+        seenOne = seenOne.withCatch(known, 5);
+        FisherProfile curious = seenOne.withNode("new_waters", 3);
+        assertThat(shareOf(known, curious)).isLessThan(shareOf(known, seenOne) * 0.85);
+    }
+
+    private double shareOf(String kind, FisherProfile profile) {
+        Random random = new Random(70);
+        int hits = 0;
+        int fish = 0;
+        for (int n = 0; n < 20000; n++) {
+            if (rule.roll(new CatchRule.Cast(Water.FROZEN, Rod.PLAIN, profile, false, 0, 0, true), random)
+                    instanceof Catch.Fish caught && caught.tier() == Tier.COMMON) {
+                fish++;
+                hits += caught.kind().id().equals(kind) ? 1 : 0;
+            }
+        }
+        return (double) hits / fish;
+    }
+
+    @Test
+    @DisplayName("Triple Haul turns some doubles into three fish, and nothing without a double")
+    void tripleHaul() {
+        Random random = new Random(71);
+        FisherProfile hauler = FisherProfile.NEW.withNode("double_catch", 5).withNode("triple_haul", 2);
+        int triples = 0;
+        int doubles = 0;
+        for (int n = 0; n < 8000; n++) {
+            if (rule.roll(cast(Water.RIVER, Rod.PLAIN, hauler, false), random) instanceof Catch.Fish fish) {
+                triples += fish.amount() == 3 ? 1 : 0;
+                doubles += fish.amount() >= 2 ? 1 : 0;
+            }
+        }
+        assertThat((double) triples / doubles).isBetween(0.25, 0.35);
+        Random plain = new Random(72);
+        for (int n = 0; n < 4000; n++) {
+            if (rule.roll(cast(Water.RIVER, Rod.PLAIN, FisherProfile.NEW.withNode("triple_haul", 2), false), plain)
+                    instanceof Catch.Fish fish) {
+                assertThat(fish.amount()).isEqualTo(1);
+            }
+        }
+    }
 }

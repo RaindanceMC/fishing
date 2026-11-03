@@ -8,7 +8,7 @@ category: Progress & rewards
 order: 35
 module: fishing
 aliases: [fish, angling, rod, lootbox, sea chest, chests]
-keywords: [catch, tier, mythic, void, lava, spot, shoal, upgrade, skill, tree, perk, dish, sushi, recipe, bait, net, skin, sell]
+keywords: [auto, afk, catch, tier, mythic, void, lava, spot, shoal, upgrade, skill, tree, perk, dish, sushi, recipe, bait, net, skin, sell]
 commands: [fishing]
 sections:
   - question: What can I catch?
@@ -21,7 +21,7 @@ sections:
     title: Sea chests
     text: |
       Now and then a chest bites instead of a fish — about {setting:fishing:chests.chance-permille|count} casts in a thousand, more with a chest lure, treasure sense or in a fishing spot. There are six: <white>Driftwood</white>, <green>Reef</green>, <aqua>Pearl</aqua>, <light_purple>Abyss</light_purple>, <gold>Leviathan</gold> and <aqua>Void</aqua>.
-      Place one wherever you like and right click it to open it: it shakes, bursts open, and what was inside comes out one thing at a time — each rises in a puff of smoke, turns in the air and drops into your bag. A cheque for its money, fish no better than the chest, and things that get richer each tier. Only you can open your chest; sneak and left click it to take it back.
+      Place one wherever you like and right click it to open it: it shakes, bursts open, and what was inside comes out one thing at a time — each rises in a puff of smoke, turns in the air and drops into your bag. A cheque for its money, fish no better than the chest, bait, and things that get richer each tier — no string or lily pads, even in a Driftwood chest. Only you can open your chest; sneak and left click it to take it back.
       Each water has its own chests: a river gives up to Pearl, swamps and caves up to Abyss, the sea up to Leviathan. The Void chest comes only out of the void.
   - question: What are fishing spots?
     title: Fishing spots
@@ -55,7 +55,8 @@ sections:
     title: Levels and the skill tree
     text: |
       Every catch earns fishing experience, more for rarer fish and for opening chests. Levels go up to {setting:fishing:levels.highest|count}, and every level is one skill point; so is every sea chest tier you open for the first time and every ten kinds of fish you have caught.
-      Spend them in the skill tree, {run:/fishing skills}: five branches — <white>Tidecaller</white> (quicker bites), <white>Treasure Hunter</white> (better sea chests), <white>Collector</white> (rarer, heavier fish), <white>Ember & Void</white> (lava and the void) and <white>Fishmonger</white> (double catches, bait, the kitchen). A node needs one next to it first; each branch has one choice between two nodes (taking one shuts the other), and ends in a capstone at fishing level 60. There are more nodes than points, so pick a path. Unlearning the whole tree costs {setting:fishing:skills.reset-fee|money} and gives every point back.
+      Spend them in the skill tree, {run:/fishing skills}: five branches — <white>Tidecaller</white> (quicker bites), <white>Treasure Hunter</white> (better sea chests), <white>Collector</white> (rarer, heavier fish), <white>Ember & Void</white> (lava and the void) and <white>Fishmonger</white> (double catches, bait, the kitchen). A node needs one next to it first; each branch has one choice between two nodes (taking one shuts the other), and ends in a capstone at fishing level 60. There are more nodes than points, so pick a path.
+      Tidecaller holds <white>Auto-Reel</white> (a bite reels itself in) and <white>Auto-Rethrow</white> (after a catch the line goes back out). Auto-Rethrow rests while you are away, and after 30 casts in a row without you looking around; look around or cast by hand and it goes on. Unlearning the whole tree costs {setting:fishing:skills.reset-fee|money} and gives every point back.
   - question: What can I cook?
     title: Dishes
     text: |
@@ -93,3 +94,4 @@ sections:
     text: |
       {cmd:/fishing give <player> <fish:id|dish:id|chest:tier|rod:tier|bait:id|net:fishing|skin:id> [amount]} hands out anything fishing makes; {cmd:/fishing xp <player> <amount>} grants fishing experience. {cmd:/fishing spot} puts a fishing spot on the water or lava you are looking at — or, in the End, out in the void.
       {cmd:/fishing spot create <tier> [radius]} puts down a spot for good, as big as you say (1 to 32 blocks round) and giving up chests and fish up to that tier — past what the water alone would; a mythic one only over the void. {cmd:/fishing spot list} shows this world's, {cmd:/fishing spot remove [id]} takes one away (the nearest within 32 blocks without an id).
+      Whoever has <white>rainsfishing.auto.unguarded</white> (operators by default) can keep Auto-Rethrow going while away or never looking around.

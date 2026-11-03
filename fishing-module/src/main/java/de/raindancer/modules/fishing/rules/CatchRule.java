@@ -97,8 +97,11 @@ public final class CatchRule implements IFishingRule {
         }
         Tier tier = pickTier(present, cast, random);
         List<FishKind> kinds = catalog.in(cast.water(), cast.biome(), tier);
-        FishKind kind = kinds.get(random.nextInt(kinds.size()));
+        FishKind kind = pickKind(kinds, cast, random);
         int amount = random.nextInt(1000) < doublePermille(cast) ? 2 : 1;
+        if (amount == 2 && random.nextDouble() * 100 < perks(cast).get(Perk.TRIPLE)) {
+            amount = 3;
+        }
         return new Catch.Fish(kind, amount);
     }
 
@@ -170,6 +173,28 @@ public final class CatchRule implements IFishingRule {
     public Tier bestChest(Water water) {
         List<Tier> band = chestBand(water);
         return band.getLast();
+    }
+
+    /** Evenly among the kinds, except that New Waters leans toward the ones the fisher has never caught. */
+    private FishKind pickKind(List<FishKind> kinds, Cast cast, Random random) {
+        double unseen = perks(cast).more(Perk.NEW_KIND);
+        if (unseen == 1.0 || kinds.size() == 1) {
+            return kinds.get(random.nextInt(kinds.size()));
+        }
+        double[] weights = new double[kinds.size()];
+        double total = 0;
+        for (int n = 0; n < kinds.size(); n++) {
+            weights[n] = cast.profile().caught(kinds.get(n).id()) > 0 ? 1.0 : unseen;
+            total += weights[n];
+        }
+        double point = random.nextDouble() * total;
+        for (int n = 0; n < weights.length; n++) {
+            point -= weights[n];
+            if (point < 0) {
+                return kinds.get(n);
+            }
+        }
+        return kinds.getLast();
     }
 
     private Tier pickTier(List<Tier> allowed, Cast cast, Random random) {

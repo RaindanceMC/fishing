@@ -22,6 +22,10 @@ public sealed interface Reward {
     record Shard(String enchantment, int amount) implements Reward {
     }
 
+    /** The module's own bait, ready for the off hand. */
+    record Bait(de.raindancer.modules.fishing.model.Bait bait, int amount) implements Reward {
+    }
+
     /** A rod skin's token: used, the skin is the fisher's for good. */
     record Skin(RodSkin skin) implements Reward {
     }

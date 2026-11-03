@@ -21,12 +21,12 @@ class SkillTreeTest {
     private final SkillTree tree = SkillTree.shipped();
 
     @Test
-    @DisplayName("five branches of twelve nodes, each on its own place in its branch's five by three grid")
+    @DisplayName("five branches of fifteen nodes, filling their branch's five by three grid")
     void shape() {
         assertThat(tree.branches()).hasSize(5);
         for (var branch : tree.branches()) {
             List<TreeNode> nodes = tree.nodesOf(branch.id());
-            assertThat(nodes).as(branch.id()).hasSize(12);
+            assertThat(nodes).as(branch.id()).hasSize(15);
             Set<Integer> places = new HashSet<>();
             for (TreeNode node : nodes) {
                 assertThat(places.add(TreeGrid.slot(node.column(), node.row()))).as(node.id()).isTrue();
@@ -44,6 +44,45 @@ class SkillTreeTest {
                 TreeGrid.link(other.column(), other.row(), node.column(), node.row());
             }
         }
+    }
+
+    @Test
+    @DisplayName("no two lines of a branch share a slot, so no line is drawn over another")
+    void linesNeverCross() {
+        for (var branch : tree.branches()) {
+            Set<Integer> used = new HashSet<>();
+            for (TreeNode node : tree.nodesOf(branch.id())) {
+                for (String needed : node.requires()) {
+                    TreeNode other = tree.node(needed).orElseThrow();
+                    var link = TreeGrid.link(other.column(), other.row(), node.column(), node.row());
+                    assertThat(used.add(link.slotRow() * 9 + link.slotColumn()))
+                            .as(branch.id() + ": " + needed + " to " + node.id()).isTrue();
+                }
+            }
+        }
+    }
+
+    @Test
+    @DisplayName("auto-reel and auto-rethrow are Tidecaller nodes behind a fishing level, one rank each")
+    void autoFishing() {
+        TreeNode reel = tree.node("auto_reel").orElseThrow();
+        TreeNode rethrow = tree.node("auto_rethrow").orElseThrow();
+        for (TreeNode node : List.of(reel, rethrow)) {
+            assertThat(node.branch()).isEqualTo("tidecaller");
+            assertThat(node.ranks()).isEqualTo(1);
+            assertThat(node.level()).isPositive();
+        }
+        assertThat(tree.perks(Map.of("auto_reel", 1)).has(Perk.AUTO_REEL)).isTrue();
+        assertThat(tree.perks(Map.of("auto_rethrow", 1)).has(Perk.AUTO_RETHROW)).isTrue();
+        assertThat(tree.perks(Map.of("auto_reel", 1)).has(Perk.AUTO_RETHROW)).isFalse();
+    }
+
+    @Test
+    @DisplayName("every perk there is is given by some node, so none is dead code")
+    void everyPerkIsUsed() {
+        Set<Perk> given = new HashSet<>();
+        tree.nodes().forEach(node -> given.addAll(node.perks().keySet()));
+        assertThat(given).containsExactlyInAnyOrder(Perk.values());
     }
 
     @Test
@@ -74,7 +113,7 @@ class SkillTreeTest {
                     }
                 }
             }
-            assertThat(reached).as(branch.id()).hasSize(12);
+            assertThat(reached).as(branch.id()).hasSize(15);
         }
     }
 

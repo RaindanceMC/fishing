@@ -234,6 +234,7 @@ public final class ChestService implements IFishingService {
                     shard.amount());
             case Reward.Money money -> new ItemStack(Material.GOLD_NUGGET);
             case Reward.Skin token -> forge.skinToken(token.skin());
+            case Reward.Bait bait -> forge.bait(bait.bait(), bait.amount());
         };
     }
 

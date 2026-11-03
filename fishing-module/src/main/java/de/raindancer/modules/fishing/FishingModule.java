@@ -51,7 +51,7 @@ import java.util.Random;
  */
 public final class FishingModule implements FlexModule {
 
-    private static final ModuleInfo INFO = ModuleInfo.of("fishing", "Fishing", "0.4.0")
+    private static final ModuleInfo INFO = ModuleInfo.of("fishing", "Fishing", "0.5.0")
             .describedAs("New fish in six tiers, sea chests, fishing spots, rod upgrades and skills, lava and "
                     + "void fishing, and dishes cooked from the catch.")
             .by("Raindancer118");
@@ -116,8 +116,10 @@ public final class FishingModule implements FlexModule {
             log.warn("The fishing nets could not be read now; they are read again the first time one is opened.");
         }
         catches.nets(nets);
+        de.raindancer.modules.fishing.service.AutoService auto = new de.raindancer.modules.fishing.service
+                .AutoService(context.plugin(), context.core().messages(), context.core().effects(), profiles, random);
         LineService lines = new LineService(context.plugin(), context.core().messages(), context.core().effects(),
-                catches, profiles, new BiteRule(), random, baits);
+                catches, profiles, new BiteRule(), random, baits, auto);
         seaChests = new de.raindancer.modules.fishing.service.SeaChestBlocks(context.plugin(), server);
         ChestService chests = new ChestService(context.plugin(), server, context.core().messages(),
                 context.core().effects(), forge, profiles, seaChests, new ChestLootRule(catalog), random, now);
@@ -134,7 +136,7 @@ public final class FishingModule implements FlexModule {
 
         services = new FishingServices(context.plugin(), server, log, context.core().messages(),
                 context.chat().brand(), context.core(), settings::current, settings, catalog, forge, profiles, rods,
-                spots, catches, lines, chests, seaChests, dishes, workshop, baits, nets, new LiveScreens());
+                spots, catches, lines, chests, seaChests, dishes, workshop, baits, nets, auto, new LiveScreens());
 
         context.listener(new FishListener(services));
         context.listener(new ChestListener(services));

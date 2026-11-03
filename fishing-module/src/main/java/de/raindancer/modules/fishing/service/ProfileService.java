@@ -9,7 +9,6 @@ import de.raindancer.core.ui.effect.Effects;
 import de.raindancer.core.ui.messages.Messages;
 import de.raindancer.modules.fishing.FishingSettings;
 import de.raindancer.modules.fishing.model.FisherProfile;
-import de.raindancer.modules.fishing.model.Perk;
 import de.raindancer.modules.fishing.model.Perks;
 import de.raindancer.modules.fishing.model.SkillTree;
 import de.raindancer.modules.fishing.model.TreeNode;
@@ -33,6 +32,9 @@ import java.util.function.UnaryOperator;
  * and comes back to the player's own thread to tell them how it went.
  */
 public final class ProfileService implements IFishingService {
+
+    private static final de.raindancer.modules.fishing.rules.BonusRule BONUS =
+            new de.raindancer.modules.fishing.rules.BonusRule();
 
     private final Plugin plugin;
     private final ProfileStore store;
@@ -83,15 +85,10 @@ public final class ProfileService implements IFishingService {
 
     /** @param water where it was caught, for the tree's lava and void experience; null for anywhere */
     public void caught(Player player, String fishId, int amount, Tier tier, double kilos, Water water) {
+        UUID id = player.getUniqueId();
+        boolean first = of(id).caught(fishId) == 0;
         reward(player, profile -> profile.withCatch(fishId, amount).withWeight(fishId, kilos),
-                experience(player.getUniqueId(), (long) tier.experience() * amount, water));
-    }
-
-    /** Experience after the tree's perks. */
-    long experience(UUID player, long plain, Water water) {
-        Perks perks = perks(player);
-        boolean hot = water == Water.LAVA || water == Water.VOID;
-        return Math.round(plain * perks.more(Perk.XP) * (hot ? perks.more(Perk.HOT_XP) : 1.0));
+                BONUS.experience((long) tier.experience() * amount, perks(id), water, first));
     }
 
     /** Staff granting fishing experience by hand. */
@@ -101,7 +98,7 @@ public final class ProfileService implements IFishingService {
 
     public void openedChest(Player player, Tier tier) {
         reward(player, profile -> profile.withChestOpened(tier),
-                experience(player.getUniqueId(), tier.experience() * 2L, null));
+                BONUS.chestExperience(tier.experience() * 2L, perks(player.getUniqueId())));
     }
 
     private void reward(Player player, UnaryOperator<FisherProfile> change, long experience) {
