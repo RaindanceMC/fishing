@@ -186,10 +186,10 @@ class ChestLootRuleTest {
     }
 
     private static final java.util.Set<String> TRASH = java.util.Set.of("string", "lily_pad", "iron_ingot",
-            "gold_nugget", "lapis_lazuli", "emerald", "prismarine_crystals");
+            "gold_nugget", "lapis_lazuli", "emerald", "prismarine_crystals", "experience_bottle");
 
     @Test
-    @DisplayName("no chest, not even a Driftwood one, holds trash: string, lily pads, nuggets, iron, lapis, a few emeralds")
+    @DisplayName("no chest, not even a Driftwood one, holds trash: string, lily pads, nuggets, iron, lapis, a few emeralds, experience bottles")
     void noTrash() {
         Random random = new Random(50);
         for (Tier tier : Tier.values()) {

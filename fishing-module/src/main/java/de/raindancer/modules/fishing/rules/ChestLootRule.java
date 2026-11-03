@@ -15,7 +15,7 @@ import java.util.Random;
 /**
  * What is in a sea chest: money, a few fish no better than the chest, things from a pool that gets richer each tier,
  * and from an Abyss chest up a prize — diamonds, then netherite. The plainer things of the low chests stop at Pearl, and
- * a chest's own tier weighs most in its pool, so a Void chest is not mostly experience bottles and bait.
+ * a chest's own tier weighs most in its pool, so a Void chest is not mostly pearls and bait.
  */
 public final class ChestLootRule implements IFishingRule {
 
@@ -75,10 +75,11 @@ public final class ChestLootRule implements IFishingRule {
             shard(Tier.EPIC, 4, Rod.TWIN_CATCH, 1, 1),
             shard(Tier.LEGENDARY, 4, Rod.TREASURE_HUNTER, 1, 2),
             shard(Tier.MYTHIC, 3, Rod.MYTHIC_LURE, 1, 1),
-            // No string, lily pads, nuggets, iron, lapis or a stray couple of emeralds: what a chest holds is worth the
-            // lid, from the Driftwood chest up — bait, experience, books, food for the road and now and then a diamond.
-            bait(Bait.WRIGGLER, 30, 4, 8),
-            cheap(Tier.COMMON, 25, "experience_bottle", 4, 8),
+            // No string, lily pads, nuggets, iron, lapis, stray emeralds or experience bottles: what a chest holds is
+            // worth the lid, from the Driftwood chest up — bait, books, pearls, food for the road, now and then a diamond.
+            bait(Bait.WRIGGLER, 35, 4, 8),
+            cheap(Tier.COMMON, 15, "ender_pearl", 1, 2),
+            cheap(Tier.COMMON, 6, "golden_apple", 1, 1),
             cheap(Tier.COMMON, 15, "golden_carrot", 4, 8),
             cheap(Tier.COMMON, 8, "name_tag", 1, 1),
             cheap(Tier.COMMON, 5, "diamond", 1, 1),
@@ -90,7 +91,7 @@ public final class ChestLootRule implements IFishingRule {
             book(Tier.UNCOMMON, 12, 14),
             bait(Bait.GILDED, 20, 2, 4),
             item(Tier.RARE, 15, "diamond", 1, 2),
-            cheap(Tier.RARE, 8, "experience_bottle", 8, 16),
+            cheap(Tier.RARE, 8, "ender_pearl", 4, 8),
             item(Tier.RARE, 8, "nautilus_shell", 1, 1),
             item(Tier.RARE, 6, "golden_apple", 1, 1),
             book(Tier.RARE, 12, 18),
