@@ -114,4 +114,45 @@ class ChestLootRuleTest {
             }
         }
     }
+
+    private static final java.util.Set<String> PRIZES = java.util.Set.of("diamond", "diamond_block",
+            "netherite_scrap", "netherite_ingot", "netherite_upgrade_smithing_template", "nether_star", "elytra");
+    private static final java.util.Set<String> CHEAP = java.util.Set.of("string", "lily_pad", "iron_ingot",
+            "gold_nugget", "lapis_lazuli", "emerald", "experience_bottle", "prismarine_crystals", "name_tag");
+
+    @Test
+    @DisplayName("an Abyss chest or better always holds diamonds or netherite, and never the cheap stuff of the low chests")
+    void bigChestsAreBig() {
+        Random random = new Random(21);
+        for (Tier tier : List.of(Tier.EPIC, Tier.LEGENDARY, Tier.MYTHIC)) {
+            for (int n = 0; n < 500; n++) {
+                List<Reward> rewards = rule.open(tier, 100, random);
+                assertThat(rewards).as(tier + " " + rewards).anyMatch(reward -> reward instanceof Reward.Item item
+                        && PRIZES.contains(item.material()));
+                assertThat(rewards).as(tier + " " + rewards).noneMatch(reward -> reward instanceof Reward.Item item
+                        && CHEAP.contains(item.material()));
+            }
+        }
+    }
+
+    private static int count(List<Reward> rewards, String material) {
+        return rewards.stream().filter(reward -> reward instanceof Reward.Item item && item.material().equals(material))
+                .mapToInt(reward -> ((Reward.Item) reward).amount()).sum();
+    }
+
+    @Test
+    @DisplayName("a Void chest averages at least one netherite ingot, a Leviathan chest a handful of diamonds")
+    void topChestsPayInNetherite() {
+        Random random = new Random(22);
+        double ingots = 0;
+        double diamonds = 0;
+        for (int n = 0; n < 1000; n++) {
+            List<Reward> mythic = rule.open(Tier.MYTHIC, 100, random);
+            ingots += count(mythic, "netherite_ingot");
+            List<Reward> legendary = rule.open(Tier.LEGENDARY, 100, random);
+            diamonds += count(legendary, "diamond") + 9 * count(legendary, "diamond_block");
+        }
+        assertThat(ingots / 1000).isGreaterThanOrEqualTo(1.0);
+        assertThat(diamonds / 1000).isGreaterThanOrEqualTo(6.0);
+    }
 }
