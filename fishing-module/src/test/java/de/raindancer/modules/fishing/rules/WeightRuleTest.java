@@ -47,6 +47,19 @@ class WeightRuleTest {
     }
 
     @Test
+    @DisplayName("every mythic fish is told to everybody, a whopper as a whopper, any other as a mythic catch")
+    void everyMythicIsTold() {
+        assertThat(rule.telling(Tier.MYTHIC, new WeightRule.Weighing(80, false)))
+                .isEqualTo(WeightRule.Telling.MYTHIC);
+        assertThat(rule.telling(Tier.MYTHIC, new WeightRule.Weighing(120, true)))
+                .isEqualTo(WeightRule.Telling.WHOPPER);
+        assertThat(rule.telling(Tier.LEGENDARY, new WeightRule.Weighing(40, false)))
+                .isEqualTo(WeightRule.Telling.NOBODY);
+        assertThat(rule.telling(Tier.RARE, new WeightRule.Weighing(24, true)))
+                .isEqualTo(WeightRule.Telling.WHOPPER);
+    }
+
+    @Test
     @DisplayName("weights read as a fisher would say them")
     void format() {
         assertThat(WeightRule.format(1.4234)).isEqualTo("1.42 kg");

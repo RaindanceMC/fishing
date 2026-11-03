@@ -28,8 +28,18 @@ public final class WeightRule implements IFishingRule {
         return new Weighing(kilos, roll >= 0.9);
     }
 
+    /** What everybody hears of a catch: a rare-or-better whopper as a whopper, and every mythic fish. */
+    public enum Telling { NOBODY, WHOPPER, MYTHIC }
+
     public boolean worthTelling(Tier tier, Weighing weighing) {
-        return weighing.whopper() && tier.atLeast(Tier.RARE);
+        return telling(tier, weighing) != Telling.NOBODY;
+    }
+
+    public Telling telling(Tier tier, Weighing weighing) {
+        if (weighing.whopper() && tier.atLeast(Tier.RARE)) {
+            return Telling.WHOPPER;
+        }
+        return tier == Tier.MYTHIC ? Telling.MYTHIC : Telling.NOBODY;
     }
 
     public static String format(double kilos) {

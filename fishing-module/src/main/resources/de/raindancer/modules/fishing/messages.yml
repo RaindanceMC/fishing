@@ -19,6 +19,9 @@ fishing:
     double: "<green>Two <white><fish></white> on one hook. The water likes you today."
     chest: "<gold>A <white><chest></white> came up on your line! Place it somewhere and right click it to open it."
 
+  mythic:
+    broadcast: "<gold><white><player></white> just landed a <aqua><bold>mythic</bold></aqua> <white><fish></white> <gray>(<weight>)</gray>!"
+
   whopper:
     broadcast: "<gold><white><player></white> just landed a whopping <white><weight></white> <white><fish></white> <gray>(<tier>)</gray>!"
     w: "<green><bold>[W]</bold></green>"

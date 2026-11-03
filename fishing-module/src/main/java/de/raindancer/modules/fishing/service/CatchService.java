@@ -149,7 +149,7 @@ public final class CatchService implements IFishingService {
         });
     }
 
-    /** Puts it on the player's record and tells them — and, for a whopper of a rare fish, everybody. */
+    /** Puts it on the player's record and tells them — and, for a whopper of a rare fish or any mythic, everybody. */
     public void credit(Player player, Catch caught) {
         switch (caught) {
             case Catch.Fish fish -> {
@@ -172,8 +172,10 @@ public final class CatchService implements IFishingService {
                 if (best > 0 && weighing.kilos() > best) {
                     messages.send(player, "fishing.caught.record", "fish", fish.kind().name(), "weight", weight);
                 }
-                if (weights.worthTelling(fish.tier(), weighing)) {
-                    whopper(player, fish.kind().name(), fish.tier().title(), weight);
+                WeightRule.Telling telling = weights.telling(fish.tier(), weighing);
+                if (telling != WeightRule.Telling.NOBODY) {
+                    whopper(player, telling == WeightRule.Telling.MYTHIC ? "fishing.mythic.broadcast"
+                            : "fishing.whopper.broadcast", fish.kind().name(), fish.tier().title(), weight);
                 }
             }
             case Catch.Chest chest -> {
@@ -191,11 +193,11 @@ public final class CatchService implements IFishingService {
      * A whopper of a rare fish: everybody hears, and everybody but the catcher gets a {@code [W]} of their own to
      * congratulate with — one each, theirs alone, good for ten minutes.
      */
-    private void whopper(Player catcher, String fish, String tier, String weight) {
+    private void whopper(Player catcher, String key, String fish, String tier, String weight) {
         UUID catcherId = catcher.getUniqueId();
         String catcherName = catcher.getName();
         for (Player each : server.getOnlinePlayers()) {
-            Component line = messages.prefixed("fishing.whopper.broadcast", "player", catcherName, "fish", fish,
+            Component line = messages.prefixed(key, "player", catcherName, "fish", fish,
                     "tier", tier, "weight", weight);
             if (!each.getUniqueId().equals(catcherId)) {
                 line = line.append(Component.space()).append(core.buttons()
