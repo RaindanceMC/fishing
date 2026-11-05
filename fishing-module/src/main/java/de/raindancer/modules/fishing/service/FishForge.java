@@ -344,6 +344,78 @@ public final class FishForge implements IFishingService {
         return factory.create(definition, Math.max(1, amount)).orElseGet(() -> new ItemStack(definition.material()));
     }
 
+    /**
+     * Fishing's items for Core's {@code /give} ({@code /give Ada fishing:rod-void}), made the way fishing makes them:
+     * a rod with its stats written on, bait and chests kept out of crafting grids, a net that stacks to one.
+     */
+    public de.raindancer.core.content.items.ItemGiver giver() {
+        return new de.raindancer.core.content.items.ItemGiver() {
+            @Override
+            public Optional<ItemStack> make(String id, int amount) {
+                for (FishKind kind : catalog.fish()) {
+                    if (kind.itemId().equals(id)) {
+                        return Optional.of(fish(kind, amount));
+                    }
+                }
+                for (Dish dish : catalog.dishes()) {
+                    if (dish.itemId().equals(id)) {
+                        return Optional.of(dish(dish, amount));
+                    }
+                    if (("raw-" + dish.itemId()).equals(id)) {
+                        return Optional.of(raw(dish, amount));
+                    }
+                }
+                for (Tier tier : Tier.values()) {
+                    if (("chest-" + tier.chest()).equals(id)) {
+                        return Optional.of(chest(tier, amount));
+                    }
+                }
+                for (RodTier rod : RodTier.values()) {
+                    if (rod.itemId().equals(id)) {
+                        return Optional.of(rod(rod));
+                    }
+                }
+                for (Bait bait : Bait.values()) {
+                    if (bait.itemId().equals(id)) {
+                        return Optional.of(bait(bait, amount));
+                    }
+                }
+                for (RodSkin skin : RodSkin.values()) {
+                    if (("skin-" + skin.id()).equals(id)) {
+                        ItemStack token = skinToken(skin);
+                        token.setAmount(Math.max(1, Math.min(amount, token.getMaxStackSize())));
+                        return Optional.of(token);
+                    }
+                }
+                return "net".equals(id) ? Optional.of(net()) : Optional.empty();
+            }
+
+            @Override
+            public List<String> ids() {
+                List<String> ids = new java.util.ArrayList<>();
+                catalog.fish().forEach(kind -> ids.add(kind.itemId()));
+                catalog.dishes().forEach(dish -> {
+                    ids.add(dish.itemId());
+                    ids.add("raw-" + dish.itemId());
+                });
+                for (Tier tier : Tier.values()) {
+                    ids.add("chest-" + tier.chest());
+                }
+                for (RodTier rod : RodTier.values()) {
+                    ids.add(rod.itemId());
+                }
+                for (Bait bait : Bait.values()) {
+                    ids.add(bait.itemId());
+                }
+                for (RodSkin skin : RodSkin.values()) {
+                    ids.add("skin-" + skin.id());
+                }
+                ids.add("net");
+                return ids;
+            }
+        };
+    }
+
     public Optional<FishKind> fishOf(ItemStack stack) {
         return id(stack).filter(id -> id.startsWith("fish-")).flatMap(id -> catalog.fish(id.substring(5)));
     }

@@ -61,7 +61,7 @@ public final class SkillTreeMenu extends TreeMenu implements IFishingScreen {
         List<Edge> edges = new ArrayList<>();
         for (TreeNode node : tree().nodesOf(branch.id())) {
             NodeState state = rule().state(profile, node);
-            nodes.add(new Node(node.id(), node.column(), node.row(), state, icon(profile, node, state)));
+            nodes.add(new Node(node.id(), node.column(), node.row(), state, icon(profile, node, state), node.mastery()));
             for (String needed : node.requires()) {
                 edges.add(new Edge(needed, node.id()));
             }
@@ -85,7 +85,8 @@ public final class SkillTreeMenu extends TreeMenu implements IFishingScreen {
             case BARRED -> "<dark_red>";
         };
         List<String> lore = new ArrayList<>();
-        String kind = node.capstone() ? "Capstone" : node.choice() ? "Choice" : null;
+        String kind = node.mastery() ? "Mastery — free once the rest of the branch is taken"
+                : node.capstone() ? "Capstone" : node.choice() ? "Choice" : null;
         if (kind != null) {
             lore.add("<dark_aqua>" + kind);
         }
@@ -98,8 +99,8 @@ public final class SkillTreeMenu extends TreeMenu implements IFishingScreen {
                     .toList()));
         }
         lore.add("");
-        lore.add("<gray>Rank <white>" + rank + "<gray>/" + node.ranks() + " · costs <white>" + node.cost()
-                + "<gray> point" + (node.cost() == 1 ? "" : "s") + " a rank");
+        lore.add("<gray>Rank <white>" + rank + "<gray>/" + node.ranks() + (node.cost() == 0 ? " · <green>free"
+                : " · costs <white>" + node.cost() + "<gray> point" + (node.cost() == 1 ? "" : "s") + " a rank"));
         int level = node.levelFor(rank + 1);
         if (level > 0 && rank < node.ranks()) {
             lore.add("<gray>Needs fishing level <white>" + level);
@@ -119,6 +120,7 @@ public final class SkillTreeMenu extends TreeMenu implements IFishingScreen {
             case MAXED -> "At its highest rank.";
             case BARRED -> "Shut: you took the other side of this choice.";
             case NEEDS -> "Needs a node next to it first.";
+            case UNFINISHED -> "Take every other node of this branch first.";
             case LEVEL -> "Needs fishing level " + node.levelFor(rank + 1) + ".";
             case NO_POINTS -> "Not enough skill points.";
         };
@@ -134,6 +136,7 @@ public final class SkillTreeMenu extends TreeMenu implements IFishingScreen {
         lore.add("<gray>A point per fishing level, one per sea chest");
         lore.add("<gray>tier first opened and per ten kinds of fish.");
         lore.add("<gray>Spent in this branch: <white>" + spentHere);
+        lore.add("<gray>Branches mastered: <white>" + rule().mastered(profile) + "<gray> of " + rule().masteryBranches());
         if (!profile.nodes().isEmpty()) {
             lore.add("");
             lore.add("<yellow>Shift-click<gray> to unlearn everything ("

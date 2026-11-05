@@ -91,4 +91,22 @@ class TreeRuleTest {
         FisherProfile profile = atLevel(10).withNode("treasure_sense", 4);
         assertThat(rule.perks(profile).get(de.raindancer.modules.fishing.model.Perk.CHEST)).isEqualTo(40);
     }
+
+    @Test
+    @DisplayName("five branches end in a mastery badge; a branch counts as mastered once its badge is taken")
+    void mastery() {
+        assertThat(rule.masteryBranches()).isEqualTo(5);
+        FisherProfile fisher = atLevel(100);
+        assertThat(rule.mastered(fisher)).isZero();
+        TreeNode badge = tree.masteries("monger").getFirst();
+        assertThat(rule.refusal(fisher, badge)).as("the branch is not finished").contains(SkillTree.Refusal.UNFINISHED);
+        for (TreeNode node : tree.nodesOf("monger")) {
+            if (!node.mastery() && !node.excludes().stream().anyMatch(fisher.nodes()::containsKey)) {
+                fisher = fisher.withNode(node.id(), node.ranks());
+            }
+        }
+        assertThat(rule.mastered(fisher)).isZero();
+        fisher = fisher.withNode(badge.id(), 1);
+        assertThat(rule.mastered(fisher)).isEqualTo(1);
+    }
 }

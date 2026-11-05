@@ -23,16 +23,37 @@ class SkillTreeTest {
     private final SkillTree tree = FishingTree.shipped();
 
     @Test
-    @DisplayName("five branches of fifteen nodes, filling their branch's five by three grid")
+    @DisplayName("five branches of fifteen nodes filling a five by three grid, and a mastery badge past the capstone")
     void shape() {
         assertThat(tree.branches()).hasSize(5);
         for (var branch : tree.branches()) {
             List<TreeNode> nodes = tree.nodesOf(branch.id());
-            assertThat(nodes).as(branch.id()).hasSize(15);
+            assertThat(nodes).as(branch.id()).hasSize(16);
             Set<Integer> places = new HashSet<>();
             for (TreeNode node : nodes) {
-                assertThat(places.add(TreeGrid.slot(node.column(), node.row()))).as(node.id()).isTrue();
+                assertThat(places.add(node.column() * 10 + node.row())).as(node.id()).isTrue();
+                if (!node.mastery()) {
+                    assertThat(node.column()).as(node.id()).isBetween(0, 4);
+                    assertThat(node.row()).as(node.id()).isBetween(0, 2);
+                }
             }
+        }
+    }
+
+    @Test
+    @DisplayName("every branch ends in one free mastery badge, right of its capstone and needing it")
+    void masteries() {
+        for (var branch : tree.branches()) {
+            List<TreeNode> badges = tree.masteries(branch.id());
+            assertThat(badges).as(branch.id()).hasSize(1);
+            TreeNode badge = badges.getFirst();
+            TreeNode capstone = tree.nodesOf(branch.id()).stream().filter(TreeNode::capstone).findFirst().orElseThrow();
+            assertThat(badge.cost()).as("earned, not bought").isZero();
+            assertThat(badge.ranks()).isEqualTo(1);
+            assertThat(badge.column()).isEqualTo(capstone.column() + 1);
+            assertThat(badge.row()).isEqualTo(capstone.row());
+            assertThat(badge.requires()).containsExactly(capstone.id());
+            assertThat(badge.effects()).as(badge.id()).hasSizeGreaterThanOrEqualTo(2);
         }
     }
 
@@ -57,7 +78,7 @@ class SkillTreeTest {
                 for (String needed : node.requires()) {
                     TreeNode other = tree.node(needed).orElseThrow();
                     var link = TreeGrid.link(other.column(), other.row(), node.column(), node.row());
-                    assertThat(used.add(link.slotRow() * 9 + link.slotColumn()))
+                    assertThat(used.add(link.slotRow() * 100 + link.slotColumn()))
                             .as(branch.id() + ": " + needed + " to " + node.id()).isTrue();
                 }
             }
@@ -115,7 +136,7 @@ class SkillTreeTest {
                     }
                 }
             }
-            assertThat(reached).as(branch.id()).hasSize(15);
+            assertThat(reached).as(branch.id()).hasSize(16);
         }
     }
 

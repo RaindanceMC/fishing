@@ -51,7 +51,7 @@ import java.util.Random;
  */
 public final class FishingModule implements FlexModule {
 
-    private static final ModuleInfo INFO = ModuleInfo.of("fishing", "Fishing", "0.7.0")
+    private static final ModuleInfo INFO = ModuleInfo.of("fishing", "Fishing", "0.8.0")
             .describedAs("New fish in six tiers, sea chests, fishing spots, rod upgrades and skills, lava and "
                     + "void fishing, and dishes cooked from the catch.")
             .by("Raindancer118");
@@ -175,6 +175,32 @@ public final class FishingModule implements FlexModule {
         };
         de.raindancer.core.social.economy.ItemPrices.provide(context.plugin(), pricer);
         context.closeWith(() -> de.raindancer.core.social.economy.ItemPrices.retract(pricer));
+        // Fishing is one of the skills in /skills when the skills plugin runs too (Core 2.36.0's registry).
+        try {
+            de.raindancer.core.ui.tree.SkillView skill = new de.raindancer.modules.fishing.service.FishingSkillView(
+                    services.profiles()::of, services.profiles().tree(),
+                    (viewer, parent) -> new SkillTreeMenu(services, viewer, parent).open());
+            de.raindancer.core.ui.tree.Skills.register(context.plugin(), skill);
+            context.closeWith(() -> de.raindancer.core.ui.tree.Skills.unregister(skill.id()));
+        } catch (LinkageError olderCore) {
+            log.info("RainsCore is older than 2.36.0: fishing is not listed in /skills.");
+        }
+        // Rod skins are a door on the cosmetics page (Core 2.34.0); /fishing rod keeps them where there is none.
+        try {
+            de.raindancer.core.ui.cosmetic.CosmeticDoor door = new de.raindancer.modules.fishing.service.RodSkinsDoor(services);
+            de.raindancer.core.ui.cosmetic.CosmeticDoors.provide(context.plugin(), door);
+            context.closeWith(() -> de.raindancer.core.ui.cosmetic.CosmeticDoors.retract(door));
+        } catch (LinkageError olderCore) {
+            log.info("RainsCore is older than 2.34.0: rod skins stay in /fishing rod.");
+        }
+        // /give knows fishing's items (/give Ada fishing:rod-void) — with Core 2.33.0; an older Core has no such /give.
+        try {
+            de.raindancer.core.content.items.ItemGiver giver = forge.giver();
+            de.raindancer.core.content.items.ItemGivers.provide(context.plugin(), FishForge.PLUGIN, giver);
+            context.closeWith(() -> de.raindancer.core.content.items.ItemGivers.retract(giver));
+        } catch (LinkageError olderCore) {
+            log.info("RainsCore is older than 2.33.0: /give does not know fishing's items; /fishing give does.");
+        }
         // Rod skins are a thank-you for supporters: wearing one hangs off Core's rains.supporter.
         try {
             var supporter = de.raindancer.core.social.support.SupporterPermission.permission(server.getPluginManager());

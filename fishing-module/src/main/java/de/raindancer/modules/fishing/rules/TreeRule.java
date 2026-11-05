@@ -66,6 +66,17 @@ public final class TreeRule implements IFishingRule {
         return tree.refusal(profile.nodes(), node, levels.level(profile.experience()), left(profile));
     }
 
+    /** How many branches end in a mastery badge. */
+    public int masteryBranches() {
+        return (int) tree.branches().stream().filter(branch -> !tree.masteries(branch.id()).isEmpty()).count();
+    }
+
+    /** How many branches the fisher has mastered: their badge taken. */
+    public int mastered(FisherProfile profile) {
+        return (int) tree.branches().stream().filter(branch -> !tree.masteries(branch.id()).isEmpty())
+                .filter(branch -> tree.mastered(profile.nodes(), branch.id())).count();
+    }
+
     @Override
     public String describe() {
         return "skill points, and whether a node of the fishing skill tree may be taken";
