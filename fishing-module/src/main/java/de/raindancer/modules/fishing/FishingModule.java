@@ -51,7 +51,7 @@ import java.util.Random;
  */
 public final class FishingModule implements FlexModule {
 
-    private static final ModuleInfo INFO = ModuleInfo.of("fishing", "Fishing", "0.8.1")
+    private static final ModuleInfo INFO = ModuleInfo.of("fishing", "Fishing", "0.9.0")
             .describedAs("New fish in six tiers, sea chests, fishing spots, rod upgrades and skills, lava and "
                     + "void fishing, and dishes cooked from the catch.")
             .by("Raindancer118");
@@ -61,6 +61,8 @@ public final class FishingModule implements FlexModule {
 
     private LogChannel log;
     private FishingServices services;
+    private static final long PROFILE_FLUSH_SECONDS = 5L;
+    private ProfileStore profileStore;
     private SpotService spots;
     private DishService dishes;
     private de.raindancer.modules.fishing.service.SeaChestBlocks seaChests;
@@ -100,6 +102,7 @@ public final class FishingModule implements FlexModule {
         }
         Random random = new Random();
         CatchRule catchRule = new CatchRule(catalog);
+        profileStore = store;
         ProfileService profiles = new ProfileService(context.plugin(), store, context.core().messages(),
                 context.core().effects(), now);
         RodService rods = new RodService(context.plugin(), context.core().messages(), context.core().effects(),
@@ -222,6 +225,11 @@ public final class FishingModule implements FlexModule {
         SpotService fixing = spots;
         Scheduling.async(context.plugin(), () -> log.info("{} fixed fishing spot(s).",
                 fixing.loadFixed(server::getWorld)));
+        var flusher = Scheduling.asyncTimer(context.plugin(), PROFILE_FLUSH_SECONDS, PROFILE_FLUSH_SECONDS,
+                task -> profiles.flush());
+        if (flusher != null) {
+            context.closeWith(flusher::cancel);
+        }
         var timer = Scheduling.globalTimer(context.plugin(), SPOT_PERIOD, SPOT_PERIOD,
                 task -> spots.tick(server.getOnlinePlayers()));
         if (timer != null) {
@@ -272,6 +280,10 @@ public final class FishingModule implements FlexModule {
     /** Takes the spots down, the recipes and the looks out; nothing else here holds anything that would be lost. */
     @Override
     public void disable() {
+        if (profileStore != null && !profileStore.flush() && log != null) {
+            log.error("{} fisher(s)' latest catches could not be written to fishers.yml and are lost.",
+                    profileStore.pending());
+        }
         if (spots != null) {
             int cleared = spots.clear();
             if (cleared > 0 && log != null) {

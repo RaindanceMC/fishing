@@ -8,7 +8,9 @@ import org.bukkit.configuration.ConfigurationSection;
 
 import java.nio.file.Path;
 import java.util.EnumMap;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -24,13 +26,27 @@ public final class ProfileStore {
     /** Written with every entry: its ranks are under "tree", not the old "skills". */
     static final int TREE_VERSION = 2;
 
+    /** Changes not yet written for one player, with the profile they add up to for reads. */
+    private static final class Pending {
+        FisherProfile view;
+        final List<UnaryOperator<FisherProfile>> changes = new ArrayList<>();
+
+        Pending(FisherProfile view) {
+            this.view = view;
+        }
+    }
+
+    private final YamlStore store;
     private final KeyedDocument<FisherProfile> document;
+    private final Map<UUID, Pending> pending = new HashMap<>();
+    private final Object flushing = new Object();
 
     public ProfileStore(Path dataFolder) {
         this(YamlStore.network(dataFolder.resolve("fishers.yml")));
     }
 
     public ProfileStore(YamlStore store) {
+        this.store = store;
         this.document = new KeyedDocument<>(store, SECTION, ProfileStore::read, ProfileStore::write);
     }
 
@@ -39,15 +55,94 @@ public final class ProfileStore {
     }
 
     public FisherProfile of(UUID player) {
-        return document.get(player.toString()).orElse(FisherProfile.NEW);
+        return find(player).orElse(FisherProfile.NEW);
     }
 
     public Optional<FisherProfile> find(UUID player) {
+        synchronized (pending) {
+            Pending queued = pending.get(player);
+            if (queued != null) {
+                return Optional.of(queued.view);
+            }
+        }
         return document.get(player.toString());
+    }
+
+    /**
+     * Keeps a change in memory, for {@link #flush()} to write with everybody else's: a catch must not rewrite the
+     * network's whole document. {@code change} is added to what the database holds when it is written, so it must
+     * only compute (a delta, not a replacement).
+     */
+    public FisherProfile queue(UUID player, UnaryOperator<FisherProfile> change) {
+        synchronized (pending) {
+            Pending queued = pending.computeIfAbsent(player,
+                    id -> new Pending(document.get(id.toString()).orElse(FisherProfile.NEW)));
+            queued.view = change.apply(queued.view);
+            queued.changes.add(change);
+            return queued.view;
+        }
+    }
+
+    /** How many players have changes not yet written. */
+    public int pending() {
+        synchronized (pending) {
+            return (int) pending.values().stream().filter(queued -> !queued.changes.isEmpty()).count();
+        }
+    }
+
+    /**
+     * Writes every queued change in one go. Nothing is dropped when it fails: the changes stay queued for the next
+     * flush.
+     *
+     * @return whether everything queued is written; false when the document cannot be read or written right now
+     */
+    public boolean flush() {
+        synchronized (flushing) {
+            Map<UUID, List<UnaryOperator<FisherProfile>>> batch = new HashMap<>();
+            synchronized (pending) {
+                pending.forEach((id, queued) -> {
+                    if (!queued.changes.isEmpty()) {
+                        batch.put(id, List.copyOf(queued.changes));
+                    }
+                });
+            }
+            if (batch.isEmpty()) {
+                return true;
+            }
+            boolean written = store.update(yaml -> batch.forEach((id, changes) -> {
+                String path = SECTION + "." + id;
+                ConfigurationSection under = yaml.getConfigurationSection(SECTION);
+                FisherProfile now = under == null ? null : read(under, id.toString());
+                for (UnaryOperator<FisherProfile> change : changes) {
+                    now = change.apply(now == null ? FisherProfile.NEW : now);
+                }
+                yaml.set(path, null);
+                write(yaml, path, now);
+            }));
+            if (!written) {
+                return false;
+            }
+            synchronized (pending) {
+                batch.forEach((id, changes) -> {
+                    Pending queued = pending.get(id);
+                    if (queued != null) {
+                        queued.changes.subList(0, changes.size()).clear();
+                    }
+                });
+            }
+            // The view stays for reads until the document holds what was written.
+            if (document.load()) {
+                synchronized (pending) {
+                    pending.values().removeIf(queued -> queued.changes.isEmpty());
+                }
+            }
+            return pending() == 0;
+        }
     }
 
     /** @return whether the change was written; false when the document cannot be read right now */
     public boolean change(UUID player, UnaryOperator<FisherProfile> change) {
+        flush();
         return document.change(player.toString(), current ->
                 change.apply(current == null ? FisherProfile.NEW : current));
     }

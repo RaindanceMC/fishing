@@ -29,8 +29,9 @@ import java.util.function.UnaryOperator;
 /**
  * A fisher's experience, level and skills: earning, spending, and telling them when they go up.
  *
- * <p>Reading a profile answers from memory; every change goes to the database, so it runs off the server's threads
- * and comes back to the player's own thread to tell them how it went.
+ * <p>Reading a profile answers from memory. Earning (catches, experience) is kept in memory and written in batches
+ * (every few seconds, when the player leaves, and when the module stops); spending (skills, skins, fees) goes to the
+ * database at once, off the server's threads, and comes back to the player's own thread to tell them how it went.
  */
 public final class ProfileService implements IFishingService {
 
@@ -107,18 +108,25 @@ public final class ProfileService implements IFishingService {
 
     private void reward(Player player, UnaryOperator<FisherProfile> change, long experience) {
         UUID id = player.getUniqueId();
-        Scheduling.async(plugin, () -> {
-            int before = level(id);
-            store.change(id, profile -> change.apply(profile).withExperience(experience));
-            int after = level(id);
-            if (after > before) {
-                back(player, () -> {
-                    effects.play(id, Cues.EARNED);
-                    messages.send(player, "fishing.level-up", "level", String.valueOf(after),
-                            "points", String.valueOf(tree.left(of(id))));
-                });
-            }
-        });
+        int before = level(id);
+        store.queue(id, profile -> change.apply(profile).withExperience(experience));
+        int after = level(id);
+        if (after > before) {
+            back(player, () -> {
+                effects.play(id, Cues.EARNED);
+                messages.send(player, "fishing.level-up", "level", String.valueOf(after),
+                        "points", String.valueOf(tree.left(of(id))));
+            });
+        }
+    }
+
+    /** Writes what catches and experience have queued; on its own thread, as it is a database write. */
+    public boolean flush() {
+        return store.flush();
+    }
+
+    public void flushSoon() {
+        Scheduling.async(plugin, store::flush);
     }
 
     /**

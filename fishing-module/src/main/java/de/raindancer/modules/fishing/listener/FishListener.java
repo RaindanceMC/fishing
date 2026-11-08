@@ -110,6 +110,7 @@ public final class FishListener implements IFishingListener {
     @EventHandler
     public void onQuit(PlayerQuitEvent event) {
         forget(event.getPlayer().getUniqueId());
+        services.profiles().flushSoon();
     }
 
     @Override
