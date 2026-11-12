@@ -51,7 +51,7 @@ import java.util.Random;
  */
 public final class FishingModule implements FlexModule {
 
-    private static final ModuleInfo INFO = ModuleInfo.of("fishing", "Fishing", "0.9.0")
+    private static final ModuleInfo INFO = ModuleInfo.of("fishing", "Fishing", "0.10.0")
             .describedAs("New fish in six tiers, sea chests, fishing spots, rod upgrades and skills, lava and "
                     + "void fishing, and dishes cooked from the catch.")
             .by("Raindancer118");
@@ -223,6 +223,8 @@ public final class FishingModule implements FlexModule {
             log.info("RainsCore is too old for fishing's screens and leaderboards; there are none until it is updated.");
         }
         SpotService fixing = spots;
+        fixing.zones(new de.raindancer.modules.fishing.store.NoSpotZoneStore(context.plugin().getDataFolder().toPath()));
+        Scheduling.async(context.plugin(), () -> log.info("{} no-spot zone(s).", fixing.loadZones()));
         Scheduling.async(context.plugin(), () -> log.info("{} fixed fishing spot(s).",
                 fixing.loadFixed(server::getWorld)));
         var flusher = Scheduling.asyncTimer(context.plugin(), PROFILE_FLUSH_SECONDS, PROFILE_FLUSH_SECONDS,

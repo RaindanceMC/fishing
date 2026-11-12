@@ -30,6 +30,7 @@ sections:
       Shoals that come up on the water near you: rings rippling out, a big bobber turning over them and a sign naming what can bite there. Cast into one and fish bite sooner, rarer fish and more sea chests come up.
       A spot reaches four blocks round its bobber. It lasts {setting:fishing:spots.minutes|count} minutes or {setting:fishing:spots.catches|count} catches, whichever runs out first; no spot comes up inside another. Spots belong to their water — an ocean spot on the ocean, a void spot hanging off an End island.
       Some spots are put down by staff and stay for good: they never run out, and their sign names the best chest that bites there.
+      Staff can also keep spots away from a place — a harbour, the spawn pond — with {cmd:/fishing nospot}: none comes up there on its own.
   - question: How do I fish lava or the void?
     title: Lava and the void
     text: |

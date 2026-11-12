@@ -90,6 +90,15 @@ fishing:
     row: "<gold><place>.</gold> <white><player></white> <gray>— <value></gray>"
     nobody: "<gray>Nobody has fished here yet."
 
+  nospot:
+    usage: "<gray>/fishing nospot add <name> [radius] <dark_gray>— a square around you · <gray>/fishing nospot add <name> <x1> <z1> <x2> <z2> · /fishing nospot remove <name> · /fishing nospot list"
+    added: "<green>No fishing spot comes up on its own in <white><name></white> now: x <white><x1></white>..<white><x2></white>, z <white><z1></white>..<white><z2></white>."
+    taken: "<red>There is already a no-spot zone called <white><name></white>."
+    removed: "<green>Fishing spots may come up in <white><name></white> again."
+    not-found: "<red>No no-spot zone called <white><name></white> here."
+    none: "<gray>No no-spot zones in this world."
+    list: "<gray>No-spot zones in this world (<white><count></white>):"
+    line: "<white><name></white> <gray>x <x1>..<x2>, z <z1>..<z2> · <distance> blocks away"
   spot:
     sign: "Fishing Spot<newline><white><shoal></white><newline><gray><chest> can bite here</gray>"
     not-allowed: "<red>Only staff can place a fishing spot."

@@ -57,6 +57,8 @@ public final class SpotService implements IFishingService {
     private final Map<UUID, Spot> fixed = new ConcurrentHashMap<>();
     private final Map<UUID, SpotVisual> fixedShown = new ConcurrentHashMap<>();
     private final FixedSpotStore store;
+    private final Map<String, de.raindancer.modules.fishing.model.NoSpotZone> zones = new ConcurrentHashMap<>();
+    private volatile de.raindancer.modules.fishing.store.NoSpotZoneStore zoneStore;
     private volatile FishingSettings settings;
 
     public SpotService(Plugin plugin, LogChannel log, Messages messages, WaterRule waters, CatchRule catches,
@@ -113,6 +115,9 @@ public final class SpotService implements IFishingService {
         double angle = ThreadLocalRandom.current().nextDouble(Math.PI * 2);
         double distance = ThreadLocalRandom.current().nextDouble(NEAREST, FARTHEST);
         Location probe = at.clone().add(Math.cos(angle) * distance, 0, Math.sin(angle) * distance);
+        if (noSpotsAt(probe.getWorld().getUID(), probe.getX(), probe.getZ())) {
+            return;
+        }
         if (!probe.getWorld().isChunkLoaded(probe.getBlockX() >> 4, probe.getBlockZ() >> 4)) {
             return;
         }
@@ -196,6 +201,76 @@ public final class SpotService implements IFishingService {
     private boolean overlapsAny(Spot spot) {
         return spots.values().stream().anyMatch(each -> each.spot().overlaps(spot))
                 || fixed.values().stream().anyMatch(each -> each.overlaps(spot));
+    }
+
+    // ---------------------------------------------------------------------------- no-spot zones
+
+    /** Where the zones are kept; null keeps them in memory only. */
+    public void zones(de.raindancer.modules.fishing.store.NoSpotZoneStore store) {
+        this.zoneStore = store;
+    }
+
+    /** Reads the zones (the database: off the world's threads); once, at start. */
+    public int loadZones() {
+        var keeping = zoneStore;
+        if (keeping == null || !keeping.load()) {
+            return 0;
+        }
+        keeping.all().forEach(zone -> zones.put(zone.key(), zone));
+        return zones.size();
+    }
+
+    /** Whether no spot may come up on its own at this column. */
+    public boolean noSpotsAt(UUID world, double x, double z) {
+        for (de.raindancer.modules.fishing.model.NoSpotZone zone : zones.values()) {
+            if (zone.contains(world, x, z)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Marks a zone; wandering spots already in it go. @return false when the name is taken
+     */
+    public boolean addZone(de.raindancer.modules.fishing.model.NoSpotZone zone) {
+        if (zones.putIfAbsent(zone.key(), zone) != null) {
+            return false;
+        }
+        for (Live live : List.copyOf(spots.values())) {
+            if (zone.contains(live.spot().world(), live.spot().x(), live.spot().z())) {
+                end(live.spot().id());
+            }
+        }
+        var keeping = zoneStore;
+        if (keeping != null) {
+            Scheduling.async(plugin, () -> {
+                if (!keeping.put(zone) && log != null) {
+                    log.warn("The no-spot zone {} could not be saved; it is gone after a restart.", zone.name());
+                }
+            });
+        }
+        return true;
+    }
+
+    /** @return whether a zone of that name was there */
+    public boolean removeZone(String name) {
+        String key = name == null ? "" : name.strip().toLowerCase(java.util.Locale.ROOT);
+        if (zones.remove(key) == null) {
+            return false;
+        }
+        var keeping = zoneStore;
+        if (keeping != null) {
+            Scheduling.async(plugin, () -> keeping.remove(key));
+        }
+        return true;
+    }
+
+    /** The zones of one world, by name. */
+    public List<de.raindancer.modules.fishing.model.NoSpotZone> zonesIn(UUID world) {
+        return zones.values().stream().filter(zone -> zone.world().equals(world))
+                .sorted(java.util.Comparator.comparing(de.raindancer.modules.fishing.model.NoSpotZone::key))
+                .toList();
     }
 
     // ---------------------------------------------------------------------------- fixed spots

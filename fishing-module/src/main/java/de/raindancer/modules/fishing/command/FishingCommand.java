@@ -63,6 +63,10 @@ public final class FishingCommand implements IFishingCommand {
             spot(live, viewer, args);
             return;
         }
+        if (sub.equals("nospot")) {
+            noSpot(live, viewer, args);
+            return;
+        }
         if (!viewer.hasPermission(PermissionNodes.MENU)) {
             live.messages().send(viewer, "fishing.menu.not-allowed");
             return;
@@ -98,6 +102,70 @@ public final class FishingCommand implements IFishingCommand {
                 }
             });
             default -> live.messages().send(viewer, "fishing.spot.usage");
+        }
+    }
+
+    /** {@code /fishing nospot add <name> [radius] | add <name> <x1> <z1> <x2> <z2> | remove <name> | list}. */
+    private void noSpot(FishingServices live, Player viewer, String[] args) {
+        if (!viewer.hasPermission(PermissionNodes.SPOT)) {
+            live.messages().send(viewer, "fishing.spot.not-allowed");
+            return;
+        }
+        String what = args.length < 2 ? "" : args[1].toLowerCase(Locale.ROOT);
+        java.util.UUID world = viewer.getWorld().getUID();
+        switch (what) {
+            case "add" -> {
+                if (args.length != 3 && args.length != 4 && args.length != 7) {
+                    live.messages().send(viewer, "fishing.nospot.usage");
+                    return;
+                }
+                de.raindancer.modules.fishing.model.NoSpotZone zone;
+                try {
+                    zone = args.length == 7
+                            ? de.raindancer.modules.fishing.model.NoSpotZone.of(args[2], world,
+                                    Integer.parseInt(args[3]), Integer.parseInt(args[4]), Integer.parseInt(args[5]),
+                                    Integer.parseInt(args[6]))
+                            : de.raindancer.modules.fishing.model.NoSpotZone.around(args[2], world,
+                                    viewer.getLocation().getX(), viewer.getLocation().getZ(),
+                                    args.length == 4 ? Math.clamp(Integer.parseInt(args[3]), 1, 512) : 32);
+                } catch (NumberFormatException notANumber) {
+                    live.messages().send(viewer, "fishing.nospot.usage");
+                    return;
+                }
+                if (!live.spots().addZone(zone)) {
+                    live.messages().send(viewer, "fishing.nospot.taken", "name", zone.name());
+                    return;
+                }
+                live.messages().send(viewer, "fishing.nospot.added", "name", zone.name(),
+                        "x1", String.valueOf(zone.minX()), "x2", String.valueOf(zone.maxX()),
+                        "z1", String.valueOf(zone.minZ()), "z2", String.valueOf(zone.maxZ()));
+            }
+            case "remove" -> {
+                if (args.length < 3) {
+                    live.messages().send(viewer, "fishing.nospot.usage");
+                    return;
+                }
+                live.messages().send(viewer, live.spots().removeZone(args[2]) ? "fishing.nospot.removed"
+                        : "fishing.nospot.not-found", "name", args[2]);
+            }
+            case "list" -> {
+                List<de.raindancer.modules.fishing.model.NoSpotZone> zones = live.spots().zonesIn(world);
+                if (zones.isEmpty()) {
+                    live.messages().send(viewer, "fishing.nospot.none");
+                    return;
+                }
+                live.messages().send(viewer, "fishing.nospot.list", "count", String.valueOf(zones.size()));
+                for (de.raindancer.modules.fishing.model.NoSpotZone zone : zones) {
+                    double cx = (zone.minX() + zone.maxX() + 1) / 2.0;
+                    double cz = (zone.minZ() + zone.maxZ() + 1) / 2.0;
+                    live.messages().send(viewer, "fishing.nospot.line", "name", zone.name(),
+                            "x1", String.valueOf(zone.minX()), "x2", String.valueOf(zone.maxX()),
+                            "z1", String.valueOf(zone.minZ()), "z2", String.valueOf(zone.maxZ()),
+                            "distance", String.valueOf(Math.round(Math.hypot(cx - viewer.getLocation().getX(),
+                                    cz - viewer.getLocation().getZ()))));
+                }
+            }
+            default -> live.messages().send(viewer, "fishing.nospot.usage");
         }
     }
 
@@ -301,8 +369,22 @@ public final class FishingCommand implements IFishingCommand {
             }
             if (sender.hasPermission(PermissionNodes.SPOT)) {
                 subs.add("spot");
+                subs.add("nospot");
             }
             return subs.stream().filter(sub -> sub.startsWith(started)).toList();
+        }
+        if (args[0].equalsIgnoreCase("nospot") && sender.hasPermission(PermissionNodes.SPOT)) {
+            String started = args[args.length - 1].toLowerCase(Locale.ROOT);
+            List<String> options = switch (args.length) {
+                case 2 -> List.of("add", "remove", "list");
+                case 3 -> args[1].equalsIgnoreCase("remove") && sender instanceof Player player
+                        ? services.get().spots().zonesIn(player.getWorld().getUID()).stream()
+                                .map(de.raindancer.modules.fishing.model.NoSpotZone::name).toList()
+                        : List.of();
+                case 4 -> args[1].equalsIgnoreCase("add") ? List.of("16", "32", "64") : List.of();
+                default -> List.of();
+            };
+            return options.stream().filter(option -> option.toLowerCase(Locale.ROOT).startsWith(started)).toList();
         }
         if (args[0].equalsIgnoreCase("spot") && sender.hasPermission(PermissionNodes.SPOT)) {
             String started = args[args.length - 1].toLowerCase(Locale.ROOT);
