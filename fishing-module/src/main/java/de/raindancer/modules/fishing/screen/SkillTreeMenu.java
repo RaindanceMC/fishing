@@ -85,7 +85,7 @@ public final class SkillTreeMenu extends TreeMenu implements IFishingScreen {
             case BARRED -> "<dark_red>";
         };
         List<String> lore = new ArrayList<>();
-        String kind = node.mastery() ? "Mastery — free once the rest of the branch is taken"
+        String kind = node.mastery() ? "Mastery: free once the rest of the branch is taken"
                 : node.capstone() ? "Capstone" : node.choice() ? "Choice" : null;
         if (kind != null) {
             lore.add("<dark_aqua>" + kind);

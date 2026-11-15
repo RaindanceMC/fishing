@@ -29,7 +29,7 @@ public final class PermissionNodes {
                 new Permission(UPGRADE, "Upgrade a fishing rod", PermissionDefault.TRUE),
                 new Permission(GIVE, "Give somebody fish, dishes or sea chests", PermissionDefault.OP),
                 new Permission(SPOT, "Put a fishing spot where you are looking", PermissionDefault.OP),
-                new Permission(SKINS, "Put a rod skin on a rod — supporters and operators", PermissionDefault.OP),
+                new Permission(SKINS, "Put a rod skin on a rod (supporters and operators)", PermissionDefault.OP),
                 new Permission(AUTO_UNGUARDED, "Auto-Rethrow keeps going while you are away or never look around",
                         PermissionDefault.OP));
     }

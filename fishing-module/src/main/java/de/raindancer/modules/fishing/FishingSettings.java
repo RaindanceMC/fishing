@@ -25,14 +25,14 @@ import org.bukkit.Material;
 public record FishingSettings(
 
         @In("fishing") @Title("New fish replace vanilla fish")
-        @Describe("Whether a fish — or junk — vanilla would have put on the hook becomes one of this module's catches. "
+        @Describe("Whether a fish or junk item vanilla would have put on the hook becomes one of this module's catches. "
                 + "Vanilla's treasure always stays. Off leaves cod, salmon and junk alone; sea chests still bite, "
                 + "and lava and the void are fished all the same.")
         @Key("catch.replace-vanilla-fish")
         boolean replaceVanillaFish,
 
         @In("fishing/spots") @Title("Fishing spots appear")
-        @Describe("Shoals that show up on water near players — ripples, a big bobber and a sign over them. Fishing "
+        @Describe("Shoals that show up on water near players: ripples, a big bobber and a sign over them. Fishing "
                 + "in one bites sooner, gives better fish and more sea chests.")
         @Key("spots.enabled")
         boolean spotsEnabled,
@@ -70,8 +70,8 @@ public record FishingSettings(
         String chestMoney,
 
         @In("fishing/rod") @Title("Hook I costs") @Range(min = 0, max = 1000000)
-        @Describe("Fishing experience. Upgrades are earned, not bought: they cost experience the fisher has caught "
-                + "their way to, never money. Every further rank costs the one before times the growth below.")
+        @Describe("Fishing experience. Upgrades cost fishing experience the fisher has earned, never "
+                + "money. Every further rank costs the one before times the growth below.")
         @Key("rod.hook-cost")
         int hookCost,
 

@@ -81,8 +81,8 @@ public final class FishingRootMenu extends Menu implements IFishingScreen {
                 "<gray>Skill points to spend: <white>" + services.profiles().tree().left(profile)),
                 click -> services.screens().skills(viewer));
         band(MenuLayout.RULES, 5, Icons.of(Material.STRING, "<green>Rod upgrades",
-                "<gray>Hook, chest lure, reel and line —",
-                "<gray>the Ember Line fishes lava, the Void Line the void."), click -> services.screens().rod(viewer));
+                "<gray>Hook, chest lure, reel and line.",
+                "<gray>The Ember Line fishes lava, the Void Line the void."), click -> services.screens().rod(viewer));
         band(MenuLayout.RULES, 7, Icons.of(Material.COD, "<green>Collection",
                 "<gray>Every fish there is, and which you have caught."),
                 click -> services.screens().collection(viewer));
@@ -91,13 +91,13 @@ public final class FishingRootMenu extends Menu implements IFishingScreen {
     @Override
     protected List<String> helpLines() {
         return List.of(
-                "Fishing, with more in the water.",
+                "Fish, sea chests, rod upgrades and a skill tree.",
                 "",
                 "Fish come in six tiers, from common to mythic,",
                 "and every kind of water has its own.",
                 "Now and then a sea chest bites instead: right click it to open it.",
                 "",
-                "Fishing spots — ripples and a big bobber on the water —",
+                "Fishing spots (ripples and a big bobber on the water)",
                 "bite sooner and give better catches until they are fished out.",
                 "",
                 "Catching earns fishing experience; every level is a skill point for the skill tree.");

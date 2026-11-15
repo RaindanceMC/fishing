@@ -47,7 +47,7 @@ public final class RodsMenu extends Menu implements IFishingScreen {
         set(MenuLayout.HEADER_SUBJECT, Icons.of(Material.EXPERIENCE_BOTTLE,
                 "<green>Fishing experience to spend: <white>" + profile.available(),
                 "<gray>Fishing level <white>" + services.profiles().levels().level(profile.experience()),
-                "<gray>Unlock a rod, then craft it — its recipe",
+                "<gray>Unlock a rod, then craft it. Its recipe",
                 "<gray>appears in your recipe book."));
         RodTier[] rods = RodTier.values();
         for (int n = 0; n < rods.length; n++) {
@@ -69,7 +69,7 @@ public final class RodsMenu extends Menu implements IFishingScreen {
             lore.add("<gray>Craft: <white>" + pretty(rod.shaft()) + "</white> ×3, <white>" + pretty(rod.line())
                     + "</white> ×2, any <white>" + rod.fishIngredient().title().toLowerCase(Locale.ROOT) + "</white> fish");
             if (unlocked) {
-                lore.add("<green>Unlocked — craft it whenever you like.");
+                lore.add("<green>Unlocked. Craft it whenever you like.");
             } else {
                 lore.add("<gray>Unlock: fishing level <white>" + rod.level() + "</white>, <white>" + rod.cost()
                         + "</white> fishing experience");
@@ -78,7 +78,7 @@ public final class RodsMenu extends Menu implements IFishingScreen {
             ItemStack icon = Icons.showing(services.forge().rod(rod),
                     "<" + rod.tier().hex() + ">" + rod.title() + (unlocked ? " <green>✔" : ""), lore);
             String reason = refusal.map(why -> switch (why) {
-                case ALREADY -> "Unlocked already — craft it.";
+                case ALREADY -> "Unlocked already. Craft it.";
                 case PREVIOUS_FIRST -> "Unlock the " + previous.title() + " first.";
                 case LEVEL_TOO_LOW -> "Needs fishing level " + rod.level() + ".";
                 case NOT_ENOUGH_EXPERIENCE -> "Needs " + rod.cost() + " fishing experience; you have "

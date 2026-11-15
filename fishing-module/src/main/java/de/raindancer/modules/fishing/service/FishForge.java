@@ -150,7 +150,7 @@ public final class FishForge implements IFishingService {
                 .material(Material.PAPER)
                 .name(colour + tier.chestName())
                 .lore(List.of(colour + tier.title() + " sea chest",
-                        "<gray>Fished up, still dripping.",
+                        "<gray>Fished up from the water.",
                         "<dark_gray>Place it, then right click it to open it."))
                 .itemModel(FishingPack.chestModel(tier.chest(), ""))
                 .glowing(tier.atLeast(Tier.LEGENDARY))
@@ -202,7 +202,7 @@ public final class FishForge implements IFishingService {
                 .name("<#7ec8e3>Fishing Net")
                 .lore(List.of("<gray>A bag for fish: a chest's worth of them.",
                         "<gray>While you carry it, what you catch goes in.",
-                        "<dark_gray>Right click it — in your hand or in your inventory — to open it."))
+                        "<dark_gray>Right click it in your hand or in your inventory to open it."))
                 .itemModel(FishingPack.NAMESPACE + ":net")
                 .build();
     }

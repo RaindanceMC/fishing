@@ -71,7 +71,7 @@ public final class RodMenu extends Menu implements IFishingScreen {
                 holding ? "<white>The rod in your hand" : "<red>You are not holding a rod", about));
         set(MenuLayout.HEADER_RIGHT, Icons.of(Material.EXPERIENCE_BOTTLE,
                 "<green>Fishing experience to spend: <white>" + profile.available(),
-                "<gray>Upgrades are earned by fishing, never bought.",
+                "<gray>Upgrades cost fishing experience, never money.",
                 "<gray>Spending experience never lowers your level."));
 
         RodPart[] parts = RodPart.values();
@@ -98,7 +98,7 @@ public final class RodMenu extends Menu implements IFishingScreen {
             }
             boolean allowed = mayUpgrade && holding && refusal.isEmpty();
             band(MenuLayout.RULES, 1 + n * 2, allowed, Icons.of(ICONS[n],
-                    "<green>" + part.title() + " <gray>— now <white>" + part.rankName(rank),
+                    "<green>" + part.title() + " <gray>· now <white>" + part.rankName(rank),
                     "<gray>" + part.effect(),
                     "",
                     maxed ? "<gray>Fully upgraded." : "<gray>Next: <white>" + part.rankName(rank + 1)
@@ -126,8 +126,8 @@ public final class RodMenu extends Menu implements IFishingScreen {
     @Override
     protected List<String> helpLines() {
         return List.of(
-                "Upgrades are earned, not bought: they cost fishing experience",
-                "and need a fishing level. Spending never lowers your level.",
+                "Upgrades cost fishing experience, never money,",
+                "and each needs a fishing level. Spending never lowers your level.",
                 "",
                 "Upgrades go onto the rod in your main hand,",
                 "and stay with that rod wherever it goes.",

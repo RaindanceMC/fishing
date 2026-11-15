@@ -57,12 +57,12 @@ public final class SkinsMenu extends PaginatedMenu<RodSkin> implements IFishingS
         FisherProfile profile = services.profiles().of(viewer.getUniqueId());
         String colour = "<" + skin.hex() + ">";
         if (!skins.has(skin, profile)) {
-            return Icons.of(Material.GRAY_DYE, "<dark_gray>" + skin.title() + " — not yours yet",
+            return Icons.of(Material.GRAY_DYE, "<dark_gray>" + skin.title() + " (not yours yet)",
                     List.of("<gray>" + skins.how(skin)));
         }
         ItemStack rod = held();
         boolean wearing = rod != null && services.forge().skinOf(rod).filter(skin::equals).isPresent();
-        String state = !supporter() ? "<light_purple>Yours — wearing it is a thank-you for supporters."
+        String state = !supporter() ? "<light_purple>Yours. Wearing it is a thank-you for supporters."
                 : wearing ? "<green>Your rod wears it." : rod == null ? "<gray>Hold a rod to put it on."
                 : "<yellow>Click to put it on the rod in your hand.";
         return Icons.showing(services.forge().skinToken(skin), colour + skin.title(), List.of(state,
@@ -109,9 +109,9 @@ public final class SkinsMenu extends PaginatedMenu<RodSkin> implements IFishingS
     @Override
     protected List<String> helpLines() {
         return List.of(
-                "A skin is a look for a rod; it fishes as itself —",
-                "and wearing one is a thank-you for supporters.",
-                "Most are earned by fishing — a level, or every",
+                "A skin changes how a rod looks; it fishes the same.",
+                "Wearing one is a thank-you for supporters.",
+                "Most are earned by fishing: a level, or every",
                 "fish of one water. The rarest come out of sea",
                 "chests as tokens: right click one to keep it.");
     }

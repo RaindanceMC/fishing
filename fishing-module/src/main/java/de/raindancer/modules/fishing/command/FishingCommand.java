@@ -440,7 +440,7 @@ public final class FishingCommand implements IFishingCommand {
 
     @Override
     public String describe() {
-        return "the fishing pages, giving out fish, dishes and sea chests, and placing fishing spots — wandering or "
+        return "the fishing pages, giving out fish, dishes and sea chests, and placing fishing spots, wandering or "
                 + "fixed for good";
     }
 }
