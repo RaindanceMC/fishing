@@ -85,7 +85,6 @@ public final class FishingModule implements FlexModule {
 
         context.core().messages().defineFrom(FishingModule.class.getResourceAsStream("messages.yml"),
                 context.chat().brand()::chatPrefix);
-        context.core().messages().seriousFrom(FishingModule.class.getResourceAsStream("messages-serious.yml"));
         int registered = PermissionNodes.register(server);
         if (registered > 0) {
             log.info("{} permission(s) registered.", registered);
