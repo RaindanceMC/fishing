@@ -31,7 +31,7 @@
              0.3.0: the nether's biomes have lava fish of their own (nine new); the float shows on lava and in the void.
              0.3.1: wearing a rod skin is for supporters (rainsfishing.skins under rains.supporter). -->
         <!-- 0.10.0: no-spot zones (/fishing nospot add|remove|list): no fishing spot comes up on its own inside one. -->
-        <plugin.version>0.10.0</plugin.version>
+        <plugin.version>0.10.1</plugin.version>
     </properties>
 
     <dependencies>
