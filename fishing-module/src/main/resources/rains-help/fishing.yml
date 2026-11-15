@@ -1,8 +1,8 @@
 id: fishing
 title: Fishing
-summary: Forty fish in six tiers, sea chests, fishing spots, rod upgrades and a skill tree — and fishing in lava and the void.
+summary: "Forty fish in six tiers, sea chests, fishing spots, rod upgrades, a skill tree, and fishing in lava and the void."
 intro: |
-  Throw a line anywhere and something better than cod can come up. Every kind of water has its own fish, from a <white>Pebble Trout</white> in a stream to an <white>Astral Leviathan</white> hanging in the void under the End.
+  Every kind of water has its own fish, from a <white>Pebble Trout</white> in a stream to an <white>Astral Leviathan</white> in the void under the End.
 icon: FISHING_ROD
 category: Progress & rewards
 order: 35
@@ -14,57 +14,57 @@ sections:
   - question: What can I catch?
     title: Fish and tiers
     text: |
-      Fish come in six tiers: <white>common</white>, <green>uncommon</green>, <aqua>rare</aqua>, <light_purple>epic</light_purple>, <gold>legendary</gold> and <aqua>mythic</aqua>. Rivers, oceans, warm seas, swamps, frozen water, cave water, lava and the void each have their own; the mythic ones live only in the void. In the nether every biome's lava has fish of its own — crimson, warped, soul sand, basalt and the wastes.
-      {if:fishing:catch.replace-vanilla-fish}Whatever fish or junk vanilla would have put on your hook becomes one of these fish instead — no more lily pads and old boots. Treasure stays treasure.{else}On this server cod and salmon stay vanilla; the new fish come from lava and the void, and from sea chests.{/if}
+      Fish come in six tiers: <white>common</white>, <green>uncommon</green>, <aqua>rare</aqua>, <light_purple>epic</light_purple>, <gold>legendary</gold> and <aqua>mythic</aqua>. Rivers, oceans, warm seas, swamps, frozen water, cave water, lava and the void each have their own; the mythic ones live only in the void. In the nether every biome's lava has fish of its own: crimson, warped, soul sand, basalt and the wastes.
+      {if:fishing:catch.replace-vanilla-fish}Whatever fish or junk vanilla would have put on your hook becomes one of these fish instead, so there are no more lily pads and old boots. Treasure stays treasure.{else}On this server cod and salmon stay vanilla; the new fish come from lava and the void, and from sea chests.{/if}
       {run:/fishing collection} shows every fish there is, and where the ones you have not caught yet bite.
   - question: What is a sea chest?
     title: Sea chests
     text: |
-      Now and then a chest bites instead of a fish — about {setting:fishing:chests.chance-permille|count} casts in a thousand, more with a chest lure, treasure sense or in a fishing spot. There are six: <white>Driftwood</white>, <green>Reef</green>, <aqua>Pearl</aqua>, <light_purple>Abyss</light_purple>, <gold>Leviathan</gold> and <aqua>Void</aqua>.
-      Place one wherever you like and right click it to open it: it shakes, bursts open, and what was inside comes out one thing at a time — each rises in a puff of smoke, turns in the air and drops into your bag. A cheque for its money, fish no better than the chest, bait, and things that get richer each tier — no string or lily pads, even in a Driftwood chest. Only you can open your chest; sneak and left click it to take it back.
+      Now and then a chest bites instead of a fish, about {setting:fishing:chests.chance-permille|count} casts in a thousand, more with a chest lure, treasure sense or in a fishing spot. There are six: <white>Driftwood</white>, <green>Reef</green>, <aqua>Pearl</aqua>, <light_purple>Abyss</light_purple>, <gold>Leviathan</gold> and <aqua>Void</aqua>.
+      Place one wherever you like and right click it to open it. It shakes and bursts open, and what was inside comes out one thing at a time: each rises in a puff of smoke, turns in the air and drops into your bag. A chest holds a cheque for its money, fish no better than the chest, bait, and things that get richer each tier. It never holds string or lily pads, even a Driftwood chest. Only you can open your chest; sneak and left click it to take it back.
       Each water has its own chests: a river gives up to Pearl, swamps and caves up to Abyss, the sea up to Leviathan. The Void chest comes only out of the void.
   - question: What are fishing spots?
     title: Fishing spots
     when: fishing:spots.enabled
     text: |
       Shoals that come up on the water near you: rings rippling out, a big bobber turning over them and a sign naming what can bite there. Cast into one and fish bite sooner, rarer fish and more sea chests come up.
-      A spot reaches four blocks round its bobber. It lasts {setting:fishing:spots.minutes|count} minutes or {setting:fishing:spots.catches|count} catches, whichever runs out first; no spot comes up inside another. Spots belong to their water — an ocean spot on the ocean, a void spot hanging off an End island.
+      A spot reaches four blocks round its bobber. It lasts {setting:fishing:spots.minutes|count} minutes or {setting:fishing:spots.catches|count} catches, whichever runs out first; no spot comes up inside another. Spots belong to their water: an ocean spot on the ocean, a void spot off an End island.
       Some spots are put down by staff and stay for good: they never run out, and their sign names the best chest that bites there.
-      Staff can also keep spots away from a place — a harbour, the spawn pond — with {cmd:/fishing nospot}: none comes up there on its own.
+      Staff can also keep spots away from a place, such as a harbour or the spawn pond, with {cmd:/fishing nospot}. None comes up there on its own.
   - question: How do I fish lava or the void?
     title: Lava and the void
     text: |
-      An ordinary line burns through in lava. Fit the <white>Ember Line</white> and your float rests on the lava like on water; watch for the wake of smoke coming at it before a bite.
-      The void keeps count: every fish it gives you that is not mythic makes the next mythic a little likelier, up to four times as likely, until one bites. Myth Lure, Void Drifter and Abyss Walker in the skill tree raise mythic catches too.
-      For the void, fit the <white>Void Line</white> (fishing level {setting:fishing:rod.void-line-level|count}), stand on the edge of an End island and cast straight down into the nothing. The float hangs on a shimmering ring over the nothing; when the wake reaches it and it dips and flares, reel in.
+      An ordinary line burns through in lava. Fit the <white>Ember Line</white> and your float rests on the lava like on water; a wake of smoke comes at it before a bite.
+      In the void, every fish you catch that is not mythic makes the next mythic a little likelier, up to four times as likely, until one bites. Myth Lure, Void Drifter and Abyss Walker in the skill tree raise mythic catches too.
+      For the void, fit the <white>Void Line</white> (fishing level {setting:fishing:rod.void-line-level|count}), stand on the edge of an End island and cast straight down. The float hangs on a shimmering ring over the void; when the wake reaches it and it dips and flares, reel in.
   - question: Which rods are there?
     title: Rods
     text: |
       Six rods, one per tier: the <white>Reed</white>, <green>Reef</green>, <aqua>Pearl</aqua>, <light_purple>Ember</light_purple>, <gold>Leviathan</gold> and <aqua>Void</aqua> Rod. Each bites sooner, brings more sea chests, rarer fish and double catches than the one before; the Ember and Leviathan rods fish lava, the Void Rod fishes the void too.
-      They are earned like everything else here: open {run:/fishing rods}, and once you have the fishing level, unlock the next rod with fishing experience (the one below it first). Its recipe then appears in your recipe book — its shaft, its line and a fish of its tier — and you craft it. Only a fisher who unlocked a rod can craft it or cast it; a plain fishing rod is always yours.
+      You earn them like everything else here: open {run:/fishing rods}, and once you have the fishing level, unlock the next rod with fishing experience (the one below it first). Its recipe then appears in your recipe book (its shaft, its line and a fish of its tier) and you craft it. Only a fisher who unlocked a rod can craft it or cast it; a plain fishing rod is always yours.
   - question: Are there fishing enchantments?
     title: Fishing enchantments
     text: |
-      Four, on any rod: <white>Deep Bite</white> (fish bite sooner), <white>Twin Catch</white> (double catches), <white>Treasure Hunter</white> (more sea chests) and <white>Mythic Lure</white> (rarer fish and chests). Their shards come from the shard world like every enchantment's, and Abyss, Leviathan and Void chests hold some — Mythic Lure only the Void chest. Unlock them in your guild, buy the book, and put it on at an anvil.
+      Four, on any rod: <white>Deep Bite</white> (fish bite sooner), <white>Twin Catch</white> (double catches), <white>Treasure Hunter</white> (more sea chests) and <white>Mythic Lure</white> (rarer fish and chests). Their shards come from the shard world like every enchantment's, and Abyss, Leviathan and Void chests hold some (Mythic Lure only the Void chest). Unlock them in your guild, buy the book, and put it on at an anvil.
   - question: How do I upgrade my rod?
     title: Rod upgrades
     permission: rainsfishing.rod.upgrade
     text: |
-      Upgrades are <i>earned</i>, not bought: they cost the fishing experience you have caught your way to, and each rank needs a fishing level. Spending experience never lowers your level.
+      Upgrades cost the fishing experience you have earned by fishing, and each rank needs a fishing level. Spending experience never lowers your level.
       Hold the rod and open {run:/fishing rod}. The <white>Hook</white> makes fish bite sooner, the <white>Chest Lure</white> brings more sea chests, the <white>Reel</white> brings double catches, and the <white>Line</white> opens lava and the void.
       Hook I costs {setting:fishing:rod.hook-cost|count} experience, and each further rank costs {setting:fishing:rod.cost-growth-percent|count}% of the one before, {setting:fishing:rod.levels-per-rank|count} fishing levels after the last. The Ember Line costs {setting:fishing:rod.ember-line-cost|count} (level {setting:fishing:rod.ember-line-level|count}), the Void Line {setting:fishing:rod.void-line-cost|count} (level {setting:fishing:rod.void-line-level|count}). Upgrades are written onto that rod and go wherever it goes.
   - question: How do levels and the skill tree work?
     title: Levels and the skill tree
     text: |
       Every catch earns fishing experience, more for rarer fish and for opening chests. Levels go up to {setting:fishing:levels.highest|count}, and every level is one skill point; so is every sea chest tier you open for the first time and every ten kinds of fish you have caught.
-      Spend them in the skill tree, {run:/fishing skills}: five branches — <white>Tidecaller</white> (quicker bites), <white>Treasure Hunter</white> (better sea chests), <white>Collector</white> (rarer, heavier fish), <white>Ember & Void</white> (lava and the void) and <white>Fishmonger</white> (double catches, bait, the kitchen). A node needs one next to it first; each branch has one choice between two nodes (taking one shuts the other), and ends in a capstone at fishing level 60 — and past it a free <gold>mastery badge</gold>, yours once every other node of the branch is taken, with a strong bonus of its own. The tree is wider than the window: the arrows below scroll it. With the skills plugin, fishing is one of the skills in {run:/skills}. There are more nodes than points, so pick a path.
-      Tidecaller holds <white>Auto-Reel</white> (a bite reels itself in) and <white>Auto-Rethrow</white> (after a catch the line goes back out). Auto-Rethrow rests while you are away, and after 30 casts in a row without you looking around; look around or cast by hand and it goes on. Unlearning the whole tree costs {setting:fishing:skills.reset-fee|money} and gives every point back.
+      Spend them in the skill tree, {run:/fishing skills}: five branches: <white>Tidecaller</white> (quicker bites), <white>Treasure Hunter</white> (better sea chests), <white>Collector</white> (rarer, heavier fish), <white>Ember & Void</white> (lava and the void) and <white>Fishmonger</white> (double catches, bait, the kitchen). A node needs one next to it first; each branch has one choice between two nodes (taking one shuts the other), and ends in a capstone at fishing level 60. Past it is a free <gold>mastery badge</gold>, yours once every other node of the branch is taken, with a strong bonus of its own. The tree is wider than the window, so use the arrows below to scroll it. With the skills plugin, fishing is one of the skills in {run:/skills}. There are more nodes than points, so you have to choose.
+      Tidecaller holds <white>Auto-Reel</white> (a bite reels itself in) and <white>Auto-Rethrow</white> (after a catch the line goes back out). Auto-Rethrow rests while you are away, and after 30 casts in a row without you looking around. Look around or cast by hand to resume. Unlearning the whole tree costs {setting:fishing:skills.reset-fee|money} and gives every point back.
   - question: What can I cook?
     title: Dishes
     text: |
-      Every meal is made in two steps: craft it, and you hold the <white>raw</white> dish; cook that in a furnace, a smoker or over a campfire, and it is done. Every recipe is in your recipe book.
-      Everyday meals take any fish at all — plain cod and salmon too: <white>Fish 'n' Chips</white>, <white>Fisherman's Stew</white>, <white>Fish Cakes</white> and the <white>Fish Skewer</white>.
-      The finer ones want a particular catch: Herb-Baked Trout, Bog Stew, Frost Chowder, Ember Skewer, Glow Broth, Abyssal Broth, Void Sashimi, a Golden Fish Pie, Starlight Soup, the Leviathan Feast — and sushi on every tier, from Herring Nigiri and Wrasse Maki to Coral Sushi, the Blazefin Roll, Crowned Marlin Nigiri and Astral Sushi.
+      Every meal is made in two steps: craft it to get the <white>raw</white> dish, then cook that in a furnace, a smoker or over a campfire. Every recipe is in your recipe book.
+      Everyday meals take any fish at all, plain cod and salmon too: <white>Fish 'n' Chips</white>, <white>Fisherman's Stew</white>, <white>Fish Cakes</white> and the <white>Fish Skewer</white>.
+      The finer ones want a particular catch: Herb-Baked Trout, Bog Stew, Frost Chowder, Ember Skewer, Glow Broth, Abyssal Broth, Void Sashimi, a Golden Fish Pie, Starlight Soup, the Leviathan Feast, and sushi on every tier, from Herring Nigiri and Wrasse Maki to Coral Sushi, the Blazefin Roll, Crowned Marlin Nigiri and Astral Sushi.
       A dish fills you more than the fish it is made from, and the better ones come with effects: fire resistance, night vision, water breathing, slow falling, strength, luck and more.
   - question: What does bait do?
     title: Bait
@@ -74,13 +74,13 @@ sections:
   - question: What is a fishing net?
     title: Fishing net
     text: |
-      A bag for fish, crafted from string and a lead. Right click it — in your hand, or on it in your inventory — and it opens like a shulker box with room for a chest's worth of fish. Shift-click fish in to put them away, click a stack to take it out.
+      A bag for fish, crafted from string and a lead. Right click it in your hand, or on it in your inventory, and it opens like a shulker box with room for a chest's worth of fish. Shift click fish in to put them away and click a stack to take it out.
       While you carry a net with room in it, what you catch goes straight in. Only fish go into a net.
   - question: How do I get rod skins?
     title: Rod skins
     text: |
-      A skin is a look for any of your rods; the rod still fishes as itself. Wearing one is a thank-you for the server's supporters: hold the rod, open {run:/fishing rod} and pick one under <white>Rod skins</white>. Everybody collects them all the same, and keeps them.
-      Most are earned by fishing: <white>Driftwood</white> at fishing level 10, <white>Golden</white> at level 40, and <white>Frostbite</white>, <white>Tidepool</white> and <white>Magma</white> for catching every fish of the frozen water, the warm ocean and lava. The rarest — <light_purple>Abyssal</light_purple>, <gold>Bonewhale</gold> and <aqua>Starfall</aqua> — only ever come out of Abyss, Leviathan and Void chests as tokens: right click one to keep the skin for good, or trade it.
+      A skin changes how any of your rods looks; the rod fishes the same. Wearing one is a thank-you for the server's supporters: hold the rod, open {run:/fishing rod} and pick one under <white>Rod skins</white>. Everybody collects them all the same, and keeps them.
+      Most are earned by fishing: <white>Driftwood</white> at fishing level 10, <white>Golden</white> at level 40, and <white>Frostbite</white>, <white>Tidepool</white> and <white>Magma</white> for catching every fish of the frozen water, the warm ocean and lava. The rarest, <light_purple>Abyssal</light_purple>, <gold>Bonewhale</gold> and <aqua>Starfall</aqua>, only come out of Abyss, Leviathan and Void chests as tokens. Right click one to keep the skin for good, or trade it.
   - question: Can I sell my catch?
     title: Selling fish
     when: fishing:market.fish-price > 0
@@ -89,11 +89,11 @@ sections:
   - question: Is there a leaderboard?
     title: Leaderboards
     text: |
-      Four: the highest fishing level, the most fish landed, the heaviest catch and the most kinds found. Staff can put them up as floating screens with {cmd:/screen}, next to a screen of everybody's own fishing record — and as statues of the top fishers (with the mannequins plugin: {cmd:/mannequin statue top fishing:level 1}).
+      Four: the highest fishing level, the most fish landed, the heaviest catch and the most kinds found. Staff can put them up as floating screens with {cmd:/screen}, next to a screen of everybody's own fishing record, and as statues of the top fishers (with the mannequins plugin: {cmd:/mannequin statue top fishing:level 1}).
   - question: What can staff do?
     title: Staff
     permission: rainsfishing.give
     text: |
-      {cmd:/fishing give <player> <fish:id|dish:id|chest:tier|rod:tier|bait:id|net:fishing|skin:id> [amount]} hands out anything fishing makes; {cmd:/fishing xp <player> <amount>} grants fishing experience. {cmd:/fishing spot} puts a fishing spot on the water or lava you are looking at — or, in the End, out in the void.
-      {cmd:/fishing spot create <tier> [radius]} puts down a spot for good, as big as you say (1 to 32 blocks round) and giving up chests and fish up to that tier — past what the water alone would; a mythic one only over the void. {cmd:/fishing spot list} shows this world's, {cmd:/fishing spot remove [id]} takes one away (the nearest within 32 blocks without an id).
+      {cmd:/fishing give <player> <fish:id|dish:id|chest:tier|rod:tier|bait:id|net:fishing|skin:id> [amount]} hands out anything fishing makes; {cmd:/fishing xp <player> <amount>} grants fishing experience. {cmd:/fishing spot} puts a fishing spot on the water or lava you are looking at, or in the End out in the void.
+      {cmd:/fishing spot create <tier> [radius]} puts down a spot for good, as big as you say (1 to 32 blocks round) and giving up chests and fish up to that tier, past what the water alone would. A mythic one only works over the void. {cmd:/fishing spot list} shows this world's, {cmd:/fishing spot remove [id]} takes one away (the nearest within 32 blocks without an id).
       Whoever has <white>rainsfishing.auto.unguarded</white> (operators by default) can keep Auto-Rethrow going while away or never looking around.
