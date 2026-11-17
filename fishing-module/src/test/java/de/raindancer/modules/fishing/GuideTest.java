@@ -17,6 +17,7 @@ class GuideTest {
         assertThat(HelpLint.of(Path.of("src/main/resources/rains-help"))
                 .module("fishing")
                 .settings(FishingSettings.class, FishingSettings.DEFAULTS)
+                .settings(de.raindancer.core.CoreConfig.class, de.raindancer.core.CoreConfig.DEFAULTS)
                 .commands(new FishingModule().commands().stream().map(ModuleCommand::name).toList())
                 .problems()).isEmpty();
     }

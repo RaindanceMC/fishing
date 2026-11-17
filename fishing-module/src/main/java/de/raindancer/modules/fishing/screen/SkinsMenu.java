@@ -62,7 +62,7 @@ public final class SkinsMenu extends PaginatedMenu<RodSkin> implements IFishingS
         }
         ItemStack rod = held();
         boolean wearing = rod != null && services.forge().skinOf(rod).filter(skin::equals).isPresent();
-        String state = !supporter() ? "<light_purple>Yours. Wearing it is a thank-you for supporters."
+        String state = !supporter() ? "<light_purple>Yours. Wearing it is a thank-you for " + de.raindancer.modules.fishing.util.Thanked.who() + "."
                 : wearing ? "<green>Your rod wears it." : rod == null ? "<gray>Hold a rod to put it on."
                 : "<yellow>Click to put it on the rod in your hand.";
         return Icons.showing(services.forge().skinToken(skin), colour + skin.title(), List.of(state,
@@ -91,7 +91,7 @@ public final class SkinsMenu extends PaginatedMenu<RodSkin> implements IFishingS
 
     private void wear(RodSkin skin) {
         if (skin != null && !supporter()) {
-            services.messages().send(viewer, "fishing.skin.supporters");
+            services.messages().send(viewer, "fishing.skin.supporters", "who", de.raindancer.modules.fishing.util.Thanked.who(), "where", de.raindancer.modules.fishing.util.Thanked.command());
             return;
         }
         ItemStack rod = held();
@@ -110,7 +110,7 @@ public final class SkinsMenu extends PaginatedMenu<RodSkin> implements IFishingS
     protected List<String> helpLines() {
         return List.of(
                 "A skin changes how a rod looks; it fishes the same.",
-                "Wearing one is a thank-you for supporters.",
+                "Wearing one is a thank-you for " + de.raindancer.modules.fishing.util.Thanked.who() + ".",
                 "Most are earned by fishing: a level, or every",
                 "fish of one water. The rarest come out of sea",
                 "chests as tokens: right click one to keep it.");

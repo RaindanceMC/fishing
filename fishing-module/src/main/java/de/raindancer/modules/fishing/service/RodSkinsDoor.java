@@ -28,7 +28,7 @@ public final class RodSkinsDoor implements CosmeticDoor {
     @Override
     public ItemStack icon(Player viewer) {
         return Icons.of(Material.FISHING_ROD, "<light_purple>Rod skins",
-                "<gray>A look for the rod in your hand.", "<gray>Earned by fishing, worn by supporters.", "",
+                "<gray>A look for the rod in your hand.", "<gray>Earned by fishing, worn by " + de.raindancer.modules.fishing.util.Thanked.who() + ".", "",
                 "<dark_gray>Hold a rod and click.");
     }
 

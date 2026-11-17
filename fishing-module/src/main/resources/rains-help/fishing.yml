@@ -79,7 +79,7 @@ sections:
   - question: How do I get rod skins?
     title: Rod skins
     text: |
-      A skin changes how any of your rods looks; the rod fishes the same. Wearing one is a thank-you for the server's supporters: hold the rod, open {run:/fishing rod} and pick one under <white>Rod skins</white>. Everybody collects them all the same, and keeps them.
+      A skin changes how any of your rods looks; the rod fishes the same. {if:core:coffee-supporters}Wearing one is a thank-you for the server's supporters{/if}{if:!core:coffee-supporters}Wearing one is a Prime perk{/if}: hold the rod, open {run:/fishing rod} and pick one under <white>Rod skins</white>. Everybody collects them all the same, and keeps them.
       Most are earned by fishing: <white>Driftwood</white> at fishing level 10, <white>Golden</white> at level 40, and <white>Frostbite</white>, <white>Tidepool</white> and <white>Magma</white> for catching every fish of the frozen water, the warm ocean and lava. The rarest, <light_purple>Abyssal</light_purple>, <gold>Bonewhale</gold> and <aqua>Starfall</aqua>, only come out of Abyss, Leviathan and Void chests as tokens. Right click one to keep the skin for good, or trade it.
   - question: Can I sell my catch?
     title: Selling fish
