@@ -230,8 +230,6 @@ public final class ChestService implements IFishingService {
             }
             case Reward.Book book -> enchantedBook(book.levels());
             case Reward.Fish fish -> forge.fish(fish.kind(), fish.amount());
-            case Reward.Shard shard -> de.raindancer.core.content.enchant.EnchantShards.of(shard.enchantment(),
-                    shard.amount());
             case Reward.Money money -> new ItemStack(Material.GOLD_NUGGET);
             case Reward.Skin token -> forge.skinToken(token.skin());
             case Reward.Bait bait -> forge.bait(bait.bait(), bait.amount());

@@ -53,7 +53,6 @@ class ChestLootRuleTest {
                         case Reward.Item item -> assertThat(item.amount()).isPositive();
                         case Reward.Book book -> assertThat(book.levels()).isBetween(1, 30);
                         case Reward.Fish fish -> assertThat(fish.amount()).isPositive();
-                        case Reward.Shard shard -> assertThat(shard.amount()).isPositive();
                         case Reward.Skin token -> assertThat(token.skin().chest()).isEqualTo(tier);
                         case Reward.Bait bait -> {
                             assertThat(bait.amount()).isPositive();
@@ -71,28 +70,22 @@ class ChestLootRuleTest {
         assertThat(rule.rolls(Tier.MYTHIC)).isGreaterThan(rule.rolls(Tier.COMMON));
     }
 
-    @Test
-    @DisplayName("fishing shards come out of the better chests only, and Mythic Lure out of the void's alone")
-    void shards() {
-        java.util.Map<Tier, java.util.Set<String>> seen = new java.util.EnumMap<>(Tier.class);
+    private double booksPerChest(Tier tier) {
         Random random = new Random(12);
-        for (Tier tier : Tier.values()) {
-            seen.put(tier, new java.util.HashSet<>());
-            for (int n = 0; n < 3000; n++) {
-                for (Reward reward : rule.open(tier, 100, random)) {
-                    if (reward instanceof Reward.Shard shard) {
-                        seen.get(tier).add(shard.enchantment());
-                    }
-                }
-            }
+        long books = 0;
+        for (int n = 0; n < 4000; n++) {
+            books += rule.open(tier, 100, random).stream().filter(Reward.Book.class::isInstance).count();
         }
-        assertThat(seen.get(Tier.COMMON)).isEmpty();
-        assertThat(seen.get(Tier.RARE)).isEmpty();
-        assertThat(seen.get(Tier.EPIC)).contains(de.raindancer.modules.fishing.model.Rod.DEEP_BITE)
-                .doesNotContain(de.raindancer.modules.fishing.model.Rod.MYTHIC_LURE);
-        assertThat(seen.get(Tier.LEGENDARY)).contains(de.raindancer.modules.fishing.model.Rod.TREASURE_HUNTER)
-                .doesNotContain(de.raindancer.modules.fishing.model.Rod.MYTHIC_LURE);
-        assertThat(seen.get(Tier.MYTHIC)).contains(de.raindancer.modules.fishing.model.Rod.MYTHIC_LURE);
+        return books / 4000.0;
+    }
+
+    @Test
+    @DisplayName("Abyss, Leviathan and Void chests hold more enchanted books than the rest of their pool gives: the better chests' extra prize")
+    void booksInTheBetterChests() {
+        assertThat(booksPerChest(Tier.EPIC)).isGreaterThan(1.4);
+        assertThat(booksPerChest(Tier.LEGENDARY)).isGreaterThan(1.75);
+        assertThat(booksPerChest(Tier.MYTHIC)).isGreaterThan(1.55);
+        assertThat(booksPerChest(Tier.RARE)).as("the plainer chests are left as they were").isLessThan(0.8);
     }
 
     @Test

@@ -5,7 +5,6 @@ import de.raindancer.modules.fishing.model.Catalog;
 import de.raindancer.modules.fishing.model.FishKind;
 import de.raindancer.modules.fishing.model.Reward;
 import de.raindancer.modules.fishing.model.RodSkin;
-import de.raindancer.modules.fishing.model.Rod;
 import de.raindancer.modules.fishing.model.Tier;
 
 import java.util.ArrayList;
@@ -20,7 +19,7 @@ import java.util.Random;
 public final class ChestLootRule implements IFishingRule {
 
     private record Entry(Tier from, Tier to, int weight, String material, int least, int most, int bookLevels,
-                         String shard, Bait bait) {
+                         Bait bait) {
 
         boolean in(Tier tier) {
             return tier.atLeast(from) && to.atLeast(tier);
@@ -36,9 +35,6 @@ public final class ChestLootRule implements IFishingRule {
             if (bait != null) {
                 return new Reward.Bait(bait, least + random.nextInt(most - least + 1));
             }
-            if (shard != null) {
-                return new Reward.Shard(shard, least + random.nextInt(most - least + 1));
-            }
             if (bookLevels > 0) {
                 return new Reward.Book(Math.min(30, bookLevels + random.nextInt(Math.max(1, bookLevels / 2) + 1)));
             }
@@ -47,34 +43,25 @@ public final class ChestLootRule implements IFishingRule {
     }
 
     private static Entry item(Tier from, int weight, String material, int least, int most) {
-        return new Entry(from, Tier.MYTHIC, weight, material, least, most, 0, null, null);
+        return new Entry(from, Tier.MYTHIC, weight, material, least, most, 0, null);
     }
 
     /** Something only the low chests hold: past Pearl it is not worth the lid. */
     private static Entry cheap(Tier from, int weight, String material, int least, int most) {
-        return new Entry(from, Tier.RARE, weight, material, least, most, 0, null, null);
+        return new Entry(from, Tier.RARE, weight, material, least, most, 0, null);
     }
 
     private static Entry book(Tier from, int weight, int levels) {
-        return new Entry(from, Tier.MYTHIC, weight, "enchanted_book", 1, 1, levels, null, null);
-    }
-
-    private static Entry shard(Tier from, int weight, String enchantment, int least, int most) {
-        return new Entry(from, Tier.MYTHIC, weight, "echo_shard", least, most, 0, enchantment, null);
+        return new Entry(from, Tier.MYTHIC, weight, "enchanted_book", 1, 1, levels, null);
     }
 
     /** The module's own bait of this tier, from its own chest up to two tiers past it. */
     private static Entry bait(Bait bait, int weight, int least, int most) {
         Tier to = Tier.values()[Math.min(Tier.MYTHIC.ordinal(), bait.tier().ordinal() + 2)];
-        return new Entry(bait.tier(), to, weight, "bait", least, most, 0, null, bait);
+        return new Entry(bait.tier(), to, weight, "bait", least, most, 0, bait);
     }
 
     private static final List<Entry> POOL = List.of(
-            // the fishing enchantments' shards, from the better chests
-            shard(Tier.EPIC, 6, Rod.DEEP_BITE, 1, 2),
-            shard(Tier.EPIC, 4, Rod.TWIN_CATCH, 1, 1),
-            shard(Tier.LEGENDARY, 4, Rod.TREASURE_HUNTER, 1, 2),
-            shard(Tier.MYTHIC, 3, Rod.MYTHIC_LURE, 1, 1),
             // No string, lily pads, nuggets, iron, lapis, stray emeralds or experience bottles: what a chest holds is
             // worth the lid, from the Driftwood chest up — bait, books, pearls, food for the road, now and then a diamond.
             bait(Bait.WRIGGLER, 35, 4, 8),
@@ -101,6 +88,7 @@ public final class ChestLootRule implements IFishingRule {
             item(Tier.EPIC, 5, "heart_of_the_sea", 1, 1),
             item(Tier.EPIC, 6, "golden_apple", 1, 2),
             book(Tier.EPIC, 12, 24),
+            book(Tier.EPIC, 10, 27),
             bait(Bait.STARLURE, 8, 1, 3),
             item(Tier.LEGENDARY, 10, "netherite_scrap", 1, 2),
             item(Tier.LEGENDARY, 10, "diamond", 4, 8),
@@ -109,6 +97,7 @@ public final class ChestLootRule implements IFishingRule {
             item(Tier.LEGENDARY, 4, "netherite_upgrade_smithing_template", 1, 1),
             item(Tier.LEGENDARY, 3, "enchanted_golden_apple", 1, 1),
             book(Tier.LEGENDARY, 12, 30),
+            book(Tier.LEGENDARY, 4, 30),
             bait(Bait.VOIDLURE, 6, 1, 2),
             item(Tier.MYTHIC, 10, "netherite_ingot", 1, 2),
             item(Tier.MYTHIC, 8, "diamond_block", 2, 5),
@@ -117,6 +106,7 @@ public final class ChestLootRule implements IFishingRule {
             item(Tier.MYTHIC, 6, "enchanted_golden_apple", 1, 1),
             item(Tier.MYTHIC, 6, "shulker_shell", 2, 4),
             item(Tier.MYTHIC, 4, "totem_of_undying", 1, 1),
+            book(Tier.MYTHIC, 3, 30),
             item(Tier.MYTHIC, 2, "elytra", 1, 1));
 
     /** The prize an Abyss chest and better always holds, one of its tier's, drawn evenly. */

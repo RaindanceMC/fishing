@@ -45,7 +45,7 @@ sections:
   - question: Are there fishing enchantments?
     title: Fishing enchantments
     text: |
-      Four, on any rod: <white>Deep Bite</white> (fish bite sooner), <white>Twin Catch</white> (double catches), <white>Treasure Hunter</white> (more sea chests) and <white>Mythic Lure</white> (rarer fish and chests). Their shards come from the shard world like every enchantment's, and Abyss, Leviathan and Void chests hold some (Mythic Lure only the Void chest). Unlock them in your guild, buy the book, and put it on at an anvil.
+      Four, on any rod: <white>Deep Bite</white> (fish bite sooner), <white>Twin Catch</white> (double catches), <white>Treasure Hunter</white> (more sea chests) and <white>Mythic Lure</white> (rarer fish and chests). Unlock them in your guild, buy the book, and put it on at an anvil.
   - question: How do I upgrade my rod?
     title: Rod upgrades
     permission: rainsfishing.rod.upgrade

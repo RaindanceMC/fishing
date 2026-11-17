@@ -18,10 +18,6 @@ public sealed interface Reward {
     record Fish(FishKind kind, int amount) implements Reward {
     }
 
-    /** Enchantment shards, by the enchantment's key ({@code rainsenchants:deep_bite}). */
-    record Shard(String enchantment, int amount) implements Reward {
-    }
-
     /** The module's own bait, ready for the off hand. */
     record Bait(de.raindancer.modules.fishing.model.Bait bait, int amount) implements Reward {
     }
