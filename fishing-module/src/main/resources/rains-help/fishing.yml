@@ -10,6 +10,7 @@ module: fishing
 aliases: [fish, angling, rod, lootbox, sea chest, chests]
 keywords: [duo, title, hoodfin, dragonet, voidlure, debt, auto, afk, catch, tier, mythic, void, lava, spot, shoal, upgrade, skill, tree, perk, dish, sushi, recipe, bait, net, skin, sell]
 commands: [fishing]
+related: [fishing-market]
 sections:
   - question: What can I catch?
     title: Fish and tiers
@@ -95,6 +96,6 @@ sections:
     title: Staff
     permission: rainsfishing.give
     text: |
-      {cmd:/fishing give <player> <fish:id|dish:id|chest:tier|rod:tier|bait:id|net:fishing|skin:id> [amount]} hands out anything fishing makes; {cmd:/fishing xp <player> <amount>} grants fishing experience. {cmd:/fishing spot} puts a fishing spot on the water or lava you are looking at, or in the End out in the void.
+      {cmd:/fishing give <player> <fish:id|dish:id|chest:tier|rod:tier|bait:id|net:fishing|skin:id> [amount]} hands out anything fishing makes; {cmd:/fishing xp <player> <amount>} grants fishing experience. {cmd:/fishing spot} puts a fishing spot on the water or lava you are looking at, or in the End out in the void. {cmd:/fishing merchant} puts a fishmonger where you stand, {cmd:/fishing merchant remove} takes the nearest away.
       {cmd:/fishing spot create <tier> [radius]} puts down a spot for good, as big as you say (1 to 32 blocks round) and giving up chests and fish up to that tier, past what the water alone would. A mythic one only works over the void. {cmd:/fishing spot list} shows this world's, {cmd:/fishing spot remove [id]} takes one away (the nearest within 32 blocks without an id).
       Whoever has <white>rainsfishing.auto.unguarded</white> (operators by default) can keep Auto-Rethrow going while away or never looking around.

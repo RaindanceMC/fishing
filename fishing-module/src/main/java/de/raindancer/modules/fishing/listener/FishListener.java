@@ -41,6 +41,14 @@ public final class FishListener implements IFishingListener {
     public void onFish(PlayerFishEvent event) {
         Player player = event.getPlayer();
         FishHook hook = event.getHook();
+        if (event.getState() != PlayerFishEvent.State.FISHING && services.tugs().active(player.getUniqueId())) {
+            // Mid-fight the hook stays out: a reel of the rod is a pull on the rope, and a new bite is nothing.
+            event.setCancelled(true);
+            if (event.getState() != PlayerFishEvent.State.BITE && event.getState() != PlayerFishEvent.State.LURED) {
+                services.tugs().reel(player);
+            }
+            return;
+        }
         switch (event.getState()) {
             case FISHING -> {
                 if (!services.workshop().mayUse(player, services.catches().rodOf(player))) {
@@ -59,7 +67,10 @@ public final class FishListener implements IFishingListener {
             }
             case BITE -> services.auto().bitten(player, hook);
             default -> {
-                services.lines().reeled(player, hook);
+                if (services.lines().reeled(player, hook)) {
+                    event.setCancelled(true);
+                    return;
+                }
                 // Reeled in empty, or the line came in some other way: the bait went with the cast.
                 services.baits().take(hook.getUniqueId());
             }
@@ -99,6 +110,17 @@ public final class FishListener implements IFishingListener {
         Catch caught = services.catches().decide(player, hook.getLocation(), water, fish,
                 services.baits().take(hook.getUniqueId()));
         ItemStack landed = services.catches().stack(caught).orElse(item.getItemStack());
+        if (caught instanceof de.raindancer.modules.fishing.model.Catch.Fish fighter && services.tugs().fights(fighter)) {
+            // A legendary or better fights first; the hook stays out and the catch comes up only when it is won.
+            event.setCancelled(true);
+            item.remove();
+            services.tugs().start(player, hook, fighter, water, at -> {
+                services.catches().bringUp(player, at, water, landed);
+                services.catches().credit(player, caught, water);
+                services.auto().landed(player);
+            });
+            return;
+        }
         // Not thrown at the fisher like vanilla's: it comes up out of the water, turns, and goes into the bag —
         // never into a neighbour's hands; a full bag puts the rest at the fisher's feet.
         item.remove();
@@ -115,6 +137,7 @@ public final class FishListener implements IFishingListener {
 
     @Override
     public void forget(UUID player) {
+        services.tugs().forget(player);
         services.lines().forget(player);
         services.auto().forget(player);
     }

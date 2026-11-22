@@ -88,10 +88,17 @@ public final class ProfileService implements IFishingService {
 
     /** @param water where it was caught, for the tree's lava and void experience; null for anywhere */
     public void caught(Player player, String fishId, int amount, Tier tier, double kilos, Water water) {
+        caught(player, fishId, amount, tier, kilos, water, null);
+    }
+
+    /** @param mutation the variant it came up as, or null; a new variant counts as a first catch for experience */
+    public void caught(Player player, String fishId, int amount, Tier tier, double kilos, Water water,
+                       de.raindancer.modules.fishing.model.Mutation mutation) {
         UUID id = player.getUniqueId();
-        boolean first = of(id).caught(fishId) == 0;
+        boolean first = of(id).caught(fishId) == 0 || mutation != null && !of(id).hasVariant(fishId, mutation);
         reward(player, profile -> {
-                    FisherProfile changed = profile.withCatch(fishId, amount).withWeight(fishId, kilos);
+                    FisherProfile changed = profile.withCatch(fishId, amount).withWeight(fishId, kilos)
+                            .withVariant(fishId, mutation);
                     return water == Water.VOID ? changed.withVoidCatch(tier, amount) : changed;
                 },
                 BONUS.experience((long) tier.experience() * amount, perks(id), water, first));

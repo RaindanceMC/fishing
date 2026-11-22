@@ -1,0 +1,34 @@
+id: fishing-market
+title: Big fish, rare fish, fish to sell
+summary: "The tug of war with legendary fish, rare variants, the fishmonger and aquariums."
+intro: |
+  What happens after the bite: fighting the big ones, the rare colours any fish can come in, selling your catch and keeping your favourites.
+icon: TROPICAL_FISH
+category: Progress & rewards
+order: 36
+module: fishing
+aliases: [fishmonger, aquarium, tug of war, variants]
+keywords: [tug, fight, variant, albino, melanistic, golden, prismatic, merchant, fishmonger, aquarium, tank, sell]
+commands: [fishing]
+related: [fishing]
+sections:
+  - question: Why does a big fish fight back?
+    title: Tug of war
+    text: |
+      A <gold>legendary</gold> or <aqua>mythic</aqua> fish fights before it comes up. A bar shows the rope between you and the fish, and the fish starts ahead.
+      While it is calm (green), hold right click to reel it in. When the bar turns yellow it is about to run, and while it runs (red) let go: reeling then only strains the line, and four strains in one run snap it.
+      Pull the rope all the way to your side and it is yours. Let the fish take it to its side and it pulls you into the water after it; in lava or the void it only tears free. A fight nobody wins ends after 45 seconds with the fish gone.
+  - question: What are golden and prismatic fish?
+    title: Rare variants
+    text: |
+      Any fish can come up as a rare variant with its own colours: <#f4eef0>albino</#f4eef0> or <#7a7a90>melanistic</#7a7a90> (about one in 250, worth 3 times a plain one), <#ffc83a>golden</#ffc83a> (one in 1000, 10 times) or <#c77dff>prismatic</#c77dff> (one in 3000, 25 times). The whole server hears of a golden or prismatic catch.
+      A variant cooks like any fish of its kind. {run:/fishing collection} shows which variants of each fish you have found.
+  - question: Where do I sell fish?
+    title: The fishmonger
+    text: |
+      The <aqua>fishmonger</aqua> buys fish: right click him, then sell the stack in your hand or every fish you carry. He pays what the shop pays, double for the three fish he wants today (they change every day), and a rare variant fetches its multiple on top.
+  - question: Can I keep my fish?
+    title: Aquariums
+    text: |
+      Craft an <#7ec8e3>Aquarium</#7ec8e3> from glass, a water bucket, sand and planks and set it down. Right click it with a fish and the fish swims in it; three fit in one tank.
+      Sneak and right click with an empty hand to take the last one out again, sneak and left click to pick the whole tank up with its fish. Only you can change your tanks; anybody may look.

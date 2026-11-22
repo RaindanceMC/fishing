@@ -1,0 +1,7 @@
+{
+ "parent": "rainsfishing:item/fish/crowned_marlin",
+ "textures": {
+  "0": "rainsfishing:item/fish/crowned_marlin_albino",
+  "particle": "rainsfishing:item/fish/crowned_marlin_albino"
+ }
+}

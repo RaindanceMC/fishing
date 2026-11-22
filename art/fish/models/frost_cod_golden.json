@@ -1,0 +1,7 @@
+{
+ "parent": "rainsfishing:item/fish/frost_cod",
+ "textures": {
+  "0": "rainsfishing:item/fish/frost_cod_golden",
+  "particle": "rainsfishing:item/fish/frost_cod_golden"
+ }
+}

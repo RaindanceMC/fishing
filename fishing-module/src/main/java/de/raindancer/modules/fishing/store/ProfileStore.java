@@ -205,7 +205,7 @@ public final class ProfileStore {
             de.raindancer.modules.fishing.model.RodSkin.parse(skin).ifPresent(skins::add);
         }
         return new FisherProfile(entry.getLong("experience"), entry.getLong("spent"), nodes, caught, chests, rods,
-                heaviest, skins, freeUnlearn, entry.getInt("void-dry"));
+                heaviest, skins, freeUnlearn, entry.getInt("void-dry"), new java.util.HashSet<>(entry.getStringList("variants")));
     }
 
     static void write(ConfigurationSection yaml, String path, FisherProfile profile) {
@@ -229,6 +229,9 @@ public final class ProfileStore {
         }
         if (!profile.skins().isEmpty()) {
             yaml.set(path + ".skins", profile.skins().stream().sorted().map(skin -> skin.id()).toList());
+        }
+        if (!profile.variants().isEmpty()) {
+            yaml.set(path + ".variants", profile.variants().stream().sorted().toList());
         }
     }
 }

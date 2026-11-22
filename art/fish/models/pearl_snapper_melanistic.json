@@ -1,0 +1,7 @@
+{
+ "parent": "rainsfishing:item/fish/pearl_snapper",
+ "textures": {
+  "0": "rainsfishing:item/fish/pearl_snapper_melanistic",
+  "particle": "rainsfishing:item/fish/pearl_snapper_melanistic"
+ }
+}

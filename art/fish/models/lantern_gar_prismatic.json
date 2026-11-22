@@ -1,0 +1,7 @@
+{
+ "parent": "rainsfishing:item/fish/lantern_gar",
+ "textures": {
+  "0": "rainsfishing:item/fish/lantern_gar_prismatic",
+  "particle": "rainsfishing:item/fish/lantern_gar_prismatic"
+ }
+}

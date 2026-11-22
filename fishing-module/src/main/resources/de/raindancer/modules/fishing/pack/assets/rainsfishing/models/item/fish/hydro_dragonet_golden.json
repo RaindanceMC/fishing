@@ -1,0 +1,7 @@
+{
+ "parent": "rainsfishing:item/fish/hydro_dragonet",
+ "textures": {
+  "0": "rainsfishing:item/fish/hydro_dragonet_golden",
+  "particle": "rainsfishing:item/fish/hydro_dragonet_golden"
+ }
+}

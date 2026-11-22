@@ -54,12 +54,24 @@ public final class CollectionMenu extends PaginatedMenu<FishKind> implements IFi
         int caught = profile.caught(kind.id());
         String colour = "<" + kind.tier().hex() + ">";
         if (caught > 0) {
-            return Icons.showing(services.forge().fish(kind, 1), colour + kind.name(), List.of(
+            List<String> lines = new java.util.ArrayList<>(List.of(
                     colour + kind.tier().title(),
                     "<gray>Caught: <white>" + caught,
                     "<gray>Heaviest: <white>" + de.raindancer.modules.fishing.rules.WeightRule.format(
                             profile.heaviest(kind.id())),
                     "<gray>Bites in: <white>" + waters));
+            StringBuilder found = new StringBuilder();
+            de.raindancer.modules.fishing.model.Mutation best = null;
+            for (de.raindancer.modules.fishing.model.Mutation mutation
+                    : de.raindancer.modules.fishing.model.Mutation.values()) {
+                boolean has = profile.hasVariant(kind.id(), mutation);
+                found.append(found.isEmpty() ? "" : " ").append(has ? "<" + mutation.hex() + ">" + mutation.title()
+                        : "<dark_gray>" + mutation.title().replaceAll(".", "·"));
+                best = has ? mutation : best;
+            }
+            lines.add("<gray>Variants: " + found);
+            // the rarest variant found is the one shown, so a page of them is a trophy wall
+            return Icons.showing(services.forge().fish(kind, 1, best), colour + kind.name(), lines);
         }
         return Icons.of(Material.GRAY_DYE, "<dark_gray>Not caught yet", List.of(
                 colour + kind.tier().title() + " fish",
@@ -75,7 +87,8 @@ public final class CollectionMenu extends PaginatedMenu<FishKind> implements IFi
     protected List<String> helpLines() {
         return List.of(
                 "Every fish there is, from common to mythic.",
-                "One you have not caught yet shows where it bites.");
+                "One you have not caught yet shows where it bites.",
+                "Any fish can come up albino, melanistic, golden or prismatic.");
     }
 
     @Override

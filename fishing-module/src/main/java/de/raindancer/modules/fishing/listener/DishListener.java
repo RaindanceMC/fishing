@@ -62,6 +62,7 @@ public final class DishListener implements IFishingListener {
         services.dishes().discover(event.getPlayer());
         services.baits().discover(event.getPlayer());
         services.nets().discover(event.getPlayer());
+        services.aquariums().discover(event.getPlayer());
     }
 
     @Override

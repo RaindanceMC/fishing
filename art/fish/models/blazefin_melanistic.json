@@ -1,0 +1,7 @@
+{
+ "parent": "rainsfishing:item/fish/blazefin",
+ "textures": {
+  "0": "rainsfishing:item/fish/blazefin_melanistic",
+  "particle": "rainsfishing:item/fish/blazefin_melanistic"
+ }
+}

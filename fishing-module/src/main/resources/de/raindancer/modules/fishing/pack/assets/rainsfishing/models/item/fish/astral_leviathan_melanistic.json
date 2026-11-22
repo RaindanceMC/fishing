@@ -1,0 +1,7 @@
+{
+ "parent": "rainsfishing:item/fish/astral_leviathan",
+ "textures": {
+  "0": "rainsfishing:item/fish/astral_leviathan_melanistic",
+  "particle": "rainsfishing:item/fish/astral_leviathan_melanistic"
+ }
+}

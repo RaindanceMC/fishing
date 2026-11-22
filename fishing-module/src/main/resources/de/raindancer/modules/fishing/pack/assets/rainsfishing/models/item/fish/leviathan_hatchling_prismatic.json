@@ -1,0 +1,7 @@
+{
+ "parent": "rainsfishing:item/fish/leviathan_hatchling",
+ "textures": {
+  "0": "rainsfishing:item/fish/leviathan_hatchling_prismatic",
+  "particle": "rainsfishing:item/fish/leviathan_hatchling_prismatic"
+ }
+}

@@ -44,6 +44,8 @@ public final class CatchService implements IFishingService {
     private final WeightRule weights = new WeightRule();
     private static final de.raindancer.modules.fishing.rules.BonusRule BONUS =
             new de.raindancer.modules.fishing.rules.BonusRule();
+    private static final de.raindancer.modules.fishing.rules.MutationRule MUTATIONS =
+            new de.raindancer.modules.fishing.rules.MutationRule();
     private static final de.raindancer.modules.fishing.rules.PriceRule PRICES =
             new de.raindancer.modules.fishing.rules.PriceRule();
     /** Where Market Stall's money comes from, for the economy's books. */
@@ -115,6 +117,9 @@ public final class CatchService implements IFishingService {
                 replacing || water.needsSpecialLine(), spot.filter(Spot::fixed).map(Spot::best).orElse(null), bait,
                 hook.getWorld().getBiome(hook).getKey().toString());
         Catch caught = rule.roll(cast, random);
+        if (caught instanceof Catch.Fish fish) {
+            caught = MUTATIONS.roll(random, 1.0).map(fish::mutated).<Catch>map(each -> each).orElse(fish);
+        }
         if (!(caught instanceof Catch.Vanilla)) {
             spot.ifPresent(spots::fished);
         }
@@ -124,7 +129,7 @@ public final class CatchService implements IFishingService {
     /** What the catch is as an item; empty for vanilla's own. */
     public Optional<ItemStack> stack(Catch caught) {
         return switch (caught) {
-            case Catch.Fish fish -> Optional.of(forge.fish(fish.kind(), fish.amount()));
+            case Catch.Fish fish -> Optional.of(forge.fish(fish.kind(), fish.amount(), fish.mutation()));
             case Catch.Chest chest -> Optional.of(forge.chest(chest.tier(), 1));
             case Catch.Vanilla vanilla -> Optional.empty();
         };
@@ -167,16 +172,27 @@ public final class CatchService implements IFishingService {
                 de.raindancer.modules.fishing.model.Perks perks = profiles.perks(player.getUniqueId());
                 WeightRule.Weighing weighing = weights.weigh(fish.kind(), random,
                         BONUS.heavier(perks, fish.tier(), water));
-                long stall = BONUS.catchMoney(PRICES.fish(fish.tier(), settings.fishPriceMinor()) * fish.amount(),
-                        perks);
+                long stall = BONUS.catchMoney(PRICES.fish(fish.tier(), settings.fishPriceMinor()) * fish.amount()
+                        * (fish.mutation() == null ? 1 : fish.mutation().priceFactor()), perks);
+                String shown = fish.mutation() == null ? fish.kind().name()
+                        : fish.mutation().title() + " " + fish.kind().name();
                 String weight = WeightRule.format(weighing.kilos());
                 double best = profiles.of(player.getUniqueId()).heaviest(fish.kind().id());
-                profiles.caught(player, fish.kind().id(), fish.amount(), fish.tier(), weighing.kilos(), water);
+                profiles.caught(player, fish.kind().id(), fish.amount(), fish.tier(), weighing.kilos(), water,
+                        fish.mutation());
+                if (fish.mutation() != null) {
+                    effects.play(player.getUniqueId(), Cues.REWARD);
+                    messages.send(player, "fishing.caught.mutation", "fish", shown,
+                            "factor", String.valueOf(fish.mutation().priceFactor()));
+                    if (fish.mutation().announced()) {
+                        whopper(player, "fishing.mutation.broadcast", shown, fish.tier().title(), weight);
+                    }
+                }
                 core.actionBars().show(player.getUniqueId(), "fishing", (stall > 0
-                                ? messages.get("fishing.caught.weighed-stall", "fish", fish.kind().name(),
+                                ? messages.get("fishing.caught.weighed-stall", "fish", shown,
                                 "weight", weight, "money", de.raindancer.core.social.economy.Fees.format(
                                         de.raindancer.core.social.economy.Money.of(stall)))
-                                : messages.get("fishing.caught.weighed", "fish", fish.kind().name(), "weight", weight))
+                                : messages.get("fishing.caught.weighed", "fish", shown, "weight", weight))
                         .colorIfAbsent(net.kyori.adventure.text.format.TextColor.color(fish.tier().colour())),
                         java.time.Duration.ofSeconds(4), de.raindancer.core.ui.actionbar.ActionBarPriority.NORMAL);
                 if (stall > 0) {

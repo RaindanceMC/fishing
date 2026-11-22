@@ -29,7 +29,7 @@ final class Ingredients {
             List<ItemStack> fish = new ArrayList<>();
             fish.add(new ItemStack(Material.COD));
             fish.add(new ItemStack(Material.SALMON));
-            catalog.fish().forEach(kind -> fish.add(forge.fish(kind, 1)));
+            catalog.fish().forEach(kind -> fish.addAll(variants(kind)));
             return new RecipeChoice.ExactChoice(fish);
         }
         if (ingredient.startsWith("any:")) {
@@ -37,7 +37,7 @@ final class Ingredients {
             if (tier == null) {
                 return null;
             }
-            List<ItemStack> fish = catalog.ofTier(tier).stream().map(kind -> forge.fish(kind, 1)).toList();
+            List<ItemStack> fish = catalog.ofTier(tier).stream().flatMap(kind -> variants(kind).stream()).toList();
             return fish.isEmpty() ? null : new RecipeChoice.ExactChoice(fish);
         }
         if (ingredient.startsWith("minecraft:")) {
@@ -45,6 +45,16 @@ final class Ingredients {
             return material == null ? null : new RecipeChoice.MaterialChoice(material);
         }
         FishKind kind = catalog.fish(ingredient).orElse(null);
-        return kind == null ? null : new RecipeChoice.ExactChoice(forge.fish(kind, 1));
+        return kind == null ? null : new RecipeChoice.ExactChoice(variants(kind));
+    }
+
+    /** A fish and each of its variants: a golden trout cooks like any trout. */
+    private List<ItemStack> variants(FishKind kind) {
+        List<ItemStack> all = new ArrayList<>();
+        all.add(forge.fish(kind, 1));
+        for (de.raindancer.modules.fishing.model.Mutation mutation : de.raindancer.modules.fishing.model.Mutation.values()) {
+            all.add(forge.fish(kind, 1, mutation));
+        }
+        return all;
     }
 }

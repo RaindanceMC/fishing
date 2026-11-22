@@ -51,7 +51,7 @@ import java.util.Random;
  */
 public final class FishingModule implements FlexModule {
 
-    private static final ModuleInfo INFO = ModuleInfo.of("fishing", "Fishing", "0.13.0")
+    private static final ModuleInfo INFO = ModuleInfo.of("fishing", "Fishing", "0.14.0")
             .describedAs("New fish in six tiers, sea chests, fishing spots, rod upgrades and skills, lava and "
                     + "void fishing, and dishes cooked from the catch.")
             .by("Raindancer118");
@@ -69,6 +69,7 @@ public final class FishingModule implements FlexModule {
     private de.raindancer.modules.fishing.service.RodWorkshopService workshop;
     private de.raindancer.modules.fishing.service.BaitService baits;
     private de.raindancer.modules.fishing.service.NetService nets;
+    private de.raindancer.modules.fishing.service.AquariumService aquariums;
     private de.raindancer.core.content.pack.ResourcePacks packs;
 
     @Override
@@ -143,27 +144,40 @@ public final class FishingModule implements FlexModule {
         settings.onChange(catches::settings);
         settings.onChange(chests::settings);
 
+        de.raindancer.modules.fishing.service.TugService tugs = new de.raindancer.modules.fishing.service.TugService(
+                context.plugin(), context.core().bossBars(), context.core().messages(), context.core().effects(), random);
+        lines.tugs(tugs);
+        de.raindancer.modules.fishing.service.MerchantService merchant =
+                new de.raindancer.modules.fishing.service.MerchantService(context.plugin(), context.core().messages(),
+                        context.core().effects(), forge, catalog, now);
+        settings.onChange(merchant::settings);
+        aquariums = new de.raindancer.modules.fishing.service.AquariumService(context.plugin(), server, forge, catalog);
+
         services = new FishingServices(context.plugin(), server, log, context.core().messages(),
                 context.chat().brand(), context.core(), settings::current, settings, catalog, forge, profiles, rods,
-                spots, catches, lines, chests, seaChests, dishes, workshop, baits, nets, auto, new LiveScreens());
+                spots, catches, lines, chests, seaChests, dishes, workshop, baits, nets, auto, new LiveScreens(),
+                tugs, merchant, aquariums);
 
         context.listener(new FishListener(services));
         context.listener(new ChestListener(services));
         context.listener(new de.raindancer.modules.fishing.listener.SpotListener(services));
         context.listener(new de.raindancer.modules.fishing.listener.NetListener(services));
         context.listener(new DishListener(services));
+        context.listener(new de.raindancer.modules.fishing.listener.MerchantListener(services));
+        context.listener(new de.raindancer.modules.fishing.listener.AquariumListener(services));
         context.listener(new de.raindancer.modules.fishing.listener.RodListener(services));
         FishingCommands.ready(services);
 
         int recipes = dishes.registerRecipes();
         int rodRecipes = workshop.registerRecipes();
-        int baitRecipes = baits.registerRecipes() + nets.registerRecipe();
+        int baitRecipes = baits.registerRecipes() + nets.registerRecipe() + aquariums.registerRecipe();
         server.getOnlinePlayers().forEach(online -> Scheduling.entity(context.plugin(), online,
                 () -> {
                     dishes.discover(online);
                     workshop.discover(online);
                     baits.discover(online);
                     nets.discover(online);
+                    aquariums.discover(online);
                 }));
         packs = context.core().resourcePacks();
         try {
@@ -174,11 +188,13 @@ public final class FishingModule implements FlexModule {
         }
 
         seaChests.start();
+        aquariums.start();
         // The shop buys our fish and dishes at our prices; a fish is never sold as the cod it is made of.
         de.raindancer.modules.fishing.rules.PriceRule prices = new de.raindancer.modules.fishing.rules.PriceRule();
         de.raindancer.core.social.economy.ItemPricer pricer = stack -> {
             long base = settings.current().fishPriceMinor();
-            java.util.Optional<Long> price = forge.fishOf(stack).map(kind -> prices.fish(kind.tier(), base))
+            java.util.Optional<Long> price = forge.fishOf(stack).map(kind -> prices.fish(kind.tier(), base)
+                            * forge.mutationOf(stack).map(de.raindancer.modules.fishing.model.Mutation::priceFactor).orElse(1))
                     .or(() -> forge.dishOf(stack).map(dish -> prices.dish(dish.tier(), base)));
             return price.filter(each -> each > 0).map(de.raindancer.core.social.economy.Money::of);
         };
@@ -300,6 +316,10 @@ public final class FishingModule implements FlexModule {
         }
         if (seaChests != null) {
             seaChests.stop();
+        }
+        if (aquariums != null) {
+            aquariums.stop();
+            aquariums.unregisterRecipe();
         }
         if (dishes != null) {
             dishes.unregisterRecipes();

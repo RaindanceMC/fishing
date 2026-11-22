@@ -69,6 +69,7 @@ public final class FishForge implements IFishingService {
             added += items.defineIfAbsent(baitDefinition(bait)) ? 1 : 0;
         }
         added += items.defineIfAbsent(netDefinition()) ? 1 : 0;
+        added += items.defineIfAbsent(aquariumDefinition()) ? 1 : 0;
         for (RodSkin skin : RodSkin.values()) {
             added += items.defineIfAbsent(tokenDefinition(skin)) ? 1 : 0;
         }
@@ -161,6 +162,48 @@ public final class FishForge implements IFishingService {
         return make(kind.itemId(), () -> fishDefinition(kind), amount);
     }
 
+    private static final org.bukkit.NamespacedKey MUTATION =
+            new org.bukkit.NamespacedKey(FishingPack.NAMESPACE, "mutation");
+    private static final net.kyori.adventure.text.minimessage.MiniMessage MINI =
+            net.kyori.adventure.text.minimessage.MiniMessage.miniMessage();
+
+    /**
+     * A fish as a rare variant: the same item underneath (so recipes, the shop and the collection know it), with the
+     * variant's model and name, a line saying what it is, and a shimmer for the golden and prismatic ones.
+     */
+    public ItemStack fish(FishKind kind, int amount, de.raindancer.modules.fishing.model.Mutation mutation) {
+        ItemStack stack = fish(kind, amount);
+        if (mutation == null) {
+            return stack;
+        }
+        org.bukkit.inventory.meta.ItemMeta meta = stack.getItemMeta();
+        meta.getPersistentDataContainer().set(MUTATION, org.bukkit.persistence.PersistentDataType.STRING,
+                mutation.id());
+        meta.itemName(MINI.deserialize("<" + mutation.hex() + ">" + mutation.title() + " <" + kind.tier().hex() + ">"
+                + kind.name()));
+        meta.customName(null);
+        List<net.kyori.adventure.text.Component> lore = new ArrayList<>(meta.hasLore() ? meta.lore() : List.of());
+        lore.add(0, MINI.deserialize("<!italic><" + mutation.hex() + ">" + mutation.title() + " variant <dark_gray>· worth "
+                + mutation.priceFactor() + "×"));
+        meta.lore(lore);
+        if (mutation.announced()) {
+            meta.setEnchantmentGlintOverride(true);
+        }
+        stack.setItemMeta(meta);
+        stack.setData(io.papermc.paper.datacomponent.DataComponentTypes.ITEM_MODEL,
+                net.kyori.adventure.key.Key.key(mutation.model(kind)));
+        return stack;
+    }
+
+    /** The variant a fish is, if it is one. */
+    public Optional<de.raindancer.modules.fishing.model.Mutation> mutationOf(ItemStack stack) {
+        if (stack == null || !stack.hasItemMeta()) {
+            return Optional.empty();
+        }
+        return de.raindancer.modules.fishing.model.Mutation.parse(stack.getItemMeta().getPersistentDataContainer()
+                .get(MUTATION, org.bukkit.persistence.PersistentDataType.STRING));
+    }
+
     public ItemStack dish(Dish dish, int amount) {
         return make(dish.itemId(), () -> dishDefinition(dish), amount);
     }
@@ -194,6 +237,26 @@ public final class FishForge implements IFishingService {
                         "<dark_gray>Hold it in your off hand: every cast takes one."))
                 .itemModel(FishingPack.NAMESPACE + ":bait/" + bait.id())
                 .build();
+    }
+
+    private static CustomItem aquariumDefinition() {
+        return CustomItem.builder(PLUGIN, "aquarium")
+                .material(Material.PAPER)
+                .name("<#7ec8e3>Aquarium")
+                .lore(List.of("<gray>A tank for three of your fish.",
+                        "<gray>Set it down, then right click it with a fish.",
+                        "<dark_gray>Sneak and right click with an empty hand to take one out,",
+                        "<dark_gray>sneak and left click to pick the tank up."))
+                .itemModel(FishingPack.NAMESPACE + ":aquarium")
+                .build();
+    }
+
+    public ItemStack aquarium() {
+        return NonIngredients.mark(make("aquarium", FishForge::aquariumDefinition, 1));
+    }
+
+    public boolean isAquarium(ItemStack stack) {
+        return id(stack).filter("aquarium"::equals).isPresent();
     }
 
     private static CustomItem netDefinition() {

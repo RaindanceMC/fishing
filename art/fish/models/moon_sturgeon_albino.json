@@ -1,0 +1,7 @@
+{
+ "parent": "rainsfishing:item/fish/moon_sturgeon",
+ "textures": {
+  "0": "rainsfishing:item/fish/moon_sturgeon_albino",
+  "particle": "rainsfishing:item/fish/moon_sturgeon_albino"
+ }
+}

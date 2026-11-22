@@ -1,0 +1,7 @@
+{
+ "parent": "rainsfishing:item/fish/ember_perch",
+ "textures": {
+  "0": "rainsfishing:item/fish/ember_perch_albino",
+  "particle": "rainsfishing:item/fish/ember_perch_albino"
+ }
+}

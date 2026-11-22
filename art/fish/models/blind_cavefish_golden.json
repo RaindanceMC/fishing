@@ -1,0 +1,7 @@
+{
+ "parent": "rainsfishing:item/fish/blind_cavefish",
+ "textures": {
+  "0": "rainsfishing:item/fish/blind_cavefish_golden",
+  "particle": "rainsfishing:item/fish/blind_cavefish_golden"
+ }
+}

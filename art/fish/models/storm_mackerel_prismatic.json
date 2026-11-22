@@ -1,0 +1,7 @@
+{
+ "parent": "rainsfishing:item/fish/storm_mackerel",
+ "textures": {
+  "0": "rainsfishing:item/fish/storm_mackerel_prismatic",
+  "particle": "rainsfishing:item/fish/storm_mackerel_prismatic"
+ }
+}

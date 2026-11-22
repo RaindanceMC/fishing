@@ -1,0 +1,7 @@
+{
+ "parent": "rainsfishing:item/fish/aurora_trout",
+ "textures": {
+  "0": "rainsfishing:item/fish/aurora_trout_albino",
+  "particle": "rainsfishing:item/fish/aurora_trout_albino"
+ }
+}

@@ -1,0 +1,7 @@
+{
+ "parent": "rainsfishing:item/fish/mirror_carp",
+ "textures": {
+  "0": "rainsfishing:item/fish/mirror_carp_golden",
+  "particle": "rainsfishing:item/fish/mirror_carp_golden"
+ }
+}

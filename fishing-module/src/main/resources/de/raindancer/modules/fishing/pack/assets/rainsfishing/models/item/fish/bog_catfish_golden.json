@@ -1,0 +1,7 @@
+{
+ "parent": "rainsfishing:item/fish/bog_catfish",
+ "textures": {
+  "0": "rainsfishing:item/fish/bog_catfish_golden",
+  "particle": "rainsfishing:item/fish/bog_catfish_golden"
+ }
+}

@@ -1,0 +1,7 @@
+{
+ "parent": "rainsfishing:item/fish/void_eel",
+ "textures": {
+  "0": "rainsfishing:item/fish/void_eel_prismatic",
+  "particle": "rainsfishing:item/fish/void_eel_prismatic"
+ }
+}

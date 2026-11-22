@@ -1,0 +1,7 @@
+{
+ "parent": "rainsfishing:item/fish/warped_tetra",
+ "textures": {
+  "0": "rainsfishing:item/fish/warped_tetra_prismatic",
+  "particle": "rainsfishing:item/fish/warped_tetra_prismatic"
+ }
+}

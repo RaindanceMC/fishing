@@ -1,0 +1,7 @@
+{
+ "parent": "rainsfishing:item/fish/glacier_char",
+ "textures": {
+  "0": "rainsfishing:item/fish/glacier_char_prismatic",
+  "particle": "rainsfishing:item/fish/glacier_char_prismatic"
+ }
+}

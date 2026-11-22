@@ -1,0 +1,7 @@
+{
+ "parent": "rainsfishing:item/fish/glassfin",
+ "textures": {
+  "0": "rainsfishing:item/fish/glassfin_prismatic",
+  "particle": "rainsfishing:item/fish/glassfin_prismatic"
+ }
+}

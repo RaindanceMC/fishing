@@ -1,0 +1,7 @@
+{
+ "parent": "rainsfishing:item/fish/mire_eel",
+ "textures": {
+  "0": "rainsfishing:item/fish/mire_eel_melanistic",
+  "particle": "rainsfishing:item/fish/mire_eel_melanistic"
+ }
+}

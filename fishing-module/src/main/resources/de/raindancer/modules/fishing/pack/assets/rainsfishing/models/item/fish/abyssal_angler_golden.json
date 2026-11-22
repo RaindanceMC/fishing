@@ -1,0 +1,7 @@
+{
+ "parent": "rainsfishing:item/fish/abyssal_angler",
+ "textures": {
+  "0": "rainsfishing:item/fish/abyssal_angler_golden",
+  "particle": "rainsfishing:item/fish/abyssal_angler_golden"
+ }
+}

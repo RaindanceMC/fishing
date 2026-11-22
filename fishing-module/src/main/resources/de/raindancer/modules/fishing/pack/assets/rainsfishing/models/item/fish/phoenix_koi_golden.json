@@ -1,0 +1,7 @@
+{
+ "parent": "rainsfishing:item/fish/phoenix_koi",
+ "textures": {
+  "0": "rainsfishing:item/fish/phoenix_koi_golden",
+  "particle": "rainsfishing:item/fish/phoenix_koi_golden"
+ }
+}

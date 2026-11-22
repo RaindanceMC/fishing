@@ -1,0 +1,7 @@
+{
+ "parent": "rainsfishing:item/fish/reed_pike",
+ "textures": {
+  "0": "rainsfishing:item/fish/reed_pike_melanistic",
+  "particle": "rainsfishing:item/fish/reed_pike_melanistic"
+ }
+}

@@ -11,6 +11,24 @@ import static org.assertj.core.api.Assertions.assertThat;
 class ProfileStoreTest {
 
     @Test
+    @DisplayName("the variants found are kept, and a fish's variant is found once however often it is caught")
+    void variants() throws Exception {
+        FisherProfile profile = FisherProfile.NEW.withCatch("pebble_trout", 1)
+                .withVariant("pebble_trout", de.raindancer.modules.fishing.model.Mutation.GOLDEN)
+                .withVariant("pebble_trout", de.raindancer.modules.fishing.model.Mutation.GOLDEN)
+                .withVariant("glassfin", de.raindancer.modules.fishing.model.Mutation.ALBINO);
+        assertThat(profile.variants()).containsExactlyInAnyOrder("pebble_trout:golden", "glassfin:albino");
+        assertThat(profile.hasVariant("pebble_trout", de.raindancer.modules.fishing.model.Mutation.GOLDEN)).isTrue();
+        assertThat(profile.hasVariant("pebble_trout", de.raindancer.modules.fishing.model.Mutation.ALBINO)).isFalse();
+        YamlConfiguration yaml = new YamlConfiguration();
+        ProfileStore.write(yaml, "fishers.someone", profile);
+        YamlConfiguration reread = new YamlConfiguration();
+        reread.loadFromString(yaml.saveToString());
+        assertThat(ProfileStore.read(reread, "fishers.someone")).isEqualTo(profile);
+        assertThat(profile.withExperience(10).withCatch("glassfin", 1).variants()).isEqualTo(profile.variants());
+    }
+
+    @Test
     @DisplayName("a profile written and read back is the same profile")
     void roundTrip() throws Exception {
         FisherProfile profile = FisherProfile.NEW.withExperience(1234).withSpent(300)

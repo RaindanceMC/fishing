@@ -1,0 +1,7 @@
+{
+ "parent": "rainsfishing:item/fish/crystal_tetra",
+ "textures": {
+  "0": "rainsfishing:item/fish/crystal_tetra_golden",
+  "particle": "rainsfishing:item/fish/crystal_tetra_golden"
+ }
+}

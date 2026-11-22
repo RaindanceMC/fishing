@@ -1,0 +1,7 @@
+{
+ "parent": "rainsfishing:item/fish/sunfin_tang",
+ "textures": {
+  "0": "rainsfishing:item/fish/sunfin_tang_melanistic",
+  "particle": "rainsfishing:item/fish/sunfin_tang_melanistic"
+ }
+}

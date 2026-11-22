@@ -1,0 +1,7 @@
+{
+ "parent": "rainsfishing:item/fish/star_ray",
+ "textures": {
+  "0": "rainsfishing:item/fish/star_ray_prismatic",
+  "particle": "rainsfishing:item/fish/star_ray_prismatic"
+ }
+}

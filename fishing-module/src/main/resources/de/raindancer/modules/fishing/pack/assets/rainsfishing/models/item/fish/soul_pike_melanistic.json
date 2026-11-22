@@ -1,0 +1,7 @@
+{
+ "parent": "rainsfishing:item/fish/soul_pike",
+ "textures": {
+  "0": "rainsfishing:item/fish/soul_pike_melanistic",
+  "particle": "rainsfishing:item/fish/soul_pike_melanistic"
+ }
+}

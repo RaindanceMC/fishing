@@ -1,0 +1,7 @@
+{
+ "parent": "rainsfishing:item/fish/raindancer_hoodfin",
+ "textures": {
+  "0": "rainsfishing:item/fish/raindancer_hoodfin_albino",
+  "particle": "rainsfishing:item/fish/raindancer_hoodfin_albino"
+ }
+}

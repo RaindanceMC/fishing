@@ -2,7 +2,7 @@
 Puts the fishing looks into the module's resource pack: the built fish, dishes, sea chests, ripple and bobbers under
 assets/rainsfishing, an item definition for each, and files.txt — the list FishingPack hands to Core.
 
-Run the art scripts first (fish/fish.py, fish/dishes3d.py, rods/rods.py, lootbox/lootbox.py, fishing_spot/spot.py,
+Run the art scripts first (fish/fish.py, fish/mutations.py, aquarium/aquarium.py, fish/dishes3d.py, rods/rods.py, lootbox/lootbox.py, fishing_spot/spot.py,
 fishing_spot/bobber.py); this only copies what they wrote.
 
     python3 pack.py
@@ -47,6 +47,15 @@ def main():
         copy("fish/textures/%s.png" % fid, "textures/item/fish/%s.png" % fid)
         copy("fish/models/%s.json" % fid, "models/item/fish/%s.json" % fid)
         item("fish/" + fid, "item/fish/" + fid)
+        for mutation in ("albino", "melanistic", "golden", "prismatic"):
+            variant = "%s_%s" % (fid, mutation)
+            copy("fish/textures/%s.png" % variant, "textures/item/fish/%s.png" % variant)
+            copy("fish/models/%s.json" % variant, "models/item/fish/%s.json" % variant)
+            item("fish/" + variant, "item/fish/" + variant)
+
+    copy("aquarium/aquarium.png", "textures/item/aquarium.png")
+    copy("aquarium/aquarium.json", "models/item/aquarium.json")
+    item("aquarium", "item/aquarium")
 
     for dish in catalog["dishes"]:
         did = dish["id"]

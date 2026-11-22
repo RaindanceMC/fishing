@@ -1,0 +1,7 @@
+{
+ "parent": "rainsfishing:item/fish/crimson_snapper",
+ "textures": {
+  "0": "rainsfishing:item/fish/crimson_snapper_prismatic",
+  "particle": "rainsfishing:item/fish/crimson_snapper_prismatic"
+ }
+}

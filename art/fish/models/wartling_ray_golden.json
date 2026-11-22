@@ -1,0 +1,7 @@
+{
+ "parent": "rainsfishing:item/fish/wartling_ray",
+ "textures": {
+  "0": "rainsfishing:item/fish/wartling_ray_golden",
+  "particle": "rainsfishing:item/fish/wartling_ray_golden"
+ }
+}

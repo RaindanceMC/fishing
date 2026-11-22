@@ -1,0 +1,7 @@
+{
+ "parent": "rainsfishing:item/fish/cinder_minnow",
+ "textures": {
+  "0": "rainsfishing:item/fish/cinder_minnow_albino",
+  "particle": "rainsfishing:item/fish/cinder_minnow_albino"
+ }
+}

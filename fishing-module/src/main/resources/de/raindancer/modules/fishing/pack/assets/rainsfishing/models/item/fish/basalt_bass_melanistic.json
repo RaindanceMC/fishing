@@ -1,0 +1,7 @@
+{
+ "parent": "rainsfishing:item/fish/basalt_bass",
+ "textures": {
+  "0": "rainsfishing:item/fish/basalt_bass_melanistic",
+  "particle": "rainsfishing:item/fish/basalt_bass_melanistic"
+ }
+}

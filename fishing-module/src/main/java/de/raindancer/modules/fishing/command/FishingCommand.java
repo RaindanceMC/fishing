@@ -67,6 +67,10 @@ public final class FishingCommand implements IFishingCommand {
             noSpot(live, viewer, args);
             return;
         }
+        if (sub.equals("merchant")) {
+            merchant(live, viewer, args);
+            return;
+        }
         if (!viewer.hasPermission(PermissionNodes.MENU)) {
             live.messages().send(viewer, "fishing.menu.not-allowed");
             return;
@@ -82,6 +86,24 @@ public final class FishingCommand implements IFishingCommand {
     }
 
     private record Target(Location at, Water water) {
+    }
+
+    /** {@code /fishing merchant} puts a fishmonger where you stand; {@code remove} takes the nearest away. */
+    private void merchant(FishingServices live, Player viewer, String[] args) {
+        if (!viewer.hasPermission(PermissionNodes.MERCHANT)) {
+            live.messages().send(viewer, "fishing.merchant.not-allowed");
+            return;
+        }
+        String what = args.length < 2 ? "" : args[1].toLowerCase(Locale.ROOT);
+        switch (what) {
+            case "" -> {
+                live.merchant().place(viewer);
+                live.messages().send(viewer, "fishing.merchant.placed");
+            }
+            case "remove" -> live.messages().send(viewer, live.merchant().remove(viewer)
+                    ? "fishing.merchant.removed" : "fishing.merchant.none-near");
+            default -> live.messages().send(viewer, "fishing.merchant.usage");
+        }
     }
 
     private void spot(FishingServices live, Player viewer, String[] args) {
@@ -339,6 +361,9 @@ public final class FishingCommand implements IFishingCommand {
     }
 
     private static Optional<ItemStack> item(FishingServices live, String written) {
+        if (written.equals("aquarium")) {
+            return Optional.of(live.forge().aquarium());
+        }
         int colon = written.indexOf(':');
         if (colon < 0) {
             return Optional.empty();
@@ -346,7 +371,17 @@ public final class FishingCommand implements IFishingCommand {
         String kind = written.substring(0, colon);
         String id = written.substring(colon + 1);
         return switch (kind) {
-            case "fish" -> live.catalog().fish(id).map(fish -> live.forge().fish(fish, 1));
+            case "fish" -> {
+                // fish:<id> or fish:<id>:<variant>, such as fish:pebble_trout:golden
+                int more = id.indexOf(':');
+                String fishId = more < 0 ? id : id.substring(0, more);
+                de.raindancer.modules.fishing.model.Mutation mutation = more < 0 ? null
+                        : de.raindancer.modules.fishing.model.Mutation.parse(id.substring(more + 1)).orElse(null);
+                if (more >= 0 && mutation == null) {
+                    yield Optional.empty();
+                }
+                yield live.catalog().fish(fishId).map(fish -> live.forge().fish(fish, 1, mutation));
+            }
             case "dish" -> live.catalog().dish(id).map(dish -> live.forge().dish(dish, 1));
             case "chest" -> Tier.parse(id).map(tier -> live.forge().chest(tier, 1));
             case "rod" -> de.raindancer.modules.fishing.model.RodTier.parse(id).map(rod -> live.forge().rod(rod));
@@ -371,7 +406,14 @@ public final class FishingCommand implements IFishingCommand {
                 subs.add("spot");
                 subs.add("nospot");
             }
+            if (sender.hasPermission(PermissionNodes.MERCHANT)) {
+                subs.add("merchant");
+            }
             return subs.stream().filter(sub -> sub.startsWith(started)).toList();
+        }
+        if (args[0].equalsIgnoreCase("merchant") && sender.hasPermission(PermissionNodes.MERCHANT)) {
+            return args.length == 2 && "remove".startsWith(args[1].toLowerCase(Locale.ROOT)) ? List.of("remove")
+                    : List.of();
         }
         if (args[0].equalsIgnoreCase("nospot") && sender.hasPermission(PermissionNodes.SPOT)) {
             String started = args[args.length - 1].toLowerCase(Locale.ROOT);
@@ -416,7 +458,14 @@ public final class FishingCommand implements IFishingCommand {
             List<String> items = new ArrayList<>();
             for (FishKind kind : services.get().catalog().fish()) {
                 items.add("fish:" + kind.id());
+                if (started.startsWith("fish:" + kind.id() + ":")) {
+                    for (de.raindancer.modules.fishing.model.Mutation mutation
+                            : de.raindancer.modules.fishing.model.Mutation.values()) {
+                        items.add("fish:" + kind.id() + ":" + mutation.id());
+                    }
+                }
             }
+            items.add("aquarium");
             for (Dish dish : services.get().catalog().dishes()) {
                 items.add("dish:" + dish.id());
             }

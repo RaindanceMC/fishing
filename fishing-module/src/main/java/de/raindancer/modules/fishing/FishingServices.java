@@ -46,7 +46,10 @@ public record FishingServices(
         de.raindancer.modules.fishing.service.BaitService baits,
         de.raindancer.modules.fishing.service.NetService nets,
         de.raindancer.modules.fishing.service.AutoService auto,
-        IFishingScreensOpener screens) {
+        IFishingScreensOpener screens,
+        de.raindancer.modules.fishing.service.TugService tugs,
+        de.raindancer.modules.fishing.service.MerchantService merchant,
+        de.raindancer.modules.fishing.service.AquariumService aquariums) {
 
     public FishingSettings config() {
         return settings.get();

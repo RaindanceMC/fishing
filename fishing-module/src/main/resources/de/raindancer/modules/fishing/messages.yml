@@ -5,9 +5,35 @@
 # here is YAML's idea of a truth value.
 fishing:
 
-  usage: "<gray>/fishing [rods|skills|rod|collection]  ·  /fishing give <player> <fish:id|dish:id|chest:tier|rod:tier|bait:id> [amount]  ·  /fishing xp <player> <amount>  ·  /fishing spot"
+  usage: "<gray>/fishing [rods|skills|rod|collection]  ·  /fishing give <player> <fish:id[:variant]|dish:id|chest:tier|rod:tier|bait:id|aquarium> [amount]  ·  /fishing merchant [remove]  ·  /fishing xp <player> <amount>  ·  /fishing spot"
   only-a-player: "<red>Only a player standing in the world can do that."
   level-up: "<green>Fishing level <white><level></white>. You have <white><points></white> skill point(s) to spend: <white>/fishing skills</white>."
+
+  merchant:
+    nothing: "<gray>You have no fish to sell."
+    sold: "<green>The fishmonger took <white><count></white> fish for <gold><money></gold>."
+    cannot-pay: "<red>The fishmonger cannot pay right now, so your fish stay with you."
+    placed: "<green>A fishmonger stands here now. Right click him to sell fish."
+    removed: "<green>The fishmonger is gone."
+    none-near: "<red>No fishmonger within four blocks."
+    usage: "<gray>/fishing merchant [remove]"
+    not-allowed: "<red>You may not place fishmongers."
+
+  aquarium:
+    placed: "<green>Aquarium set down. Right click it with a fish to put the fish in."
+    added: "<green><white><fish></white> is swimming in your aquarium now."
+    full: "<red>The aquarium is full. <most> fish fit in one."
+    empty: "<gray>No fish in it yet."
+    how: "<gray>Right click with a fish to put it in. Sneak and right click with an empty hand to take one out, sneak and left click to pick the tank up."
+    not-yours: "<red>This aquarium is not yours."
+    someone-elses: "<gray><white><owner></white>'s aquarium: <white><fish></white>."
+
+  tug:
+    start: "<gold>A <white><fish></white> fish is on the line! Hold right click to reel, and let go when it runs."
+    pulled-in: "<red>The <white><fish></white> was stronger and pulled you in."
+    tore-free: "<red>The <white><fish></white> was stronger and tore free."
+    snapped: "<red>Your line snapped. The <white><fish></white> is gone."
+    escaped: "<gray>The <white><fish></white> got away."
 
   duo:
     complete: "<light_purple>Duo complete: <white><title></white>. It shows as your title in chat now. You can switch it off on the cosmetics Tags page."
@@ -22,7 +48,11 @@ fishing:
     record: "<gold>New personal best: a <white><weight></white> <white><fish></white>."
     double: "<green>Double catch: <white><fish></white>."
     triple: "<green>Triple catch: <white><fish></white>."
+    mutation: "<light_purple>A rare variant: <white><fish></white>. It is worth <white><factor>×</white> a plain one."
     chest: "<gold>A <white><chest></white> came up on your line. Place it somewhere and right click it to open it."
+
+  mutation:
+    broadcast: "<gold><white><player></white> landed a <light_purple><bold><fish></bold></light_purple> <gray>(<tier>, <weight>)</gray>."
 
   mythic:
     broadcast: "<gold><white><player></white> landed a <aqua><bold>mythic</bold></aqua> <white><fish></white> <gray>(<weight>)</gray>."

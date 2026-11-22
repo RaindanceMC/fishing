@@ -1,0 +1,7 @@
+{
+ "parent": "rainsfishing:item/fish/silver_herring",
+ "textures": {
+  "0": "rainsfishing:item/fish/silver_herring_melanistic",
+  "particle": "rainsfishing:item/fish/silver_herring_melanistic"
+ }
+}

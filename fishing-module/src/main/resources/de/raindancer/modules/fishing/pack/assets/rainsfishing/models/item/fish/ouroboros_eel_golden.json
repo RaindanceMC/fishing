@@ -1,0 +1,7 @@
+{
+ "parent": "rainsfishing:item/fish/ouroboros_eel",
+ "textures": {
+  "0": "rainsfishing:item/fish/ouroboros_eel_golden",
+  "particle": "rainsfishing:item/fish/ouroboros_eel_golden"
+ }
+}

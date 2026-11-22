@@ -130,7 +130,13 @@ public record FishingSettings(
         @Describe("What the shop pays for one common fish, such as 8; rarer fish fetch up to 75 times as much, a "
                 + "dish half again its fish. 0 and the shop takes no fish or dishes.")
         @Key("market.fish-price")
-        String fishPrice) {
+        String fishPrice,
+
+        @In("fishing/chests") @Title("The fishmonger wears")
+        @Describe("The skin fishmongers wear: a player's name, a MineSkin link, several of either separated by commas "
+                + "(each fishmonger keeps one), or empty for a suit.")
+        @Key("market.fishmonger-skin")
+        String merchantSkin) {
 
     public static final FishingSettings DEFAULTS = new FishingSettings(
             true,
@@ -138,7 +144,7 @@ public record FishingSettings(
             25, "100",
             40, 120, 100, 1500, 6000, 200, 5, 10, 25,
             100, "1000",
-            "8");
+            "8", "");
 
     /** What rod upgrades cost in fishing experience, for {@link UpgradeRule}. */
     public UpgradeRule.Costs costs() {

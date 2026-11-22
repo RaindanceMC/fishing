@@ -36,7 +36,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public final class LineService implements IFishingService {
 
-    private enum Phase { FALLING, WAITING, BITING }
+    private enum Phase { FALLING, WAITING, BITING, FIGHTING }
 
     private static final class Line {
         final UUID player;
@@ -65,6 +65,7 @@ public final class LineService implements IFishingService {
 
     private final BaitService baits;
     private final AutoService auto;
+    private TugService tugs;
     private static final de.raindancer.modules.fishing.rules.BonusRule BONUS =
             new de.raindancer.modules.fishing.rules.BonusRule();
 
@@ -79,6 +80,11 @@ public final class LineService implements IFishingService {
         this.profiles = profiles;
         this.bites = bites;
         this.random = random;
+    }
+
+    /** The tug of war, for legendary and better fish caught in lava or the void. */
+    public void tugs(TugService tugs) {
+        this.tugs = tugs;
     }
 
     @Override
@@ -118,6 +124,9 @@ public final class LineService implements IFishingService {
                     line.ticks = BONUS.biteWindow(bites.biteWindowTicks(), profiles.perks(player.getUniqueId()));
                     bite(player, hook, line);
                 }
+            }
+            case FIGHTING -> {
+                // the tug of war has the line; the hook is held where it is until it is landed or lost
             }
             case BITING -> {
                 line.ticks -= (int) PERIOD;
@@ -232,28 +241,39 @@ public final class LineService implements IFishingService {
     }
 
     /**
-     * The rod was reeled in. Lands a catch when a fish was biting; true when this hook was one of ours, so the
-     * caller knows vanilla had nothing to do with it.
+     * The rod was reeled in. Lands a catch when a fish was biting, or starts the tug of war when a legendary or better
+     * one was; true when the hook has to stay out for that fight, so the caller cancels the reel.
      */
     public boolean reeled(Player player, FishHook hook) {
-        Line line = lines.remove(hook.getUniqueId());
-        if (line != null && line.visual != null) {
-            line.visual.remove();
-        }
-        if (line == null || line.phase == Phase.FALLING) {
+        Line line = lines.get(hook.getUniqueId());
+        if (line == null || line.phase == Phase.FALLING || line.phase == Phase.FIGHTING) {
             return false;
         }
+        Location at = hook.getLocation();
         if (line.phase == Phase.BITING) {
-            Location at = hook.getLocation();
             Catch caught = catches.decide(player, at, line.water, true, baits.take(hook.getUniqueId()));
             Optional<ItemStack> stack = catches.stack(caught);
-            stack.ifPresent(item -> catches.bringUp(player, at, line.water, item));
-            flare(at, line.water, 20);
-            catches.credit(player, caught, line.water);
-            player.giveExp(1 + random.nextInt(6));
-            auto.landed(player);
+            if (caught instanceof Catch.Fish fish && tugs.fights(fish)) {
+                line.phase = Phase.FIGHTING;
+                Water water = line.water;
+                tugs.start(player, hook, fish, water, where -> land(player, where, water, caught, stack));
+                return true;
+            }
+            land(player, at, line.water, caught, stack);
         }
-        return true;
+        lines.remove(hook.getUniqueId());
+        if (line.visual != null) {
+            line.visual.remove();
+        }
+        return false;
+    }
+
+    private void land(Player player, Location at, Water water, Catch caught, Optional<ItemStack> stack) {
+        stack.ifPresent(item -> catches.bringUp(player, at, water, item));
+        flare(at, water, 20);
+        catches.credit(player, caught, water);
+        player.giveExp(1 + random.nextInt(6));
+        auto.landed(player);
     }
 
     public void forget(UUID player) {

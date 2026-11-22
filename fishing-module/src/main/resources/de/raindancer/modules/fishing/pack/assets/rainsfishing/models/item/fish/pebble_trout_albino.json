@@ -1,0 +1,7 @@
+{
+ "parent": "rainsfishing:item/fish/pebble_trout",
+ "textures": {
+  "0": "rainsfishing:item/fish/pebble_trout_albino",
+  "particle": "rainsfishing:item/fish/pebble_trout_albino"
+ }
+}

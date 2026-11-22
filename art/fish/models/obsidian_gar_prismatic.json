@@ -1,0 +1,7 @@
+{
+ "parent": "rainsfishing:item/fish/obsidian_gar",
+ "textures": {
+  "0": "rainsfishing:item/fish/obsidian_gar_prismatic",
+  "particle": "rainsfishing:item/fish/obsidian_gar_prismatic"
+ }
+}

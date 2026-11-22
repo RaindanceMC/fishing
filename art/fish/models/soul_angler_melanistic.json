@@ -1,0 +1,7 @@
+{
+ "parent": "rainsfishing:item/fish/soul_angler",
+ "textures": {
+  "0": "rainsfishing:item/fish/soul_angler_melanistic",
+  "particle": "rainsfishing:item/fish/soul_angler_melanistic"
+ }
+}

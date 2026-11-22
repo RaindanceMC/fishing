@@ -1,0 +1,7 @@
+{
+ "parent": "rainsfishing:item/fish/coral_wrasse",
+ "textures": {
+  "0": "rainsfishing:item/fish/coral_wrasse_melanistic",
+  "particle": "rainsfishing:item/fish/coral_wrasse_melanistic"
+ }
+}

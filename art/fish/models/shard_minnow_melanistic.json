@@ -1,0 +1,7 @@
+{
+ "parent": "rainsfishing:item/fish/shard_minnow",
+ "textures": {
+  "0": "rainsfishing:item/fish/shard_minnow_melanistic",
+  "particle": "rainsfishing:item/fish/shard_minnow_melanistic"
+ }
+}

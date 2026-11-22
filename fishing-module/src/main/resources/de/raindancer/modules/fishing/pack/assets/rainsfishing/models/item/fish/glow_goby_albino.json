@@ -1,0 +1,7 @@
+{
+ "parent": "rainsfishing:item/fish/glow_goby",
+ "textures": {
+  "0": "rainsfishing:item/fish/glow_goby_albino",
+  "particle": "rainsfishing:item/fish/glow_goby_albino"
+ }
+}
