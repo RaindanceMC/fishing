@@ -4,6 +4,7 @@ Side profiles of every fish as character grids (head on the left, -X). One chara
   B body  W belly  A accent (flush with the body)  K dark (barbels, stalks)  E pupil  R eye white / teeth
   F fin (1 thick)  G thick fin (2)  S spike / horn / crystal (accent, 2 thick)  Y gold (crown)
   Z glowing spot (flush with the body)  L glowing bulb (sticks out)
+  C extra colour (flush)  D second extra colour (sticks out like an eye) — the catalogue's "extra" colours
 
 A shape is a dict: grid, depth (body thickness, int or list per column), plane "xy" (a fish seen from the side) or
 "xz" (a ray, lying flat: rows run along z, thickness is y).
@@ -495,6 +496,33 @@ def build_all():
           "....WWWWWWW..FF.",
           "........FF.FF...")
     out["crowned_marlin"] = {"grid": g, "depth": 2, "plane": "xy", "ends": (0, 0), "dy": 0}
+
+    # ---- the owners' fish, after their skins
+    # Raindancer118: shaggy black hair (K) over a face (C) with a blue eye (D), navy hoodie, its front pocket
+    # (W), and the two black drawstrings with white tips hanging under the chin.
+    out["raindancer_hoodfin"] = shaped(["..G.GG.G.G......",
+                                        ".KKKKKKKKKK.....",
+                                        "KKKKKKKKKKKBB.FF",
+                                        "KCDCKBBBBBBBBFFF",
+                                        "CCCCBBBBBBBBBFF.",
+                                        "CCCBBBBBBBBBBFF.",
+                                        ".WWWWWWWWWWWFFF.",
+                                        "..FWFWWWWWW..FF.",
+                                        "..F.F...FF......",
+                                        "..S.S..........."],
+                                       depth=[3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 2, 2, 2, 2])
+    # Hydr0Drag0n: a pink head with little ears and a green cheek (D), a black suit (C) over a white shirt (W)
+    # and a red tie (A), lavender sail and fins for the sleeves.
+    out["hydro_dragonet"] = shaped([".B..B..F.F.F....",
+                                    ".BBBB.FFFFFFF..F",
+                                    "BBBBBCCCCCCCC.FF",
+                                    "BEBBBWCCCCCCCFFF",
+                                    "BBDBWAWCCCCCCFF.",
+                                    ".BBBWAWCCCCCCFF.",
+                                    "..BBWAWCCCCCC.FF",
+                                    "....CACCCCCC....",
+                                    ".....FF...FF...."],
+                                   depth=[3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 2, 2, 2, 2])
 
     # ---- leviathan: horned head, arched back with a spiked crest, a great fluke
     g = G("Z...Z...Z...Z..Z",

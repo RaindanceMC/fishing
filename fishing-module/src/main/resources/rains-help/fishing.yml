@@ -8,7 +8,7 @@ category: Progress & rewards
 order: 35
 module: fishing
 aliases: [fish, angling, rod, lootbox, sea chest, chests]
-keywords: [voidlure, debt, auto, afk, catch, tier, mythic, void, lava, spot, shoal, upgrade, skill, tree, perk, dish, sushi, recipe, bait, net, skin, sell]
+keywords: [duo, title, hoodfin, dragonet, voidlure, debt, auto, afk, catch, tier, mythic, void, lava, spot, shoal, upgrade, skill, tree, perk, dish, sushi, recipe, bait, net, skin, sell]
 commands: [fishing]
 sections:
   - question: What can I catch?
@@ -17,6 +17,7 @@ sections:
       Fish come in six tiers: <white>common</white>, <green>uncommon</green>, <aqua>rare</aqua>, <light_purple>epic</light_purple>, <gold>legendary</gold> and <aqua>mythic</aqua>. Rivers, oceans, warm seas, swamps, frozen water, cave water, lava and the void each have their own; the mythic ones live only in the void. In the nether every biome's lava has fish of its own: crimson, warped, soul sand, basalt and the wastes.
       {if:fishing:catch.replace-vanilla-fish}Whatever fish or junk vanilla would have put on your hook becomes one of these fish instead, so there are no more lily pads and old boots. Treasure stays treasure.{else}On this server cod and salmon stay vanilla; the new fish come from lava and the void, and from sea chests.{/if}
       {run:/fishing collection} shows every fish there is, and where the ones you have not caught yet bite.
+      Two legendaries belong together: the <gold>Raindancer Hoodfin</gold> in frozen water and the <gold>Hydro Dragonet</gold> in rivers. Catch one of each and you earn the <light_purple>Rain & Hydro</light_purple> title in chat, and the two together make the <gold>Rain & Hydro Platter</gold>.
   - question: What is a sea chest?
     title: Sea chests
     text: |

@@ -51,7 +51,7 @@ import java.util.Random;
  */
 public final class FishingModule implements FlexModule {
 
-    private static final ModuleInfo INFO = ModuleInfo.of("fishing", "Fishing", "0.12.0")
+    private static final ModuleInfo INFO = ModuleInfo.of("fishing", "Fishing", "0.13.0")
             .describedAs("New fish in six tiers, sea chests, fishing spots, rod upgrades and skills, lava and "
                     + "void fishing, and dishes cooked from the catch.")
             .by("Raindancer118");
@@ -129,6 +129,13 @@ public final class FishingModule implements FlexModule {
         dishes.lastingFor(player -> profiles.perks(player).more(de.raindancer.modules.fishing.model.Perk.DISH));
         workshop = new de.raindancer.modules.fishing.service.RodWorkshopService(context.plugin(), server,
                 context.core().messages(), context.core().effects(), profiles, store, forge, catalog);
+
+        de.raindancer.modules.fishing.service.DuoService duos = new de.raindancer.modules.fishing.service.DuoService(
+                catalog, context.core().achievements(), context.core().messages(), context.core().effects(),
+                profiles::of);
+        duos.install();
+        context.closeWith(duos::uninstall);
+        profiles.afterCatch(duos::caught);
 
         settings.onChange(profiles::settings);
         settings.onChange(rods::settings);

@@ -32,7 +32,7 @@
              0.3.1: wearing a rod skin is for supporters (rainsfishing.skins under rains.supporter). -->
         <!-- 0.10.0: no-spot zones (/fishing nospot add|remove|list): no fishing spot comes up on its own inside one. -->
         <!-- 0.11.0: sea chests no longer hold enchantment shards (gone from the game): Abyss, Leviathan and Void chests hold enchanted books instead. -->
-        <plugin.version>0.12.0</plugin.version>
+        <plugin.version>0.13.0</plugin.version>
     </properties>
 
     <dependencies>

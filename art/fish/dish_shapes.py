@@ -621,3 +621,25 @@ DISHES["astral_sushi"] = {"items": plate(as_plate, as_rim, 14, 16) + [
     B(14, 8, 12, 14.5, 8.5, 12.5, as_star, name="st5"),
     B(0.5, 2.5, 1.5, 1.5, 3.5, 2.5, "amethyst", name="ga"), B(14.5, 2.5, 1.5, 15.5, 3.5, 2.5, "amethyst", name="gb"),
 ], "view": {"el": 40, "az": 22}}
+
+# ---- rain & hydro platter: a navy nigiri with a drawstring, a pink one with a red tie, a golden carrot between
+rh_plate = mat("rh_plate", "#efe9dc", "ceramic")
+rh_rim = hard("rh_rim", "metal", "#c77dff")
+rh_navy_top = mat("rh_navy_top", "#3c5088", "marble", raw_colour="#7a88b0", shade=1.0)
+rh_navy_side = mat("rh_navy_side", "#22305a", "flake", raw_colour="#a8b0cc", raw_pattern="marble")
+rh_pink_top = mat("rh_pink_top", "#fdc1df", "marble", raw_colour="#f4d0e0", shade=1.0)
+rh_pink_side = mat("rh_pink_side", "#e08ab4", "flake", raw_colour="#f0c0d4", raw_pattern="marble")
+rh_tie = mat("rh_tie", "#d0204a", "sheen", raw_colour="#d0204a")
+rh_string = mat("rh_string", "#1a1717", "flat")
+rh_tip = mat("rh_tip", "#e8e8e8", "flat")
+rh_carrot = mat("rh_carrot", "#ffc43a", "speck", raw_colour="#e8a060", specks=[("#fff0a0", 0.1)], raw_specks=[])
+rh_leaf = mat("rh_leaf", "#4ea83c", "speck", raw_colour="#6ab058")
+DISHES["rain_and_hydro_platter"] = {"items": plate(rh_plate, rh_rim, 14, 16) + [
+    *nigiri(1.5, 8.5, rh_navy_top, rh_navy_side, band=kelp, y0=2),
+    *nigiri(8.5, 8.5, rh_pink_top, rh_pink_side, band=rh_tie, y0=2),
+    B(3, 5.5, 9, 3.5, 6, 12.5, rh_string, name="str1"), B(5, 5.5, 9, 5.5, 6, 12.5, rh_string, name="str2"),
+    B(3, 5, 12.5, 3.5, 6, 13, rh_tip, name="tip1"), B(5, 5, 12.5, 5.5, 6, 13, rh_tip, name="tip2"),
+    B(4, 2, 3.5, 12, 3.5, 5, rh_carrot, name="carrot"),
+    B(12, 2.5, 3.5, 13.5, 3.5, 5, rh_leaf, name="leaf"),
+    B(2.5, 2.5, 3.5, 3.5, 3.5, 4.5, "amethyst", name="gem_a"), B(13.5, 2.5, 6, 14.5, 3.5, 7, "ruby", name="gem_r"),
+], "view": {"el": 40, "az": 22}}

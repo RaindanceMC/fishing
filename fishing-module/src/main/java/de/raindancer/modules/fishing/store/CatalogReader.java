@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import de.raindancer.modules.fishing.model.Catalog;
 import de.raindancer.modules.fishing.model.Dish;
+import de.raindancer.modules.fishing.model.Duo;
 import de.raindancer.modules.fishing.model.FishKind;
 import de.raindancer.modules.fishing.model.Tier;
 import de.raindancer.modules.fishing.model.Water;
@@ -77,7 +78,30 @@ public final class CatalogReader {
             dishes.add(new Dish(entry.get("id").getAsString(), entry.get("name").getAsString(), tier(entry),
                     ingredients, food.get(0).getAsInt(), food.get(1).getAsFloat(), effects));
         }
-        return new Catalog(fish, dishes);
+        return new Catalog(fish, dishes, duos(root, fish));
+    }
+
+    private static List<Duo> duos(JsonObject root, List<FishKind> fish) {
+        List<Duo> duos = new ArrayList<>();
+        if (!root.has("duos")) {
+            return duos;
+        }
+        Set<String> known = new java.util.HashSet<>();
+        fish.forEach(kind -> known.add(kind.id()));
+        for (JsonElement each : root.getAsJsonArray("duos")) {
+            JsonObject entry = each.getAsJsonObject();
+            String id = entry.get("id").getAsString();
+            List<String> members = new ArrayList<>();
+            for (JsonElement member : entry.getAsJsonArray("fish")) {
+                if (!known.contains(member.getAsString())) {
+                    throw new IllegalArgumentException("duo " + id + ": no fish " + member.getAsString());
+                }
+                members.add(member.getAsString());
+            }
+            duos.add(new Duo(id, entry.get("title").getAsString(), entry.get("badge").getAsString(),
+                    entry.has("description") ? entry.get("description").getAsString() : "", members));
+        }
+        return duos;
     }
 
     private static Tier tier(JsonObject entry) {

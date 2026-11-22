@@ -1,0 +1,7 @@
+{
+ "parent": "rainsfishing:item/dish/rain_and_hydro_platter",
+ "textures": {
+  "0": "rainsfishing:item/dish/raw_rain_and_hydro_platter",
+  "particle": "rainsfishing:item/dish/raw_rain_and_hydro_platter"
+ }
+}

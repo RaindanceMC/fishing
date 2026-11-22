@@ -16,7 +16,7 @@ import sys
 import time
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, os.path.join(HERE, "..", "..", "..", "dnd", "dnd-module", "art", "items"))
+sys.path.insert(0, os.path.join(HERE, "..", "..", "..", "skills", "skills-module", "art", "items"))
 sys.path.insert(0, os.path.join(HERE, "..", "lootbox"))
 import build  # noqa: E402
 import paint  # noqa: E402
@@ -33,6 +33,7 @@ CELLS = {
     "B": ("body", "b"), "W": ("belly", "b"), "A": ("accent", "b"), "K": ("dark", "b"),
     "E": ("pupil", "e"), "R": ("white", "e"), "L": ("glow", 1.5), "Z": ("glow", "b"),
     "F": ("fin", 0.5), "G": ("fin", 1.0), "S": ("accent", 1.0), "Y": ("gold", 1.0),
+    "C": ("extra_c", "b"), "D": ("extra_d", "e"),
 }
 
 DISPLAY = {
@@ -92,7 +93,7 @@ def lift(hexcolour, amount):
     return "#%02x%02x%02x" % tuple(int(c + (255 - c) * amount) for c in (r, g, b))
 
 
-def register(colours, glow):
+def register(colours, glow, extra=None):
     body, belly, fin, accent = colours
     m = paint.MATERIALS
     m["fish_body"] = {"colour": body, "kind": "scales"}
@@ -104,10 +105,14 @@ def register(colours, glow):
     m["fish_white"] = {"colour": "#f1f1e8", "kind": "smooth"}
     m["fish_glow"] = {"colour": lift(accent, 0.18) if glow else accent, "kind": "speckle"}
     m["fish_gold"] = {"colour": "#e8b830", "kind": "scales"}
+    extra = extra or {}
+    m["fish_extra_c"] = {"colour": extra.get("C", accent), "kind": "scales"}
+    m["fish_extra_d"] = {"colour": extra.get("D", accent), "kind": "smooth"}
 
 
 MAT = {"body": "fish_body", "belly": "fish_belly", "fin": "fish_fin", "accent": "fish_accent", "dark": "fish_dark",
-       "pupil": "fish_pupil", "white": "fish_white", "glow": "fish_glow", "gold": "fish_gold"}
+       "pupil": "fish_pupil", "white": "fish_white", "glow": "fish_glow", "gold": "fish_gold",
+       "extra_c": "fish_extra_c", "extra_d": "fish_extra_d"}
 
 
 # ------------------------------------------------------------------ grid -> boxes
@@ -192,7 +197,7 @@ def write_model(fid, model):
 def make(entry, shapes):
     fid = entry["id"]
     shape = shapes[fid]
-    register(entry["colours"], bool(entry.get("glow")))
+    register(entry["colours"], bool(entry.get("glow")), entry.get("extra"))
     parts = parts_of(shape)
     faces = build.faces_of(parts)
     image, spots, size = paint.paint(faces)

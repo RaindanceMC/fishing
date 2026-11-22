@@ -1,5 +1,5 @@
 {
- "_": "The fishing catalogue, shared by the art scripts (blockbench/fish) and the plugin. Tiers: common, uncommon, rare, epic, legendary, mythic. Waters: river, ocean, warm_ocean, swamp, frozen, cave, lava, void. Colours are hints for the model: body, belly, fin, accent. Dish ingredients: a fish id, any:<tier> (any of this module's fish of that tier), any:fish (any fish at all, vanilla cod and salmon too) or a minecraft: item. Every dish is crafted raw and cooked in a furnace, smoker or over a campfire.",
+ "_": "The fishing catalogue, shared by the art scripts (blockbench/fish) and the plugin. Tiers: common, uncommon, rare, epic, legendary, mythic. Waters: river, ocean, warm_ocean, swamp, frozen, cave, lava, void. Colours are hints for the model: body, belly, fin, accent. Dish ingredients: a fish id, any:<tier> (any of this module's fish of that tier), any:fish (any fish at all, vanilla cod and salmon too) or a minecraft: item. Every dish is crafted raw and cooked in a furnace, smoker or over a campfire. Optional \"extra\" colours paint the C and D cells of a shape (a fish drawn after a skin needs more than four). Duos: fish that belong together; one of each caught earns the duo's achievement and its title badge (MiniMessage).",
  "fish": [
   {
    "id": "pebble_trout",
@@ -680,6 +680,46 @@
     "#5ae8ff"
    ],
    "glow": true
+  },
+  {
+   "id": "raindancer_hoodfin",
+   "name": "Raindancer Hoodfin",
+   "tier": "legendary",
+   "waters": [
+    "frozen"
+   ],
+   "shape": "deep",
+   "colours": [
+    "#31457d",
+    "#3c5088",
+    "#1a1717",
+    "#e8e8e8"
+   ],
+   "extra": {
+    "C": "#e9c3ae",
+    "D": "#2d5aa8"
+   },
+   "_skin": "Raindancer118: navy hoodie, black drawstrings with white tips, black shaggy hair, blue eyes"
+  },
+  {
+   "id": "hydro_dragonet",
+   "name": "Hydro Dragonet",
+   "tier": "legendary",
+   "waters": [
+    "river"
+   ],
+   "shape": "deep",
+   "colours": [
+    "#fdc1df",
+    "#f4f0f4",
+    "#afbadf",
+    "#d0204a"
+   ],
+   "extra": {
+    "C": "#1d1818",
+    "D": "#6fd65a"
+   },
+   "_skin": "Hydr0Drag0n: pink head with green cheeks, black suit, white shirt, red tie, pastel lavender sleeves"
   }
  ],
  "dishes": [
@@ -1106,6 +1146,43 @@
    ]
   },
   {
+   "id": "rain_and_hydro_platter",
+   "name": "Rain & Hydro Platter",
+   "tier": "legendary",
+   "ingredients": [
+    "raindancer_hoodfin",
+    "hydro_dragonet",
+    "minecraft:dried_kelp",
+    "minecraft:golden_carrot"
+   ],
+   "food": [
+    16,
+    20.0
+   ],
+   "effects": [
+    [
+     "luck",
+     1,
+     900
+    ],
+    [
+     "speed",
+     1,
+     300
+    ],
+    [
+     "dolphins_grace",
+     0,
+     300
+    ],
+    [
+     "regeneration",
+     1,
+     30
+    ]
+   ]
+  },
+  {
    "id": "leviathan_feast",
    "name": "Leviathan Feast",
    "tier": "mythic",
@@ -1182,6 +1259,18 @@
      1,
      900
     ]
+   ]
+  }
+ ],
+ "duos": [
+  {
+   "id": "rain_and_hydro",
+   "title": "Rain & Hydro",
+   "badge": "<bold><gradient:#C77DFF:#FDC1DF>Rain & Hydro</gradient></bold>",
+   "description": "Catch a Raindancer Hoodfin and a Hydro Dragonet.",
+   "fish": [
+    "raindancer_hoodfin",
+    "hydro_dragonet"
    ]
   }
  ]

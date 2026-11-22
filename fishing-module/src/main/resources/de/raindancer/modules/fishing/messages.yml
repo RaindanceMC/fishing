@@ -9,6 +9,9 @@ fishing:
   only-a-player: "<red>Only a player standing in the world can do that."
   level-up: "<green>Fishing level <white><level></white>. You have <white><points></white> skill point(s) to spend: <white>/fishing skills</white>."
 
+  duo:
+    complete: "<light_purple>Duo complete: <white><title></white>. It shows as your title in chat now. You can switch it off on the cosmetics Tags page."
+
   menu:
     not-allowed: "<red>You may not open the fishing pages."
 

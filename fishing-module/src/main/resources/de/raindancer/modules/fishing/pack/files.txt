@@ -1,3 +1,5 @@
+assets/rainsfishing/font/tree.json
+assets/rainsfishing/font/tree_scene.json
 assets/rainsfishing/items/bait/abyss.json
 assets/rainsfishing/items/bait/gilded.json
 assets/rainsfishing/items/bait/shimmer.json
@@ -40,6 +42,7 @@ assets/rainsfishing/items/dish/herring_nigiri.json
 assets/rainsfishing/items/dish/herring_sandwich.json
 assets/rainsfishing/items/dish/leviathan_feast.json
 assets/rainsfishing/items/dish/marlin_nigiri.json
+assets/rainsfishing/items/dish/rain_and_hydro_platter.json
 assets/rainsfishing/items/dish/raw_abyssal_broth.json
 assets/rainsfishing/items/dish/raw_astral_sushi.json
 assets/rainsfishing/items/dish/raw_blazefin_roll.json
@@ -58,6 +61,7 @@ assets/rainsfishing/items/dish/raw_herring_nigiri.json
 assets/rainsfishing/items/dish/raw_herring_sandwich.json
 assets/rainsfishing/items/dish/raw_leviathan_feast.json
 assets/rainsfishing/items/dish/raw_marlin_nigiri.json
+assets/rainsfishing/items/dish/raw_rain_and_hydro_platter.json
 assets/rainsfishing/items/dish/raw_starlight_soup.json
 assets/rainsfishing/items/dish/raw_void_sashimi.json
 assets/rainsfishing/items/dish/raw_wrasse_maki.json
@@ -82,6 +86,7 @@ assets/rainsfishing/items/fish/frost_cod.json
 assets/rainsfishing/items/fish/glacier_char.json
 assets/rainsfishing/items/fish/glassfin.json
 assets/rainsfishing/items/fish/glow_goby.json
+assets/rainsfishing/items/fish/hydro_dragonet.json
 assets/rainsfishing/items/fish/lantern_gar.json
 assets/rainsfishing/items/fish/leviathan_hatchling.json
 assets/rainsfishing/items/fish/magma_ray.json
@@ -93,6 +98,7 @@ assets/rainsfishing/items/fish/ouroboros_eel.json
 assets/rainsfishing/items/fish/pearl_snapper.json
 assets/rainsfishing/items/fish/pebble_trout.json
 assets/rainsfishing/items/fish/phoenix_koi.json
+assets/rainsfishing/items/fish/raindancer_hoodfin.json
 assets/rainsfishing/items/fish/reed_pike.json
 assets/rainsfishing/items/fish/shard_minnow.json
 assets/rainsfishing/items/fish/shroomlight_eel.json
@@ -165,6 +171,7 @@ assets/rainsfishing/models/item/dish/herring_nigiri.json
 assets/rainsfishing/models/item/dish/herring_sandwich.json
 assets/rainsfishing/models/item/dish/leviathan_feast.json
 assets/rainsfishing/models/item/dish/marlin_nigiri.json
+assets/rainsfishing/models/item/dish/rain_and_hydro_platter.json
 assets/rainsfishing/models/item/dish/raw_abyssal_broth.json
 assets/rainsfishing/models/item/dish/raw_astral_sushi.json
 assets/rainsfishing/models/item/dish/raw_blazefin_roll.json
@@ -183,6 +190,7 @@ assets/rainsfishing/models/item/dish/raw_herring_nigiri.json
 assets/rainsfishing/models/item/dish/raw_herring_sandwich.json
 assets/rainsfishing/models/item/dish/raw_leviathan_feast.json
 assets/rainsfishing/models/item/dish/raw_marlin_nigiri.json
+assets/rainsfishing/models/item/dish/raw_rain_and_hydro_platter.json
 assets/rainsfishing/models/item/dish/raw_starlight_soup.json
 assets/rainsfishing/models/item/dish/raw_void_sashimi.json
 assets/rainsfishing/models/item/dish/raw_wrasse_maki.json
@@ -207,6 +215,7 @@ assets/rainsfishing/models/item/fish/frost_cod.json
 assets/rainsfishing/models/item/fish/glacier_char.json
 assets/rainsfishing/models/item/fish/glassfin.json
 assets/rainsfishing/models/item/fish/glow_goby.json
+assets/rainsfishing/models/item/fish/hydro_dragonet.json
 assets/rainsfishing/models/item/fish/lantern_gar.json
 assets/rainsfishing/models/item/fish/leviathan_hatchling.json
 assets/rainsfishing/models/item/fish/magma_ray.json
@@ -218,6 +227,7 @@ assets/rainsfishing/models/item/fish/ouroboros_eel.json
 assets/rainsfishing/models/item/fish/pearl_snapper.json
 assets/rainsfishing/models/item/fish/pebble_trout.json
 assets/rainsfishing/models/item/fish/phoenix_koi.json
+assets/rainsfishing/models/item/fish/raindancer_hoodfin.json
 assets/rainsfishing/models/item/fish/reed_pike.json
 assets/rainsfishing/models/item/fish/shard_minnow.json
 assets/rainsfishing/models/item/fish/shroomlight_eel.json
@@ -281,6 +291,27 @@ assets/rainsfishing/textures/block/lootbox/leviathan.png
 assets/rainsfishing/textures/block/lootbox/pearl.png
 assets/rainsfishing/textures/block/lootbox/reef.png
 assets/rainsfishing/textures/block/lootbox/void.png
+assets/rainsfishing/textures/font/tree/across_dim.png
+assets/rainsfishing/textures/font/tree/across_lit.png
+assets/rainsfishing/textures/font/tree/down_dim.png
+assets/rainsfishing/textures/font/tree/down_lit.png
+assets/rainsfishing/textures/font/tree/falling_dim.png
+assets/rainsfishing/textures/font/tree/falling_lit.png
+assets/rainsfishing/textures/font/tree/frame_barred.png
+assets/rainsfishing/textures/font/tree/frame_locked.png
+assets/rainsfishing/textures/font/tree/frame_maxed.png
+assets/rainsfishing/textures/font/tree/frame_open.png
+assets/rainsfishing/textures/font/tree/frame_owned.png
+assets/rainsfishing/textures/font/tree/mastery_locked.png
+assets/rainsfishing/textures/font/tree/mastery_maxed.png
+assets/rainsfishing/textures/font/tree/mastery_open.png
+assets/rainsfishing/textures/font/tree/rising_dim.png
+assets/rainsfishing/textures/font/tree/rising_lit.png
+assets/rainsfishing/textures/font/tree_scene/collector.png
+assets/rainsfishing/textures/font/tree_scene/ember.png
+assets/rainsfishing/textures/font/tree_scene/monger.png
+assets/rainsfishing/textures/font/tree_scene/tidecaller.png
+assets/rainsfishing/textures/font/tree_scene/treasure.png
 assets/rainsfishing/textures/item/dish/abyssal_broth.png
 assets/rainsfishing/textures/item/dish/astral_sushi.png
 assets/rainsfishing/textures/item/dish/blazefin_roll.png
@@ -299,6 +330,7 @@ assets/rainsfishing/textures/item/dish/herring_nigiri.png
 assets/rainsfishing/textures/item/dish/herring_sandwich.png
 assets/rainsfishing/textures/item/dish/leviathan_feast.png
 assets/rainsfishing/textures/item/dish/marlin_nigiri.png
+assets/rainsfishing/textures/item/dish/rain_and_hydro_platter.png
 assets/rainsfishing/textures/item/dish/raw_abyssal_broth.png
 assets/rainsfishing/textures/item/dish/raw_astral_sushi.png
 assets/rainsfishing/textures/item/dish/raw_blazefin_roll.png
@@ -317,6 +349,7 @@ assets/rainsfishing/textures/item/dish/raw_herring_nigiri.png
 assets/rainsfishing/textures/item/dish/raw_herring_sandwich.png
 assets/rainsfishing/textures/item/dish/raw_leviathan_feast.png
 assets/rainsfishing/textures/item/dish/raw_marlin_nigiri.png
+assets/rainsfishing/textures/item/dish/raw_rain_and_hydro_platter.png
 assets/rainsfishing/textures/item/dish/raw_starlight_soup.png
 assets/rainsfishing/textures/item/dish/raw_void_sashimi.png
 assets/rainsfishing/textures/item/dish/raw_wrasse_maki.png
@@ -341,6 +374,7 @@ assets/rainsfishing/textures/item/fish/frost_cod.png
 assets/rainsfishing/textures/item/fish/glacier_char.png
 assets/rainsfishing/textures/item/fish/glassfin.png
 assets/rainsfishing/textures/item/fish/glow_goby.png
+assets/rainsfishing/textures/item/fish/hydro_dragonet.png
 assets/rainsfishing/textures/item/fish/lantern_gar.png
 assets/rainsfishing/textures/item/fish/leviathan_hatchling.png
 assets/rainsfishing/textures/item/fish/magma_ray.png
@@ -352,6 +386,7 @@ assets/rainsfishing/textures/item/fish/ouroboros_eel.png
 assets/rainsfishing/textures/item/fish/pearl_snapper.png
 assets/rainsfishing/textures/item/fish/pebble_trout.png
 assets/rainsfishing/textures/item/fish/phoenix_koi.png
+assets/rainsfishing/textures/item/fish/raindancer_hoodfin.png
 assets/rainsfishing/textures/item/fish/reed_pike.png
 assets/rainsfishing/textures/item/fish/shard_minnow.png
 assets/rainsfishing/textures/item/fish/shroomlight_eel.png
@@ -407,26 +442,3 @@ assets/rainsfishing/textures/item/rod/skin_tidepool_cast.png
 assets/rainsfishing/textures/item/rod/void.png
 assets/rainsfishing/textures/item/rod/void_cast.png
 pack.mcmeta
-assets/rainsfishing/textures/font/tree/frame_locked.png
-assets/rainsfishing/textures/font/tree/frame_open.png
-assets/rainsfishing/textures/font/tree/frame_owned.png
-assets/rainsfishing/textures/font/tree/frame_maxed.png
-assets/rainsfishing/textures/font/tree/frame_barred.png
-assets/rainsfishing/textures/font/tree/across_dim.png
-assets/rainsfishing/textures/font/tree/across_lit.png
-assets/rainsfishing/textures/font/tree/down_dim.png
-assets/rainsfishing/textures/font/tree/down_lit.png
-assets/rainsfishing/textures/font/tree/falling_dim.png
-assets/rainsfishing/textures/font/tree/falling_lit.png
-assets/rainsfishing/textures/font/tree/rising_dim.png
-assets/rainsfishing/textures/font/tree/rising_lit.png
-assets/rainsfishing/textures/font/tree/mastery_locked.png
-assets/rainsfishing/textures/font/tree/mastery_open.png
-assets/rainsfishing/textures/font/tree/mastery_maxed.png
-assets/rainsfishing/font/tree.json
-assets/rainsfishing/textures/font/tree_scene/tidecaller.png
-assets/rainsfishing/textures/font/tree_scene/treasure.png
-assets/rainsfishing/textures/font/tree_scene/collector.png
-assets/rainsfishing/textures/font/tree_scene/ember.png
-assets/rainsfishing/textures/font/tree_scene/monger.png
-assets/rainsfishing/font/tree_scene.json

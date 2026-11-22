@@ -44,6 +44,7 @@ public final class ProfileService implements IFishingService {
     private final Effects effects;
     private volatile LevelRule levels;
     private volatile TreeRule tree;
+    private volatile java.util.function.BiConsumer<Player, String> afterCatch = (player, fishId) -> { };
 
     public ProfileService(Plugin plugin, ProfileStore store, Messages messages, Effects effects,
                           FishingSettings settings) {
@@ -94,6 +95,12 @@ public final class ProfileService implements IFishingService {
                     return water == Water.VOID ? changed.withVoidCatch(tier, amount) : changed;
                 },
                 BONUS.experience((long) tier.experience() * amount, perks(id), water, first));
+        afterCatch.accept(player, fishId);
+    }
+
+    /** Hears every catch once it is counted, on the thread that counted it. */
+    public void afterCatch(java.util.function.BiConsumer<Player, String> listener) {
+        afterCatch = listener;
     }
 
     /** Staff granting fishing experience by hand. */

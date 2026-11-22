@@ -7,12 +7,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-/** Every fish and every dish there is, in the order the catalogue lists them. */
-public record Catalog(List<FishKind> fish, List<Dish> dishes) {
+/** Every fish, dish and duo there is, in the order the catalogue lists them. */
+public record Catalog(List<FishKind> fish, List<Dish> dishes, List<Duo> duos) {
 
     public Catalog {
         fish = List.copyOf(fish);
         dishes = List.copyOf(dishes);
+        duos = duos == null ? List.of() : List.copyOf(duos);
+    }
+
+    public Catalog(List<FishKind> fish, List<Dish> dishes) {
+        this(fish, dishes, List.of());
+    }
+
+    public Optional<Duo> duo(String id) {
+        return duos.stream().filter(duo -> duo.id().equals(id)).findFirst();
     }
 
     public Optional<FishKind> fish(String id) {
