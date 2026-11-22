@@ -16,7 +16,7 @@ import sys
 import time
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, os.path.join(HERE, "..", "..", "..", "dnd", "dnd-module", "art", "items"))
+sys.path.insert(0, os.path.join(HERE, "..", "..", "..", "skills", "skills-module", "art", "items"))
 sys.path.insert(0, os.path.join(HERE, "..", "lootbox"))
 import build  # noqa: E402
 import paint  # noqa: E402
