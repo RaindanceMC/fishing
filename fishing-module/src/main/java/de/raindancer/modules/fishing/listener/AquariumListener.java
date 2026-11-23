@@ -95,7 +95,6 @@ public final class AquariumListener implements IFishingListener {
         services.effects().play(player.getUniqueId(), Cues.CLICK);
         services.effects().playAt(block.getWorld().getName(), block.getX() + 0.5, block.getY() + 0.5,
                 block.getZ() + 0.5, SPLASH);
-        services.messages().send(player, "fishing.aquarium.added", "fish", name(resident.get()));
     }
 
     // ------------------------------------------------------------------ breaking, like a glass block
@@ -210,7 +209,6 @@ public final class AquariumListener implements IFishingListener {
         }
         player.swingMainHand();
         services.effects().play(player.getUniqueId(), Cues.CLICK);
-        services.messages().send(player, "fishing.aquarium.placed");
     }
 
     /**
@@ -234,11 +232,6 @@ public final class AquariumListener implements IFishingListener {
     @EventHandler
     public void onChunkUnload(ChunkUnloadEvent event) {
         services.aquariums().unloaded(event.getChunk());
-    }
-
-    private String name(Aquarium.Resident resident) {
-        String kind = services.catalog().fish(resident.fishId()).map(each -> each.name()).orElse(resident.fishId());
-        return resident.mutation() == null ? kind : resident.mutation().title() + " " + kind;
     }
 
     @Override

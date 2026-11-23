@@ -335,6 +335,9 @@ public final class AquariumService implements IFishingService {
             prepare(made);
             made.setItemStack(Looks.wearing(FishingPack.NAMESPACE + ":aquarium_" + look));
             made.setViewRange(TANK_RANGE);
+            // an item display shows a model turned half round; turned back, its joined sides face their neighbours
+            made.setTransformation(new Transformation(new Vector3f(), new Quaternionf().rotateY((float) Math.PI),
+                    new Vector3f(1), new Quaternionf()));
         });
         List<UUID> ids = new ArrayList<>();
         for (Aquarium.Resident resident : tank.residents()) {
@@ -377,8 +380,8 @@ public final class AquariumService implements IFishingService {
         }
         SwimRule.V3 at = fish.swimmer().at();
         SwimRule.V3 heading = fish.swimmer().heading();
-        // a fish model's head points to -x: turn -x onto the way it swims
-        float yaw = (float) Math.atan2(heading.z(), -heading.x());
+        // a fish model's head points to -x, and a display turns its model half round: so the head points to +x here
+        float yaw = (float) Math.atan2(-heading.z(), heading.x());
         display.setInterpolationDelay(0);
         display.setInterpolationDuration(SWIM_TICKS);
         display.setTransformation(new Transformation(new Vector3f((float) (at.x() - fish.home().x()),

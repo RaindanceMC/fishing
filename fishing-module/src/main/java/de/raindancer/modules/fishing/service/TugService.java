@@ -87,7 +87,6 @@ public final class TugService {
         Running running = new Running(rule.start(caught.tier(), random), caught, water, hook, land);
         fights.put(id, running);
         effects.play(id, Cues.NOTIFY);
-        messages.send(player, "fishing.tug.start", "fish", caught.tier().title().toLowerCase(java.util.Locale.ROOT));
         effects.play(id, HOOKED);
         show(id, running.fight);
         Scheduling.entityTimer(plugin, player, PERIOD, PERIOD, task -> {

@@ -182,8 +182,6 @@ public final class CatchService implements IFishingService {
                         fish.mutation());
                 if (fish.mutation() != null) {
                     effects.play(player.getUniqueId(), Cues.REWARD);
-                    messages.send(player, "fishing.caught.mutation", "fish", shown,
-                            "factor", String.valueOf(fish.mutation().priceFactor()));
                     if (fish.mutation().announced()) {
                         whopper(player, "fishing.mutation.broadcast", shown, fish.tier().title(), weight);
                     }

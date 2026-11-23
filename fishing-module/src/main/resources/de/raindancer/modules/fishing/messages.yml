@@ -20,8 +20,6 @@ fishing:
     not-allowed: "<red>You may not place fishmongers."
 
   aquarium:
-    placed: "<green>Aquarium set down. Right click it to open it, or with a fish in hand to put the fish in. Tanks side by side join into one."
-    added: "<green><white><fish></white> is swimming in the aquarium now."
     full: "<red>The aquarium is full. <most> fish fit in it; set another tank down beside it for more room."
     only-fish: "<red>Only fish go into an aquarium."
     no-fish: "<gray>You carry no fish."
@@ -29,7 +27,6 @@ fishing:
     gone: "<gray>The aquarium is out of reach now."
 
   tug:
-    start: "<gold>A <white><fish></white> fish is on the line! Hold right click to reel, and let go when it runs."
     pulled-in: "<red>The <white><fish></white> was stronger and pulled you in."
     tore-free: "<red>The <white><fish></white> was stronger and tore free."
     snapped: "<red>Your line snapped. The <white><fish></white> is gone."
@@ -48,7 +45,6 @@ fishing:
     record: "<gold>New personal best: a <white><weight></white> <white><fish></white>."
     double: "<green>Double catch: <white><fish></white>."
     triple: "<green>Triple catch: <white><fish></white>."
-    mutation: "<light_purple>A rare variant: <white><fish></white>. It is worth <white><factor>×</white> a plain one."
     chest: "<gold>A <white><chest></white> came up on your line. Place it somewhere and right click it to open it."
 
   mutation:
