@@ -61,7 +61,9 @@ public final class CatalogReader {
                 }
             }
             fish.add(new FishKind(entry.get("id").getAsString(), entry.get("name").getAsString(),
-                    tier(entry), waters, entry.has("glow") && entry.get("glow").getAsBoolean(), biomes));
+                    tier(entry), waters, entry.has("glow") && entry.get("glow").getAsBoolean(), biomes,
+                    entry.has("shape") ? entry.get("shape").getAsString() : null,
+                    entry.has("temper") ? entry.get("temper").getAsString() : null));
         }
         List<Dish> dishes = new ArrayList<>();
         for (JsonElement each : root.getAsJsonArray("dishes")) {

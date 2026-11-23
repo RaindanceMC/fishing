@@ -12,6 +12,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockDamageAbortEvent;
+import org.bukkit.event.block.BlockDamageEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
@@ -25,13 +27,21 @@ import java.util.UUID;
 
 /**
  * Aquariums: set down like a block (claims decide where). A right click opens the whole tank like a chest, or with a
- * fish in hand puts it straight in; a sneaking left click picks one block up with its fish. Opening is for whoever may
- * open a chest there, picking up for whoever may break a block there.
+ * fish in hand puts it straight in. Mined like a glass block, it breaks and drops itself and its fish. Opening is for
+ * whoever may open a chest there, breaking for whoever may break a block there.
  */
 public final class AquariumListener implements IFishingListener {
 
     private static final de.raindancer.core.ui.effect.Effect SPLASH = de.raindancer.core.ui.effect.Effect.of(
             new de.raindancer.core.ui.effect.SoundCue("entity.fish.swim", 1f, 1f));
+    private static final de.raindancer.core.ui.effect.Effect SHATTER = de.raindancer.core.ui.effect.Effect.of(
+            new de.raindancer.core.ui.effect.SoundCue("block.glass.break", 1f, 1f));
+    /** About as long as glass takes by hand. */
+    private static final int BREAK_TICKS = 9;
+
+    private final java.util.Map<UUID, Block> mining = new java.util.concurrent.ConcurrentHashMap<>();
+    /** Tanks whose break this listener is asking the claims about right now. */
+    private final java.util.Set<Block> breaking = java.util.concurrent.ConcurrentHashMap.newKeySet();
 
     private final FishingServices services;
 
@@ -51,9 +61,6 @@ public final class AquariumListener implements IFishingListener {
             if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
                 event.setCancelled(true);
                 use(player, block, event.getItem());
-            } else if (event.getAction() == Action.LEFT_CLICK_BLOCK && player.isSneaking()) {
-                event.setCancelled(true);
-                pickUp(player, block, tank.get());
             }
             return;
         }
@@ -91,16 +98,88 @@ public final class AquariumListener implements IFishingListener {
         services.messages().send(player, "fishing.aquarium.added", "fish", name(resident.get()));
     }
 
-    private void pickUp(Player player, Block block, Aquarium tank) {
-        if (!services.aquariums().mayPickUp(player, block)) {
-            services.messages().send(player, "fishing.aquarium.not-allowed-take");
-            services.effects().play(player.getUniqueId(), Cues.NO);
+    // ------------------------------------------------------------------ breaking, like a glass block
+
+    /** Started mining a tank: the cracks grow while they keep at it, and at the end it breaks like a block. */
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    public void onDamage(BlockDamageEvent event) {
+        Block block = event.getBlock();
+        Player player = event.getPlayer();
+        if (services.aquariums().at(block).isEmpty() || mining.containsKey(player.getUniqueId())
+                || player.getGameMode() == GameMode.ADVENTURE || player.getGameMode() == GameMode.SPECTATOR) {
             return;
         }
+        UUID id = player.getUniqueId();
+        int[] ticks = {0};
+        mining.put(id, block);
+        de.raindancer.core.platform.util.Scheduling.entityTimer(services.plugin(), player, 1, 1, task -> {
+            boolean still = block.equals(mining.get(id)) && services.aquariums().at(block).isPresent()
+                    && block.equals(player.getTargetBlockExact(6));
+            if (!still) {
+                stopMining(id, block, player);
+                task.cancel();
+                return;
+            }
+            ticks[0]++;
+            cracks(block, player, (float) ticks[0] / BREAK_TICKS);
+            if (ticks[0] >= BREAK_TICKS) {
+                stopMining(id, block, player);
+                task.cancel();
+                breakTank(player, block, true);
+            }
+        }, () -> mining.remove(id));
+    }
+
+    @EventHandler
+    public void onAbort(BlockDamageAbortEvent event) {
+        Block block = mining.get(event.getPlayer().getUniqueId());
+        if (block != null && block.equals(event.getBlock())) {
+            stopMining(event.getPlayer().getUniqueId(), block, event.getPlayer());
+        }
+    }
+
+    private void stopMining(UUID id, Block block, Player player) {
+        if (mining.remove(id, block)) {
+            cracks(block, player, 0f);
+        }
+    }
+
+    /** Everybody near sees the cracks, as for any block being mined. */
+    private static void cracks(Block block, Player miner, float progress) {
+        org.bukkit.Location at = block.getLocation();
+        for (Player near : block.getWorld().getNearbyPlayers(at, 32)) {
+            near.sendBlockDamage(at, Math.min(1f, progress), miner);
+        }
+    }
+
+    /**
+     * Breaks one tank as a block breaks: only where a block break is let through (claims decide), the tank and its
+     * fish dropped where it stood, the glass sound and splinters. In creative only the fish drop, as from a chest.
+     */
+    private void breakTank(Player player, Block block, boolean dropTank) {
+        Optional<Aquarium> tank = services.aquariums().at(block);
+        if (tank.isEmpty()) {
+            return;
+        }
+        breaking.add(block);
+        try {
+            if (!new BlockBreakEvent(block, player).callEvent()) {
+                return;
+            }
+        } finally {
+            breaking.remove(block);
+        }
+        org.bukkit.Location centre = block.getLocation().add(0.5, 0.5, 0.5);
         services.aquariums().takeAway(block);
-        tank.residents().forEach(resident -> give(player, resident));
-        give(player, services.forge().aquarium());
-        services.effects().play(player.getUniqueId(), Cues.CLICK);
+        for (Aquarium.Resident resident : tank.get().residents()) {
+            services.aquariums().item(resident).ifPresent(item -> block.getWorld().dropItemNaturally(centre, item));
+        }
+        if (dropTank) {
+            block.getWorld().dropItemNaturally(centre, services.forge().aquarium());
+        }
+        services.effects().playAt(block.getWorld().getName(), centre.getX(), centre.getY(), centre.getZ(), SHATTER);
+        block.getWorld().spawnParticle(org.bukkit.Particle.BLOCK, centre, 30, 0.3, 0.3, 0.3,
+                Material.GLASS.createBlockData());
     }
 
     private void give(Player player, Aquarium.Resident resident) {
@@ -134,13 +213,17 @@ public final class AquariumListener implements IFishingListener {
         services.messages().send(player, "fishing.aquarium.placed");
     }
 
-    /** A tank is never broken like a block: the fish in it would be lost. */
+    /**
+     * A tank broken the game's own way: in creative, where a barrier goes in one click. The block break the mining
+     * above fires itself is let through to the claims and nothing else here.
+     */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onBreak(BlockBreakEvent event) {
-        if (services.aquariums().at(event.getBlock()).isPresent()) {
-            event.setCancelled(true);
-            services.messages().send(event.getPlayer(), "fishing.aquarium.how");
+        if (breaking.contains(event.getBlock()) || services.aquariums().at(event.getBlock()).isEmpty()) {
+            return;
         }
+        event.setCancelled(true);
+        breakTank(event.getPlayer(), event.getBlock(), event.getPlayer().getGameMode() != GameMode.CREATIVE);
     }
 
     @EventHandler
@@ -160,6 +243,6 @@ public final class AquariumListener implements IFishingListener {
 
     @Override
     public void forget(UUID player) {
-        // Nothing remembered per player: a tank's fish are in the tank.
+        mining.remove(player);
     }
 }

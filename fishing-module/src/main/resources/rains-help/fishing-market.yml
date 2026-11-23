@@ -31,5 +31,6 @@ sections:
     title: Aquariums
     text: |
       Craft an <#7ec8e3>Aquarium</#7ec8e3> from glass, a water bucket, sand and planks and set it down. Tanks set down side by side join into one big aquarium, up to twelve tanks with three fish each, and the fish swim through all of it. A tank stacked on another stays its own.
-      Right click it to open it like a chest: click a fish to take it out, shift-click fish in your inventory to put them in. With a fish in hand, a right click puts it straight in. Sneak and left click to pick one tank up; the fish in it come with it.
-      Whoever may open a chest on that ground may open the aquarium, and whoever may break blocks there may pick it up.
+      Every kind swims its own way: calm, shy, playful, schooling, at home on the sand, or aggressive. Predators chase other fish and nip them, and the rarer they are the keener they hunt. {run:/fishing collection} shows each fish's temper.
+      Right click it to open it like a chest: click a fish to take it out, shift-click fish in your inventory to put them in. With a fish in hand, a right click puts it straight in. Mine a tank like a glass block to take it away; it drops itself and the fish that were in it.
+      Whoever may open a chest on that ground may open the aquarium, and whoever may break blocks there may break it.

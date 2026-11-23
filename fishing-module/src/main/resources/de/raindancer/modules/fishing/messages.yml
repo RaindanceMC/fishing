@@ -25,9 +25,7 @@ fishing:
     full: "<red>The aquarium is full. <most> fish fit in it; set another tank down beside it for more room."
     only-fish: "<red>Only fish go into an aquarium."
     no-fish: "<gray>You carry no fish."
-    how: "<gray>Right click to open the aquarium. Sneak and left click to pick a tank up with its fish."
     not-allowed-open: "<red>You may not open containers here, so not this aquarium either."
-    not-allowed-take: "<red>You may not break blocks here, so you cannot pick this tank up."
     gone: "<gray>The aquarium is out of reach now."
 
   tug:

@@ -21,7 +21,8 @@ rng = random.Random(11)
 
 # atlas regions, in texels: name -> (x, y, w, h)
 REGIONS = {"frame": (0, 0, 8, 8), "sand": (8, 0, 8, 8), "kelp": (16, 0, 8, 8), "pebble": (24, 0, 8, 8),
-           "water": (0, 8, 16, 16), "glass": (16, 8, 16, 16)}
+           "water": (0, 8, 16, 16), "glass": (16, 8, 16, 16),
+           "kelp_light": (0, 24, 8, 8), "kelp_dark": (8, 24, 8, 8), "bladder": (16, 24, 8, 8)}
 
 
 def paint():
@@ -41,7 +42,11 @@ def paint():
 
     fill("frame", lambda x, y, w, h: jitter((58, 40, 28), 8) + (255,))
     fill("sand", lambda x, y, w, h: jitter((219, 203, 150), 14) + (255,))
-    fill("kelp", lambda x, y, w, h: jitter((58, 128, 52) if (x + y) % 3 else (40, 96, 38), 8) + (255,))
+    # Minecraft's kelp greens: a darker stalk, lighter fronds, and the yellow-green air bladders it carries
+    fill("kelp", lambda x, y, w, h: jitter((76, 140, 44), 6) + (255,))
+    fill("kelp_dark", lambda x, y, w, h: jitter((52, 104, 34) if y % 2 else (60, 116, 38), 4) + (255,))
+    fill("kelp_light", lambda x, y, w, h: jitter((110, 176, 62), 6) + (255,))
+    fill("bladder", lambda x, y, w, h: jitter((176, 206, 84), 6) + (255,))
     fill("pebble", lambda x, y, w, h: jitter((128, 132, 138), 12) + (255,))
     # water and glass are even all over: joined tanks put block after block of them side by side, and any pattern
     # in them shows as a seam every block
@@ -66,6 +71,32 @@ def cube(name, frm, to, material, sides=None):
 
 
 N, E, S, W = 1, 2, 4, 8
+
+
+def kelp(name, x, z, segments):
+    """
+    A little kelp after Minecraft's own: a thin stalk swaying a quarter step left and right per segment, a frond off
+    every segment on alternating sides, and a round air bladder on top. x, z: where its foot stands.
+    """
+    e = []
+    y = 2.5
+    sway = (0, 0.25, 0.5, 0.25)
+    for n in range(segments):
+        dx = sway[n % len(sway)]
+        e.append(cube("%s_stalk%d" % (name, n), [x + dx, y, z], [x + dx + 0.75, y + 1.5, z + 0.75], "kelp_dark"))
+        side = -1 if n % 2 == 0 else 1
+        fx = x + dx - 0.75 if side < 0 else x + dx + 0.75
+        e.append(cube("%s_frond%d" % (name, n), [fx, y + 0.5, z + 0.125], [fx + 0.75, y + 1.25, z + 0.625],
+                      "kelp_light"))
+        if n % 2 == 1:
+            # a frond tip curling up, like the kelp texture's leaf ends
+            tx = fx - 0.25 if side < 0 else fx + 0.5
+            e.append(cube("%s_tip%d" % (name, n), [tx, y + 1.25, z + 0.125], [tx + 0.5, y + 1.75, z + 0.625],
+                          "kelp_light"))
+        y += 1.5
+    dx = sway[segments % len(sway)]
+    e.append(cube(name + "_bladder", [x + dx - 0.125, y, z - 0.125], [x + dx + 0.875, y + 1, z + 0.875], "bladder"))
+    return e
 
 
 def elements(mask=0):
@@ -97,10 +128,10 @@ def elements(mask=0):
     e.append(cube("sand", [x0, 1, z0], [x1, 2.5, z1], "sand", tuple(["up"] + water_faces)))
     # the decoration moves with the mask, so a long tank is not the same block over and over
     if mask % 3 == 0:
-        e.append(cube("kelp1", [3, 2.5, 11], [4, 9, 12], "kelp"))
-        e.append(cube("kelp2", [4, 6, 11], [5, 11, 12], "kelp"))
+        e.extend(kelp("kelp_a", 3, 11, 5))
+        e.extend(kelp("kelp_b", 5.5, 12.5, 3))
     if mask % 3 == 1:
-        e.append(cube("kelp3", [12, 2.5, 4], [13, 7, 5], "kelp"))
+        e.extend(kelp("kelp_c", 12, 4, 4))
     if mask % 4 == 0:
         e.append(cube("pebble", [10, 2.5, 10], [12.5, 3.5, 12], "pebble"))
     elif mask % 4 == 2:

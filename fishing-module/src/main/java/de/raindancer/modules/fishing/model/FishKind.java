@@ -8,8 +8,11 @@ import java.util.Set;
  * @param glows  whether its model has lit parts, so a display of it is drawn at full brightness
  * @param biomes where in its waters it bites — the nether's biomes by name ({@code crimson_forest}), and
  *               {@code overworld} for anywhere outside the nether; empty for everywhere its waters are
+ * @param shape  its model's shape in the catalogue (slim, deep, eel …), or null
+ * @param temper how it swims in an aquarium when the catalogue says, or null for what its shape suggests
  */
-public record FishKind(String id, String name, Tier tier, Set<Water> waters, boolean glows, Set<String> biomes) {
+public record FishKind(String id, String name, Tier tier, Set<Water> waters, boolean glows, Set<String> biomes,
+                       String shape, String temper) {
 
     /** The nether's own biomes; lava anywhere else is the overworld's. */
     public static final Set<String> NETHER = Set.of("nether_wastes", "crimson_forest", "warped_forest",
@@ -22,6 +25,10 @@ public record FishKind(String id, String name, Tier tier, Set<Water> waters, boo
 
     public FishKind(String id, String name, Tier tier, Set<Water> waters, boolean glows) {
         this(id, name, tier, waters, glows, Set.of());
+    }
+
+    public FishKind(String id, String name, Tier tier, Set<Water> waters, boolean glows, Set<String> biomes) {
+        this(id, name, tier, waters, glows, biomes, null, null);
     }
 
     public boolean livesIn(Water water) {

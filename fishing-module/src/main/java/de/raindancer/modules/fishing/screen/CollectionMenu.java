@@ -42,6 +42,9 @@ public final class CollectionMenu extends PaginatedMenu<FishKind> implements IFi
         return "Collection";
     }
 
+    private static final de.raindancer.modules.fishing.rules.SwimRule TEMPER =
+            new de.raindancer.modules.fishing.rules.SwimRule();
+
     @Override
     protected List<FishKind> entries() {
         return services.catalog().fish().stream()
@@ -70,6 +73,7 @@ public final class CollectionMenu extends PaginatedMenu<FishKind> implements IFi
                 best = has ? mutation : best;
             }
             lines.add("<gray>Variants: " + found);
+            lines.add("<gray>In an aquarium: <white>" + TEMPER.personality(kind).temper().title());
             // the rarest variant found is the one shown, so a page of them is a trophy wall
             return Icons.showing(services.forge().fish(kind, 1, best), colour + kind.name(), lines);
         }

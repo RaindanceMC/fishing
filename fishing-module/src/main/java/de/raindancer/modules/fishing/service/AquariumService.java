@@ -8,6 +8,7 @@ import de.raindancer.modules.fishing.model.Aquarium;
 import de.raindancer.modules.fishing.model.Catalog;
 import de.raindancer.modules.fishing.model.FishKind;
 import de.raindancer.modules.fishing.model.TankPos;
+import de.raindancer.modules.fishing.rules.SwimRule;
 import de.raindancer.modules.fishing.rules.TankRule;
 import de.raindancer.modules.fishing.store.FishingPack;
 import de.raindancer.modules.fishing.visual.Looks;
@@ -44,21 +45,29 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Aquariums standing in the world, kept like sea chests: a barrier block wearing a tank model on a display, its fish
  * in the chunk's own data under its position. Tanks side by side (not stacked) are one big tank ({@link TankRule}): each block wears
- * the look for the sides it is joined on, its fish swim through the whole tank, and the tank opens as one inventory.
+ * the look for the sides it is joined on, all its fish share one brain ({@link SwimRule}: each kind's temper, chases
+ * and schools) and swim through the whole tank, and the tank opens as one inventory.
  * Every block still keeps its own three fish, so picking one block up gives back what it held. None of the displays is
  * saved with the world; a chunk coming in dresses its tanks again.
  *
- * <p>Who may open a tank is who may open a chest on that ground; who may pick one up is who may break a block there.
+ * <p>Who may open a tank is who may open a chest on that ground; breaking one is a block break the claims decide.
  */
 public final class AquariumService implements IFishingService {
 
     private static final NamespacedKey DISPLAY = new NamespacedKey(FishingPack.NAMESPACE, "aquarium_display");
     private static final String PREFIX = "aquarium_";
-    private static final int SWIM_TICKS = 30;
+    /** A beat of the fish's brains; the client glides them between beats, so two a second look smooth. */
+    private static final int SWIM_TICKS = 10;
+    /** Fish swim only while somebody is this close; nobody near, a tank costs one look around per beat. */
+    private static final double WATCHED = 32;
+    /** Clients draw fish within about 32 blocks and tanks within about 48 (a display's range is a share of 64). */
+    private static final float FISH_RANGE = 0.5f;
+    private static final float TANK_RANGE = 0.75f;
+    private static final SwimRule SWIM = new SwimRule();
     private static final float FISH_SCALE = 0.32f;
 
-    /** The looks of one block and the timer moving its fish. */
-    private record Dressed(UUID tank, List<UUID> fish, ScheduledTask swim) {
+    /** The looks of one block: its glass and the fish it holds. */
+    private record Dressed(UUID tank, List<UUID> fish) {
     }
 
     /** One fish's place in a whole tank: which block holds it, and where in that block's list. */
@@ -73,8 +82,9 @@ public final class AquariumService implements IFishingService {
     private final TankRule rule = new TankRule();
     private final Random random = new Random();
     private final Map<String, Dressed> dressed = new ConcurrentHashMap<>();
-    /** The block of its tank each fish is swimming in now, relative to its own block. */
-    private final Map<UUID, TankPos> swimmingIn = new ConcurrentHashMap<>();
+    /** Each tank's brain, by its first block, and which tank each block's fish swim in. */
+    private final Map<String, ScheduledTask> schools = new ConcurrentHashMap<>();
+    private final Map<String, String> schoolOf = new ConcurrentHashMap<>();
     private NamespacedKey recipe;
 
     public AquariumService(Plugin plugin, Server server, FishForge forge, Catalog catalog, Land land) {
@@ -127,11 +137,6 @@ public final class AquariumService implements IFishingService {
     /** Whoever may open a chest standing here. */
     public boolean mayOpen(Player player, Block block) {
         return may(player, block, LandAction.CONTAINERS);
-    }
-
-    /** Whoever may break a block here. */
-    public boolean mayPickUp(Player player, Block block) {
-        return may(player, block, LandAction.BREAK);
     }
 
     private boolean may(Player player, Block block, LandAction action) {
@@ -271,49 +276,91 @@ public final class AquariumService implements IFishingService {
 
     // ------------------------------------------------------------------ looks
 
-    /** Dresses every block of this block's tank; the blocks dressed. */
+    /** A fish swimming in a tank: its display, its brain, and its own block relative to the tank's first. */
+    private record Swimming(ItemDisplay display, SwimRule.Swimmer swimmer, SwimRule.V3 home) {
+    }
+
+    /**
+     * Dresses every block of this block's tank and puts one brain over all its fish, so they swim through the whole
+     * tank and notice each other; the blocks dressed.
+     */
     private List<Block> redress(Block block) {
         List<Block> members = group(block);
+        if (members.isEmpty()) {
+            return members;
+        }
+        members.forEach(this::stopSchool);
         Set<TankPos> joined = new HashSet<>();
         members.forEach(each -> joined.add(pos(each)));
+        TankPos anchor = pos(members.getFirst());
+        List<SwimRule.V3> layout = members.stream().map(each -> relative(pos(each), anchor)).toList();
+        SwimRule.Water water = SwimRule.Water.of(layout);
+        List<Swimming> fish = new ArrayList<>();
         for (Block member : members) {
-            at(member).ifPresent(tank -> dress(member, tank, joined));
+            at(member).ifPresent(tank -> dress(member, tank, joined, relative(pos(member), anchor), fish));
+        }
+        if (!fish.isEmpty()) {
+            Block first = members.getFirst();
+            Location centre = first.getLocation().add(0.5, 0.5, 0.5);
+            List<SwimRule.Swimmer> brains = fish.stream().map(Swimming::swimmer).toList();
+            ScheduledTask school = Scheduling.regionTimer(plugin, centre, SWIM_TICKS, SWIM_TICKS, task -> {
+                // nobody watching, nobody swimming: a tank far from every player costs nothing
+                if (centre.getWorld().getNearbyPlayers(centre, WATCHED).isEmpty()) {
+                    return;
+                }
+                for (SwimRule.Nip nip : SWIM.step(brains, water, random)) {
+                    centre.getWorld().spawnParticle(org.bukkit.Particle.BUBBLE_POP, centre.clone().add(nip.at().x(),
+                            nip.at().y(), nip.at().z()), 6, 0.05, 0.05, 0.05, 0.02);
+                }
+                // a resting fish sends nothing
+                fish.stream().filter(each -> each.swimmer().moved()).forEach(AquariumService::show);
+            });
+            String key = spot(first);
+            schools.put(key, school);
+            members.forEach(each -> schoolOf.put(spot(each), key));
         }
         return members;
     }
 
-    private void dress(Block block, Aquarium tank, Set<TankPos> joined) {
+    private static SwimRule.V3 relative(TankPos at, TankPos anchor) {
+        return new SwimRule.V3(at.x() - anchor.x(), at.y() - anchor.y(), at.z() - anchor.z());
+    }
+
+    private void dress(Block block, Aquarium tank, Set<TankPos> joined, SwimRule.V3 home, List<Swimming> fish) {
         undress(block);
         World world = block.getWorld();
-        TankPos home = pos(block);
         Location centre = block.getLocation().add(0.5, 0.5, 0.5);
-        int look = rule.look(home, joined::contains);
+        int look = rule.look(pos(block), joined::contains);
         ItemDisplay glass = world.spawn(centre, ItemDisplay.class, made -> {
             prepare(made);
             made.setItemStack(Looks.wearing(FishingPack.NAMESPACE + ":aquarium_" + look));
+            made.setViewRange(TANK_RANGE);
         });
-        List<ItemDisplay> swimmers = new ArrayList<>();
+        List<UUID> ids = new ArrayList<>();
         for (Aquarium.Resident resident : tank.residents()) {
+            Optional<FishKind> kind = catalog.fish(resident.fishId());
             Optional<ItemStack> fishLook = item(resident);
-            if (fishLook.isEmpty()) {
+            if (kind.isEmpty() || fishLook.isEmpty()) {
                 continue;
             }
-            boolean glows = catalog.fish(resident.fishId()).map(FishKind::glows).orElse(false);
-            swimmers.add(world.spawn(centre, ItemDisplay.class, made -> {
+            SwimRule.V3 start = new SwimRule.V3(home.x() + (random.nextDouble() - 0.5) * 0.5,
+                    home.y() + random.nextDouble() * 0.3 - 0.15, home.z() + (random.nextDouble() - 0.5) * 0.5);
+            SwimRule.Swimmer brain = new SwimRule.Swimmer(fish.size(), kind.get().id(), SWIM.personality(kind.get()),
+                    start);
+            ItemDisplay display = world.spawn(centre, ItemDisplay.class, made -> {
                 prepare(made);
                 made.setItemStack(fishLook.get());
-                made.setTransformation(pose(point(new TankPos(0, 0, 0)), random.nextFloat() * 6.28f));
-                if (glows) {
+                made.setViewRange(FISH_RANGE);
+                if (kind.get().glows()) {
                     made.setBrightness(new Display.Brightness(15, 15));
                 }
-            }));
+            });
+            Swimming swimming = new Swimming(display, brain, home);
+            show(swimming);
+            fish.add(swimming);
+            ids.add(display.getUniqueId());
         }
-        List<TankPos> others = new ArrayList<>();
-        joined.forEach(each -> others.add(new TankPos(each.x() - home.x(), each.y() - home.y(), each.z() - home.z())));
-        ScheduledTask swim = swimmers.isEmpty() ? null : Scheduling.regionTimer(plugin, centre, SWIM_TICKS,
-                SWIM_TICKS, task -> swimmers.forEach(fish -> swim(fish, others)));
-        dressed.put(spot(block), new Dressed(glass.getUniqueId(),
-                swimmers.stream().map(Entity::getUniqueId).toList(), swim));
+        dressed.put(spot(block), new Dressed(glass.getUniqueId(), ids));
     }
 
     private static void prepare(ItemDisplay display) {
@@ -322,59 +369,43 @@ public final class AquariumService implements IFishingService {
         display.getPersistentDataContainer().set(DISPLAY, PersistentDataType.BYTE, (byte) 1);
     }
 
-    /**
-     * Off to a new point, in the block it is in or one beside it within the tank, turned to face the way it swims,
-     * gliding there over the next beat.
-     *
-     * @param tank every block of the tank, relative to the fish's own block
-     */
-    private void swim(ItemDisplay fish, List<TankPos> tank) {
-        if (!fish.isValid()) {
-            swimmingIn.remove(fish.getUniqueId());
+    /** Where its brain says it is, facing the way it last swam, gliding there over the next beat. */
+    private static void show(Swimming fish) {
+        ItemDisplay display = fish.display();
+        if (!display.isValid()) {
             return;
         }
-        TankPos in = swimmingIn.getOrDefault(fish.getUniqueId(), new TankPos(0, 0, 0));
-        if (!tank.contains(in)) {
-            in = new TankPos(0, 0, 0);
-        }
-        TankPos current = in;
-        List<TankPos> beside = tank.stream().filter(each -> Math.abs(each.x() - current.x())
-                + Math.abs(each.y() - current.y()) + Math.abs(each.z() - current.z()) == 1).toList();
-        TankPos next = beside.isEmpty() || random.nextBoolean() ? in : beside.get(random.nextInt(beside.size()));
-        swimmingIn.put(fish.getUniqueId(), next);
-        Vector3f from = fish.getTransformation().getTranslation();
-        Vector3f to = point(next);
+        SwimRule.V3 at = fish.swimmer().at();
+        SwimRule.V3 heading = fish.swimmer().heading();
         // a fish model's head points to -x: turn -x onto the way it swims
-        float yaw = (float) Math.atan2(to.z - from.z, -(to.x - from.x));
-        fish.setInterpolationDelay(0);
-        fish.setInterpolationDuration(SWIM_TICKS);
-        fish.setTransformation(pose(to, yaw));
+        float yaw = (float) Math.atan2(heading.z(), -heading.x());
+        display.setInterpolationDelay(0);
+        display.setInterpolationDuration(SWIM_TICKS);
+        display.setTransformation(new Transformation(new Vector3f((float) (at.x() - fish.home().x()),
+                (float) (at.y() - fish.home().y()), (float) (at.z() - fish.home().z())),
+                new Quaternionf().rotateY(yaw), new Vector3f(FISH_SCALE), new Quaternionf()));
     }
 
-    /** A point inside the water of the block at {@code in}, clear of the glass and the sand. */
-    private Vector3f point(TankPos in) {
-        return new Vector3f(in.x() - 0.3f + random.nextFloat() * 0.6f,
-                in.y() - 0.15f + random.nextFloat() * 0.45f, in.z() - 0.3f + random.nextFloat() * 0.6f);
+    private void stopSchool(Block member) {
+        String key = schoolOf.remove(spot(member));
+        if (key == null) {
+            return;
+        }
+        ScheduledTask school = schools.remove(key);
+        if (school != null) {
+            school.cancel();
+        }
     }
 
-    private static Transformation pose(Vector3f at, float yaw) {
-        return new Transformation(at, new Quaternionf().rotateY(yaw), new Vector3f(FISH_SCALE), new Quaternionf());
-    }
-
-    /** Takes the block's looks away (the block stays). */
+    /** Takes the block's looks away (the block stays), and stops its tank's school. */
     public void undress(Block block) {
+        stopSchool(block);
         Dressed gone = dressed.remove(spot(block));
         if (gone == null) {
             return;
         }
-        if (gone.swim() != null) {
-            gone.swim().cancel();
-        }
         remove(gone.tank());
-        gone.fish().forEach(id -> {
-            swimmingIn.remove(id);
-            remove(id);
-        });
+        gone.fish().forEach(this::remove);
     }
 
     private void remove(UUID id) {
@@ -442,10 +473,10 @@ public final class AquariumService implements IFishingService {
 
     /** Takes every look down — the module is stopping, so this runs where it is called. */
     public void stop() {
+        schools.values().forEach(ScheduledTask::cancel);
+        schools.clear();
+        schoolOf.clear();
         for (Dressed each : dressed.values()) {
-            if (each.swim() != null) {
-                each.swim().cancel();
-            }
             try {
                 remove(each.tank());
                 each.fish().forEach(this::remove);
@@ -454,6 +485,5 @@ public final class AquariumService implements IFishingService {
             }
         }
         dressed.clear();
-        swimmingIn.clear();
     }
 }
