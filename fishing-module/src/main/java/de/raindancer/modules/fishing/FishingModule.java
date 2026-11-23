@@ -151,7 +151,8 @@ public final class FishingModule implements FlexModule {
                 new de.raindancer.modules.fishing.service.MerchantService(context.plugin(), context.core().messages(),
                         context.core().effects(), forge, catalog, now);
         settings.onChange(merchant::settings);
-        aquariums = new de.raindancer.modules.fishing.service.AquariumService(context.plugin(), server, forge, catalog);
+        aquariums = new de.raindancer.modules.fishing.service.AquariumService(context.plugin(), server, forge, catalog,
+                context.core().land());
 
         services = new FishingServices(context.plugin(), server, log, context.core().messages(),
                 context.chat().brand(), context.core(), settings::current, settings, catalog, forge, profiles, rods,

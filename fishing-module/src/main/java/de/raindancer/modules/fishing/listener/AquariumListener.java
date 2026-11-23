@@ -22,12 +22,11 @@ import org.bukkit.util.BoundingBox;
 
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 /**
- * Aquariums: set down like a block (claims decide where), a fish put in with a right click, taken out with a sneaking
- * right click of an empty hand, the tank picked up with a sneaking left click — all by its owner. Anybody else who
- * right clicks it is told whose it is and what swims in it.
+ * Aquariums: set down like a block (claims decide where). A right click opens the whole tank like a chest, or with a
+ * fish in hand puts it straight in; a sneaking left click picks one block up with its fish. Opening is for whoever may
+ * open a chest there, picking up for whoever may break a block there.
  */
 public final class AquariumListener implements IFishingListener {
 
@@ -51,7 +50,7 @@ public final class AquariumListener implements IFishingListener {
         if (tank.isPresent()) {
             if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
                 event.setCancelled(true);
-                use(player, block, tank.get(), event.getItem());
+                use(player, block, event.getItem());
             } else if (event.getAction() == Action.LEFT_CLICK_BLOCK && player.isSneaking()) {
                 event.setCancelled(true);
                 pickUp(player, block, tank.get());
@@ -67,46 +66,34 @@ public final class AquariumListener implements IFishingListener {
         }
     }
 
-    private void use(Player player, Block block, Aquarium tank, ItemStack held) {
-        if (!tank.owner().equals(player.getUniqueId())) {
-            String fish = tank.residents().isEmpty() ? "nothing yet" : tank.residents().stream()
-                    .map(this::name).collect(Collectors.joining(", "));
-            services.messages().send(player, "fishing.aquarium.someone-elses", "owner",
-                    nameOf(tank.owner()), "fish", fish);
+    private void use(Player player, Block block, ItemStack held) {
+        if (!services.aquariums().mayOpen(player, block)) {
+            services.messages().send(player, "fishing.aquarium.not-allowed-open");
+            services.effects().play(player.getUniqueId(), Cues.NO);
             return;
         }
         Optional<Aquarium.Resident> resident = services.aquariums().resident(held);
-        if (resident.isPresent()) {
-            if (tank.full()) {
-                services.messages().send(player, "fishing.aquarium.full", "most", String.valueOf(Aquarium.CAPACITY));
-                services.effects().play(player.getUniqueId(), Cues.NO);
-                return;
-            }
-            held.setAmount(held.getAmount() - 1);
-            services.aquariums().write(block, tank.with(resident.get()));
-            services.effects().play(player.getUniqueId(), Cues.CLICK);
-            services.effects().playAt(block.getWorld().getName(), block.getX() + 0.5, block.getY() + 0.5,
-                    block.getZ() + 0.5, SPLASH);
-            services.messages().send(player, "fishing.aquarium.added", "fish", name(resident.get()));
+        if (resident.isEmpty()) {
+            new de.raindancer.modules.fishing.screen.AquariumMenu(services, player, block).open();
             return;
         }
-        if (player.isSneaking() && (held == null || held.getType().isAir())) {
-            Optional<Aquarium.Resident> last = tank.last();
-            if (last.isEmpty()) {
-                services.messages().send(player, "fishing.aquarium.empty");
-                return;
-            }
-            services.aquariums().write(block, tank.withoutLast());
-            give(player, last.get());
-            services.effects().play(player.getUniqueId(), Cues.CLICK);
+        // a fish in hand goes straight in, without opening anything
+        if (!services.aquariums().put(block, resident.get())) {
+            services.messages().send(player, "fishing.aquarium.full", "most",
+                    String.valueOf(services.aquariums().capacity(block)));
+            services.effects().play(player.getUniqueId(), Cues.NO);
             return;
         }
-        services.messages().send(player, "fishing.aquarium.how");
+        held.setAmount(held.getAmount() - 1);
+        services.effects().play(player.getUniqueId(), Cues.CLICK);
+        services.effects().playAt(block.getWorld().getName(), block.getX() + 0.5, block.getY() + 0.5,
+                block.getZ() + 0.5, SPLASH);
+        services.messages().send(player, "fishing.aquarium.added", "fish", name(resident.get()));
     }
 
     private void pickUp(Player player, Block block, Aquarium tank) {
-        if (!tank.owner().equals(player.getUniqueId())) {
-            services.messages().send(player, "fishing.aquarium.not-yours");
+        if (!services.aquariums().mayPickUp(player, block)) {
+            services.messages().send(player, "fishing.aquarium.not-allowed-take");
             services.effects().play(player.getUniqueId(), Cues.NO);
             return;
         }
@@ -171,13 +158,8 @@ public final class AquariumListener implements IFishingListener {
         return resident.mutation() == null ? kind : resident.mutation().title() + " " + kind;
     }
 
-    private String nameOf(UUID owner) {
-        String name = services.server().getOfflinePlayer(owner).getName();
-        return name == null ? "someone" : name;
-    }
-
     @Override
     public void forget(UUID player) {
-        // Nothing remembered per player: a tank's owner is in the tank.
+        // Nothing remembered per player: a tank's fish are in the tank.
     }
 }

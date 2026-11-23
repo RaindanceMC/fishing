@@ -20,13 +20,15 @@ fishing:
     not-allowed: "<red>You may not place fishmongers."
 
   aquarium:
-    placed: "<green>Aquarium set down. Right click it with a fish to put the fish in."
-    added: "<green><white><fish></white> is swimming in your aquarium now."
-    full: "<red>The aquarium is full. <most> fish fit in one."
-    empty: "<gray>No fish in it yet."
-    how: "<gray>Right click with a fish to put it in. Sneak and right click with an empty hand to take one out, sneak and left click to pick the tank up."
-    not-yours: "<red>This aquarium is not yours."
-    someone-elses: "<gray><white><owner></white>'s aquarium: <white><fish></white>."
+    placed: "<green>Aquarium set down. Right click it to open it, or with a fish in hand to put the fish in. Tanks side by side join into one."
+    added: "<green><white><fish></white> is swimming in the aquarium now."
+    full: "<red>The aquarium is full. <most> fish fit in it; set another tank down beside it for more room."
+    only-fish: "<red>Only fish go into an aquarium."
+    no-fish: "<gray>You carry no fish."
+    how: "<gray>Right click to open the aquarium. Sneak and left click to pick a tank up with its fish."
+    not-allowed-open: "<red>You may not open containers here, so not this aquarium either."
+    not-allowed-take: "<red>You may not break blocks here, so you cannot pick this tank up."
+    gone: "<gray>The aquarium is out of reach now."
 
   tug:
     start: "<gold>A <white><fish></white> fish is on the line! Hold right click to reel, and let go when it runs."

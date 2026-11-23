@@ -48,6 +48,16 @@ public record Aquarium(UUID owner, List<Resident> residents) {
         return new Aquarium(owner, more);
     }
 
+    /** Without the fish at {@code index}; the same tank when there is none there. */
+    public Aquarium without(int index) {
+        if (index < 0 || index >= residents.size()) {
+            return this;
+        }
+        List<Resident> fewer = new ArrayList<>(residents);
+        fewer.remove(index);
+        return new Aquarium(owner, fewer);
+    }
+
     public Optional<Resident> last() {
         return residents.isEmpty() ? Optional.empty() : Optional.of(residents.getLast());
     }
