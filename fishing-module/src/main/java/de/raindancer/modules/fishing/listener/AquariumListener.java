@@ -26,7 +26,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 /**
- * Aquariums: set down like a block (claims decide where). A right click opens the whole tank like a chest, or with a
+ * Aquariums: set down like a block (claims decide where), also against another tank. A right click opens the whole tank like a chest, or with a
  * fish in hand puts it straight in. Mined like a glass block, it breaks and drops itself and its fish. Opening is for
  * whoever may open a chest there, breaking for whoever may break a block there.
  */
@@ -56,20 +56,18 @@ public final class AquariumListener implements IFishingListener {
         }
         Player player = event.getPlayer();
         Block block = event.getClickedBlock();
-        Optional<Aquarium> tank = block == null ? Optional.empty() : services.aquariums().at(block);
-        if (tank.isPresent()) {
-            if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
-                event.setCancelled(true);
-                use(player, block, event.getItem());
-            }
+        if (event.getAction() != Action.RIGHT_CLICK_BLOCK || block == null) {
             return;
         }
-        if (!services.forge().isAquarium(event.getItem())) {
-            return;
-        }
-        if (event.getAction() == Action.RIGHT_CLICK_BLOCK && block != null) {
+        // An aquarium in hand is set down, against a tank too (that is how they are stacked and lined up).
+        if (services.forge().isAquarium(event.getItem())) {
             event.setCancelled(true);
             setDown(player, block, event.getBlockFace(), event.getItem());
+            return;
+        }
+        if (services.aquariums().at(block).isPresent()) {
+            event.setCancelled(true);
+            use(player, block, event.getItem());
         }
     }
 
