@@ -44,7 +44,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Aquariums standing in the world, kept like sea chests: a barrier block wearing a tank model on a display, its fish
- * in the chunk's own data under its position. Tanks side by side (not stacked) are one big tank ({@link TankRule}): each block wears
+ * in the chunk's own data under its position. Tanks side by side or stacked are one big tank ({@link TankRule}): each block wears
  * the look for the sides it is joined on, all its fish share one brain ({@link SwimRule}: each kind's temper, chases
  * and schools) and swim through the whole tank, and the tank opens as one inventory.
  * Every block still keeps its own three fish, so picking one block up gives back what it held. None of the displays is

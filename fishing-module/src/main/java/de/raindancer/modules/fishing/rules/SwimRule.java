@@ -132,8 +132,8 @@ public final class SwimRule implements IFishingRule {
     }
 
     /**
-     * The water of a tank: one box per block, reaching to the block's edge where another block of the tank goes on.
-     * Margins keep a fish's body clear of the glass, the sand and the surface.
+     * The water of a tank: one box per block, reaching to the block's edge where another block of the tank goes on,
+     * above or below too. Margins keep a fish's body clear of the glass, the sand and the surface.
      */
     public static final class Water {
         static final double SIDE = 0.32;
@@ -141,18 +141,33 @@ public final class SwimRule implements IFishingRule {
         static final double TOP = 0.25;
 
         private final List<double[]> boxes = new ArrayList<>();
+        /** Per box, the bottom and top of the stack of blocks it is part of: where depth 0 and 1 are. */
+        private final List<double[]> columns = new ArrayList<>();
         private final List<V3> blocks;
 
         private Water(List<V3> blocks) {
             this.blocks = List.copyOf(blocks);
             Set<V3> all = new HashSet<>(blocks);
+            V3 up = new V3(0, 1, 0);
+            V3 down = new V3(0, -1, 0);
             for (V3 block : blocks) {
                 double west = all.contains(block.plus(new V3(-1, 0, 0))) ? 0.5 : SIDE;
                 double east = all.contains(block.plus(new V3(1, 0, 0))) ? 0.5 : SIDE;
                 double north = all.contains(block.plus(new V3(0, 0, -1))) ? 0.5 : SIDE;
                 double south = all.contains(block.plus(new V3(0, 0, 1))) ? 0.5 : SIDE;
-                boxes.add(new double[]{block.x - west, block.y + BOTTOM, block.z - north,
-                        block.x + east, block.y + TOP, block.z + south});
+                double bottom = all.contains(block.plus(down)) ? -0.5 : BOTTOM;
+                double top = all.contains(block.plus(up)) ? 0.5 : TOP;
+                boxes.add(new double[]{block.x - west, block.y + bottom, block.z - north,
+                        block.x + east, block.y + top, block.z + south});
+                V3 lowest = block;
+                while (all.contains(lowest.plus(down))) {
+                    lowest = lowest.plus(down);
+                }
+                V3 highest = block;
+                while (all.contains(highest.plus(up))) {
+                    highest = highest.plus(up);
+                }
+                columns.add(new double[]{lowest.y + BOTTOM, highest.y + TOP});
             }
         }
 
@@ -173,25 +188,28 @@ public final class SwimRule implements IFishingRule {
 
         /** A point somewhere in the water; at {@code depth} (0 sand, 1 surface) when that is not negative. */
         V3 anywhere(Random random, double depth) {
-            double[] box = boxes.get(random.nextInt(boxes.size()));
-            return within(box, random, depth);
+            return within(random.nextInt(boxes.size()), random, depth);
         }
 
-        /** A point in the box holding {@code near}, or one beside it. */
+        /** A point in the box holding {@code near}, or one beside, above or below it. */
         V3 near(V3 near, Random random, double depth) {
-            List<double[]> close = new ArrayList<>();
+            List<Integer> close = new ArrayList<>();
+            V3 at = new V3(Math.round(near.x), Math.round(near.y), Math.round(near.z));
             for (int n = 0; n < boxes.size(); n++) {
-                if (blocks.get(n).distance(new V3(Math.round(near.x), blocks.get(n).y, Math.round(near.z))) <= 1.01) {
-                    close.add(boxes.get(n));
+                if (blocks.get(n).distance(at) <= 1.01) {
+                    close.add(n);
                 }
             }
             return close.isEmpty() ? anywhere(random, depth) : within(close.get(random.nextInt(close.size())), random,
                     depth);
         }
 
-        private static V3 within(double[] box, Random random, double depth) {
+        /** In box {@code n}; a depth is measured over its whole stack, so a bottom fish keeps to the lowest sand. */
+        private V3 within(int n, Random random, double depth) {
+            double[] box = boxes.get(n);
+            double[] column = columns.get(n);
             double y = depth < 0 ? box[1] + random.nextDouble() * (box[4] - box[1])
-                    : Math.max(box[1], Math.min(box[4], box[1] + depth * (box[4] - box[1])
+                    : Math.max(column[0], Math.min(column[1], column[0] + depth * (column[1] - column[0])
                     + (random.nextDouble() - 0.5) * 0.06));
             return new V3(box[0] + random.nextDouble() * (box[3] - box[0]), y,
                     box[2] + random.nextDouble() * (box[5] - box[2]));

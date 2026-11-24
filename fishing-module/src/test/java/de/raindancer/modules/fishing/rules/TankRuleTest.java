@@ -20,14 +20,27 @@ class TankRuleTest {
     }
 
     @Test
-    @DisplayName("tanks side by side are one tank; a corner is not a side, and one stacked on top stays its own")
+    @DisplayName("tanks side by side and stacked are one tank; a corner is not a side")
     void sidesJoin() {
         Set<TankPos> world = tanks(new TankPos(0, 0, 0), new TankPos(1, 0, 0), new TankPos(1, 1, 0),
-                new TankPos(2, 0, 1), new TankPos(5, 0, 0));
+                new TankPos(2, 0, 1), new TankPos(2, 2, 0), new TankPos(5, 0, 0));
         assertThat(rule.group(new TankPos(0, 0, 0), world::contains))
-                .containsExactly(new TankPos(0, 0, 0), new TankPos(1, 0, 0));
-        assertThat(rule.group(new TankPos(1, 1, 0), world::contains)).containsExactly(new TankPos(1, 1, 0));
+                .containsExactlyInAnyOrder(new TankPos(0, 0, 0), new TankPos(1, 0, 0), new TankPos(1, 1, 0));
+        assertThat(rule.group(new TankPos(2, 2, 0), world::contains)).as("diagonally above is a corner")
+                .containsExactly(new TankPos(2, 2, 0));
         assertThat(rule.group(new TankPos(5, 0, 0), world::contains)).containsExactly(new TankPos(5, 0, 0));
+    }
+
+    @Test
+    @DisplayName("a stacked tower is one tank too, capped like a row")
+    void stackedJoin() {
+        Set<TankPos> tower = new HashSet<>();
+        for (int y = 0; y < 20; y++) {
+            tower.add(new TankPos(0, y, 0));
+        }
+        assertThat(rule.group(new TankPos(0, 0, 0), tower::contains)).hasSize(TankRule.MAX_TANKS);
+        assertThat(rule.group(new TankPos(0, 3, 0), tanks(new TankPos(0, 3, 0), new TankPos(0, 4, 0))::contains))
+                .containsExactly(new TankPos(0, 3, 0), new TankPos(0, 4, 0));
     }
 
     @Test
@@ -51,14 +64,16 @@ class TankRuleTest {
     }
 
     @Test
-    @DisplayName("a block's look names the sides it is joined on: north 1, east 2, south 4, west 8")
+    @DisplayName("a block's look names the sides it is joined on: north 1, east 2, south 4, west 8, up 16, down 32")
     void look() {
         Set<TankPos> group = tanks(new TankPos(0, 0, 0), new TankPos(1, 0, 0), new TankPos(0, 0, -1),
                 new TankPos(0, 1, 0));
-        assertThat(rule.look(new TankPos(0, 0, 0), group::contains)).isEqualTo(2 | 1);
+        assertThat(rule.look(new TankPos(0, 0, 0), group::contains)).isEqualTo(2 | 1 | 16);
         assertThat(rule.look(new TankPos(1, 0, 0), group::contains)).isEqualTo(8);
         assertThat(rule.look(new TankPos(0, 0, -1), group::contains)).isEqualTo(4);
+        assertThat(rule.look(new TankPos(0, 1, 0), group::contains)).isEqualTo(32);
         assertThat(rule.look(new TankPos(9, 9, 9), Set.<TankPos>of()::contains)).isZero();
+        assertThat(TankRule.LOOKS).isEqualTo(64);
     }
 
     @Test

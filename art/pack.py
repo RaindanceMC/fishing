@@ -56,7 +56,7 @@ def main():
     copy("aquarium/aquarium.png", "textures/item/aquarium.png")
     copy("aquarium/aquarium.json", "models/item/aquarium.json")
     item("aquarium", "item/aquarium")
-    for mask in range(16):
+    for mask in range(64):
         copy("aquarium/joined/aquarium_%d.json" % mask, "models/item/aquarium_%d.json" % mask)
         item("aquarium_%d" % mask, "item/aquarium_%d" % mask)
 

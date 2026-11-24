@@ -11,7 +11,7 @@ import java.util.Set;
 import java.util.function.Predicate;
 
 /**
- * Aquariums side by side (not stacked) are one big tank: which blocks belong together, and which sides of a block are joined to
+ * Aquariums side by side or stacked are one big tank: which blocks belong together, and which sides of a block are joined to
  * another, which picks its model.
  */
 public final class TankRule implements IFishingRule {
@@ -23,11 +23,13 @@ public final class TankRule implements IFishingRule {
     public static final int EAST = 2;
     public static final int SOUTH = 4;
     public static final int WEST = 8;
+    public static final int UP = 16;
+    public static final int DOWN = 32;
     /** How many looks a block can have, one per pattern of joined sides. */
-    public static final int LOOKS = 16;
+    public static final int LOOKS = 64;
 
-    // Side by side only: a tank stacked on another stays its own, as one water level per tank is what reads as water.
-    private static final int[][] SIDES = {{0, 0, -1, NORTH}, {1, 0, 0, EAST}, {0, 0, 1, SOUTH}, {-1, 0, 0, WEST}};
+    private static final int[][] SIDES = {{0, 0, -1, NORTH}, {1, 0, 0, EAST}, {0, 0, 1, SOUTH}, {-1, 0, 0, WEST},
+            {0, 1, 0, UP}, {0, -1, 0, DOWN}};
 
     /** The tank {@code start} is part of, nearest blocks first up to the cap, then in {@link TankPos#ORDER}. */
     public List<TankPos> group(TankPos start, Predicate<TankPos> isTank) {
@@ -73,6 +75,6 @@ public final class TankRule implements IFishingRule {
 
     @Override
     public String describe() {
-        return "which aquariums side by side make one tank, and how each block of it looks";
+        return "which aquariums side by side or stacked make one tank, and how each block of it looks";
     }
 }

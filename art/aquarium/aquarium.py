@@ -3,8 +3,8 @@ The aquarium: a one-block glass tank with a dark wooden frame, a sand floor, wat
 Written straight as an item model (no Blockbench needed), worn by the display a placed tank stands in and by the item.
 
   aquarium.json  (rainsfishing:item/aquarium)   aquarium.png  (32x32 atlas)
-  joined/aquarium_<mask>.json   the look of a placed block joined to neighbours (north 1, east 2, south 4, west 8),
-                                so tanks side by side read as one
+  joined/aquarium_<mask>.json   the look of a placed block joined to neighbours (north 1, east 2, south 4, west 8,
+                                up 16, down 32), so tanks side by side and stacked read as one
 
     python3 aquarium.py
 """
@@ -70,7 +70,7 @@ def cube(name, frm, to, material, sides=None):
     return {"name": name, "from": frm, "to": to, "faces": faces}
 
 
-N, E, S, W = 1, 2, 4, 8
+N, E, S, W, UP, DOWN = 1, 2, 4, 8, 16, 32
 
 
 def kelp(name, x, z, segments):
@@ -100,21 +100,26 @@ def kelp(name, x, z, segments):
 
 
 def elements(mask=0):
-    """One block of a tank, joined to its neighbours on the sides in mask: no glass, frame or water wall there."""
+    """
+    One block of a tank, joined to its neighbours on the sides in mask: no glass, frame or water wall there. Joined
+    below, it has no floor, sand or kelp of its own; joined above, its water runs on up without a surface.
+    """
     def has(side):
         return bool(mask & side)
 
     # how far floor, water and rims reach along x and z: to the block's edge where a neighbour carries on
     x0, x1 = (0 if has(W) else 1), (16 if has(E) else 15)
     z0, z1 = (0 if has(N) else 1), (16 if has(S) else 15)
-    y0, y1 = 1, 15
+    y0, y1 = (0 if has(DOWN) else 1), (16 if has(UP) else 15)
     e = []
     # a corner post stands only where neither side next to it goes on
     for name, (x, z), sides in (("nw", (0, 0), (N, W)), ("ne", (15, 0), (N, E)), ("sw", (0, 15), (S, W)),
                                 ("se", (15, 15), (S, E))):
         if not any(has(side) for side in sides):
             e.append(cube("post_" + name, [x, 0, z], [x + 1, 16, z + 1], "frame"))
-    for y in (0, 15):
+    for y, joined in ((0, has(DOWN)), (15, has(UP))):
+        if joined:
+            continue
         if not has(N):
             e.append(cube("rim_n%d" % y, [x0, y, 0], [x1, y + 1, 1], "frame"))
         if not has(S):
@@ -124,19 +129,24 @@ def elements(mask=0):
         if not has(E):
             e.append(cube("rim_e%d" % y, [15, y, z0], [16, y + 1, z1], "frame"))
     water_faces = [face for face, side in (("north", N), ("south", S), ("west", W), ("east", E)) if not has(side)]
-    e.append(cube("floor", [x0, 0, z0], [x1, 1, z1], "frame"))
-    e.append(cube("sand", [x0, 1, z0], [x1, 2.5, z1], "sand", tuple(["up"] + water_faces)))
-    # the decoration moves with the mask, so a long tank is not the same block over and over
-    if mask % 3 == 0:
-        e.extend(kelp("kelp_a", 3, 11, 5))
-        e.extend(kelp("kelp_b", 5.5, 12.5, 3))
-    if mask % 3 == 1:
-        e.extend(kelp("kelp_c", 12, 4, 4))
-    if mask % 4 == 0:
-        e.append(cube("pebble", [10, 2.5, 10], [12.5, 3.5, 12], "pebble"))
-    elif mask % 4 == 2:
-        e.append(cube("pebble", [4, 2.5, 5], [6, 3.5, 6.5], "pebble"))
-    e.append(cube("water", [x0, 2.5, z0], [x1, 13.5, z1], "water", tuple(water_faces + ["up"])))
+    if not has(DOWN):
+        e.append(cube("floor", [x0, 0, z0], [x1, 1, z1], "frame"))
+        e.append(cube("sand", [x0, 1, z0], [x1, 2.5, z1], "sand", tuple(["up"] + water_faces)))
+        # the decoration moves with the mask, so a long tank is not the same block over and over
+        flat = mask % 16
+        if flat % 3 == 0:
+            e.extend(kelp("kelp_a", 3, 11, 5))
+            e.extend(kelp("kelp_b", 5.5, 12.5, 3))
+        if flat % 3 == 1:
+            e.extend(kelp("kelp_c", 12, 4, 4))
+        if flat % 4 == 0:
+            e.append(cube("pebble", [10, 2.5, 10], [12.5, 3.5, 12], "pebble"))
+        elif flat % 4 == 2:
+            e.append(cube("pebble", [4, 2.5, 5], [6, 3.5, 6.5], "pebble"))
+    water_bottom = 0 if has(DOWN) else 2.5
+    water_top = 16 if has(UP) else 13.5
+    e.append(cube("water", [x0, water_bottom, z0], [x1, water_top, z1], "water",
+                  tuple(water_faces + ([] if has(UP) else ["up"]))))
     # glass panes just inside the frame, each a single face outward, only on open sides
     if not has(N):
         e.append(cube("glass_n", [x0, y0, 0.5], [x1, y1, 0.5], "glass", ("north",)))
@@ -165,14 +175,14 @@ def main():
     }
     with open(os.path.join(HERE, "aquarium.json"), "w") as out:
         json.dump(model, out, indent=1)
-    # a placed block wears one of 16 looks, by the sides it is joined on (TankRule.look)
+    # a placed block wears one of 64 looks, by the sides it is joined on (TankRule.look)
     os.makedirs(os.path.join(HERE, "joined"), exist_ok=True)
-    for mask in range(16):
+    for mask in range(64):
         joined = {"textures": model["textures"], "elements": elements(mask)}
         with open(os.path.join(HERE, "joined", "aquarium_%d.json" % mask), "w") as out:
             json.dump(joined, out, separators=(",", ":"))
     paint().save(os.path.join(HERE, "aquarium.png"))
-    print(len(model["elements"]), "elements, 16 joined looks")
+    print(len(model["elements"]), "elements, 64 joined looks")
 
 
 if __name__ == "__main__":

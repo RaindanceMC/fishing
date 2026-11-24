@@ -107,6 +107,22 @@ class SwimRuleTest {
     }
 
     @Test
+    @DisplayName("stacked tanks are one water: a fish swims from the lower block up into the upper one")
+    void stackedWater() {
+        SwimRule.Water tower = SwimRule.Water.of(List.of(new SwimRule.V3(0, 0, 0), new SwimRule.V3(0, 1, 0)));
+        assertThat(tower.inside(new SwimRule.V3(0, 0.5, 0))).as("where the two blocks meet").isTrue();
+        assertThat(tower.inside(new SwimRule.V3(0, -0.3, 0))).as("the sand of the lowest block").isFalse();
+        assertThat(tower.inside(new SwimRule.V3(0, 1.3, 0))).as("above the surface of the top block").isFalse();
+        Random random = new Random(2);
+        for (int n = 0; n < 50; n++) {
+            assertThat(tower.anywhere(random, 0).y()).as("depth 0 is the sand at the bottom of the whole tank")
+                    .isLessThan(-0.1);
+            assertThat(tower.anywhere(random, 1).y()).as("depth 1 is the surface at the top of the whole tank")
+                    .isGreaterThan(1.2);
+        }
+    }
+
+    @Test
     @DisplayName("a bottom dweller keeps low; a shy fish keeps its distance from the others")
     void bottomAndShy() {
         Random random = new Random(4);

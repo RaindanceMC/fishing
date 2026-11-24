@@ -211,7 +211,7 @@ public final class AquariumMenu extends Menu implements IFishingScreen {
         return List.of("<gray>Shift-click fish in your inventory to put",
                 "<gray>them in, or click with fish on the cursor.",
                 "<gray>Click a fish to take it out.",
-                "<dark_gray>Tanks side by side are one aquarium:",
+                "<dark_gray>Tanks side by side or stacked are one aquarium:",
                 "<dark_gray>three fish per tank, up to " + TankRule.MAX_TANKS + " tanks.");
     }
 
