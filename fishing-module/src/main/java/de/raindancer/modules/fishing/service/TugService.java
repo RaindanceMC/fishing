@@ -7,8 +7,10 @@ import de.raindancer.core.ui.bossbar.BossBars;
 import de.raindancer.core.ui.effect.Cues;
 import de.raindancer.core.ui.effect.Effects;
 import de.raindancer.core.ui.messages.Messages;
+import de.raindancer.modules.fishing.FishingSettings;
 import de.raindancer.modules.fishing.model.Catch;
 import de.raindancer.modules.fishing.model.Water;
+import de.raindancer.modules.fishing.rules.HeldInputRule;
 import de.raindancer.modules.fishing.rules.TugRule;
 import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.Component;
@@ -27,14 +29,20 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
 /**
- * The tug of war with a legendary or mythic fish: the hook stays out, every reel of the rod is a pull on the rope,
- * and a boss bar shows where the rope is and whether the fish is running. Lost in water, the fish pulls the fisher in
- * after it; in lava or the void it only tears free, as nobody is dragged to their death by a fish.
+ * The reel-in battle a legendary or mythic fish sometimes puts up: the hook stays out, holding sneak reels, and a boss
+ * bar shows where the rope is, how tight the line is and whether the fish is running. The rod does nothing during the
+ * fight, and a right click or shift still held when it ends neither casts again nor leaves the boat. Lost in water,
+ * the fish pulls the fisher in after it; in lava or the void it only tears free, as nobody is dragged to their death by
+ * a fish.
  */
 public final class TugService {
 
     private static final String BAR = "fishing-tug";
     private static final long PERIOD = 2L;
+    /** Segments of the tension gauge. */
+    private static final int LINE = 10;
+    /** A held right click repeats every 200 ms; this outlasts that with room for a lag spike. */
+    private static final long HELD_MILLIS = 750L;
     private static final MiniMessage MINI = MiniMessage.miniMessage();
     private static final de.raindancer.core.ui.effect.Effect HOOKED = sound("entity.fishing_bobber.retrieve", 1f, 0.5f);
     private static final de.raindancer.core.ui.effect.Effect REELED = sound("entity.fishing_bobber.retrieve", 0.6f, 1.2f);
@@ -56,9 +64,14 @@ public final class TugService {
     private final Effects effects;
     private final Random random;
     private final TugRule rule = new TugRule();
+    private final HeldInputRule heldCasts = new HeldInputRule(HELD_MILLIS);
+    private final HeldInputRule heldShift = new HeldInputRule(HELD_MILLIS);
     private final Map<UUID, Running> fights = new ConcurrentHashMap<>();
+    private volatile TugRule.Odds odds;
 
-    public TugService(Plugin plugin, BossBars bars, Messages messages, Effects effects, Random random) {
+    public TugService(Plugin plugin, BossBars bars, Messages messages, Effects effects, Random random,
+                      FishingSettings settings) {
+        this.odds = settings.fightOdds();
         this.plugin = plugin;
         this.bars = bars;
         this.messages = messages;
@@ -66,8 +79,23 @@ public final class TugService {
         this.random = random;
     }
 
+    public void settings(FishingSettings settings) {
+        odds = settings.fightOdds();
+    }
+
+    /** Rolled once per catch: whether this one fights before it comes up. */
     public boolean fights(Catch caught) {
-        return rule.fights(caught);
+        return rule.fights(caught, odds, random);
+    }
+
+    /** A cast by hand right after a fight: the right click that reeled is still held, so it is not a new cast. */
+    public boolean castHeldOver(UUID player) {
+        return heldCasts.blocks(player, System.currentTimeMillis());
+    }
+
+    /** Shift in a boat reels during a fight and must not leave it; nor may the shift still held when it ends. */
+    public boolean keepsSeated(UUID player) {
+        return fights.containsKey(player) || heldShift.blocks(player, System.currentTimeMillis());
     }
 
     public boolean active(UUID player) {
@@ -99,7 +127,12 @@ public final class TugService {
                 task.cancel();
                 return;
             }
-            rule.step(running.fight, random);
+            boolean reeling = player.getCurrentInput().isSneak();
+            TugRule.Phase phase = running.fight.phase();
+            rule.step(running.fight, reeling, random);
+            if (reeling && random.nextInt(phase == TugRule.Phase.SURGE ? 2 : 3) == 0) {
+                effects.play(id, phase == TugRule.Phase.SURGE ? STRAINED : REELED);
+            }
             tug(player, running);
             if (running.fight.outcome() != TugRule.Outcome.FIGHTING) {
                 finish(player, running, running.fight.outcome());
@@ -111,24 +144,6 @@ public final class TugService {
             fights.remove(id, running);
             bars.clear(id, BAR);
         });
-    }
-
-    /** A reel of the rod during a fight. */
-    public void reel(Player player) {
-        Running running = fights.get(player.getUniqueId());
-        if (running == null) {
-            return;
-        }
-        TugRule.Phase phase = running.fight.phase();
-        int strain = running.fight.strain();
-        rule.reel(running.fight);
-        effects.play(player.getUniqueId(),
-                phase == TugRule.Phase.SURGE && running.fight.strain() > strain ? STRAINED : REELED);
-        if (running.fight.outcome() != TugRule.Outcome.FIGHTING) {
-            finish(player, running, running.fight.outcome());
-        } else {
-            show(player.getUniqueId(), running.fight);
-        }
     }
 
     /** The fish's side of it: the float darts, and in water a run tugs at the fisher too. */
@@ -159,6 +174,9 @@ public final class TugService {
         if (!fights.remove(id, running)) {
             return;
         }
+        long now = System.currentTimeMillis();
+        heldCasts.arm(id, now);
+        heldShift.arm(id, now);
         bars.clear(id, BAR);
         FishHook hook = running.hook;
         Location at = hook.isValid() ? hook.getLocation() : player.getLocation();
@@ -196,25 +214,30 @@ public final class TugService {
     }
 
     private void show(UUID player, TugRule.Fight fight) {
-        String strain = "▮".repeat(fight.strain()) + "<dark_gray>" + "▮".repeat(TugRule.MAX_STRAIN - fight.strain());
+        double tension = fight.tension();
+        int tight = (int) Math.round(tension * LINE);
+        String colour = tension < 0.5 ? "<green>" : tension < 0.8 ? "<yellow>" : "<red>";
+        String line = colour + "▮".repeat(tight) + "<dark_gray>" + "▮".repeat(LINE - tight);
         String head = switch (fight.phase()) {
-            case CALM -> "<green>Reel! <gray>Hold right click";
+            case CALM -> "<green>Reel! <gray>Hold sneak";
             case WARNING -> "<yellow>It is about to run…";
-            case SURGE -> "<red><bold>It is running! Let go!";
+            case SURGE -> "<red><bold>It is running! Let go!</bold>";
         };
-        Component text = MINI.deserialize(head + " <dark_gray>· <gray>Line <red>" + strain
+        Component text = MINI.deserialize(head + " <dark_gray>· <gray>Line " + line
                 + " <dark_gray>· <gray>" + fight.secondsLeft() + "s");
-        BossBar.Color colour = switch (fight.phase()) {
+        BossBar.Color bar = switch (fight.phase()) {
             case CALM -> BossBar.Color.GREEN;
             case WARNING -> BossBar.Color.YELLOW;
             case SURGE -> BossBar.Color.RED;
         };
-        bars.show(player, BAR, BarStyle.of(text).progress((float) fight.rope()).colour(colour)
+        bars.show(player, BAR, BarStyle.of(text).progress((float) fight.rope()).colour(bar)
                 .overlay(BossBar.Overlay.NOTCHED_10), BarPriority.HIGH);
     }
 
     /** A fisher who left mid-fight: the fish is gone. */
     public void forget(UUID player) {
+        heldCasts.forget(player);
+        heldShift.forget(player);
         Running running = fights.remove(player);
         if (running != null) {
             bars.clear(player, BAR);

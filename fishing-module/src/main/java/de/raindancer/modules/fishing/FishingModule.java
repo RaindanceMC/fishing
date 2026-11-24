@@ -51,7 +51,7 @@ import java.util.Random;
  */
 public final class FishingModule implements FlexModule {
 
-    private static final ModuleInfo INFO = ModuleInfo.of("fishing", "Fishing", "0.16.0")
+    private static final ModuleInfo INFO = ModuleInfo.of("fishing", "Fishing", "0.17.0")
             .describedAs("New fish in six tiers, sea chests, fishing spots, rod upgrades and skills, lava and "
                     + "void fishing, and dishes cooked from the catch.")
             .by("Raindancer118");
@@ -145,7 +145,8 @@ public final class FishingModule implements FlexModule {
         settings.onChange(chests::settings);
 
         de.raindancer.modules.fishing.service.TugService tugs = new de.raindancer.modules.fishing.service.TugService(
-                context.plugin(), context.core().bossBars(), context.core().messages(), context.core().effects(), random);
+                context.plugin(), context.core().bossBars(), context.core().messages(), context.core().effects(), random, now);
+        settings.onChange(tugs::settings);
         lines.tugs(tugs);
         de.raindancer.modules.fishing.service.MerchantService merchant =
                 new de.raindancer.modules.fishing.service.MerchantService(context.plugin(), context.core().messages(),

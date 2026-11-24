@@ -1,6 +1,6 @@
 id: fishing-market
 title: Big fish, rare fish, fish to sell
-summary: "The tug of war with legendary fish, rare variants, the fishmonger and aquariums."
+summary: "The reel-in battle with legendary fish, rare variants, the fishmonger and aquariums."
 intro: |
   What happens after the bite: fighting the big ones, the rare colours any fish can come in, selling your catch and keeping your favourites.
 icon: TROPICAL_FISH
@@ -13,10 +13,11 @@ commands: [fishing]
 related: [fishing]
 sections:
   - question: Why does a big fish fight back?
-    title: Tug of war
+    title: Reel-in battle
     text: |
-      A <gold>legendary</gold> or <aqua>mythic</aqua> fish fights before it comes up. A bar shows the rope between you and the fish, and the fish starts ahead.
-      While it is calm (green), hold right click to reel it in. When the bar turns yellow it is about to run, and while it runs (red) let go: reeling then only strains the line, and four strains in one run snap it.
+      Now and then a <gold>legendary</gold> or <aqua>mythic</aqua> fish fights before it comes up. A bar shows the rope between you and the fish, and the fish starts ahead.
+      Hold <white>sneak</white> to reel while it is calm (green). Reeling tightens the line a little, letting go eases it; the Line gauge shows how tight it is. When the bar turns yellow the fish is about to run: let go once it runs (red), as reeling then pulls the line tight fast, and a line pulled tight snaps.
+      Your rod does nothing during the fight, so a right click can never throw a new line. In a boat, sneak reels without leaving it.
       Pull the rope all the way to your side and it is yours. Let the fish take it to its side and it pulls you into the water after it; in lava or the void it only tears free. A fight nobody wins ends after 45 seconds with the fish gone.
   - question: What are golden and prismatic fish?
     title: Rare variants

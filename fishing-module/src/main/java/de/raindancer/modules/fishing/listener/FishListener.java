@@ -12,6 +12,7 @@ import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
+import org.bukkit.event.entity.EntityDismountEvent;
 import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
@@ -42,11 +43,14 @@ public final class FishListener implements IFishingListener {
         Player player = event.getPlayer();
         FishHook hook = event.getHook();
         if (event.getState() != PlayerFishEvent.State.FISHING && services.tugs().active(player.getUniqueId())) {
-            // Mid-fight the hook stays out: a reel of the rod is a pull on the rope, and a new bite is nothing.
+            // Mid-fight the hook stays out and the rod does nothing: sneak reels, and a new bite is nothing.
             event.setCancelled(true);
-            if (event.getState() != PlayerFishEvent.State.BITE && event.getState() != PlayerFishEvent.State.LURED) {
-                services.tugs().reel(player);
-            }
+            return;
+        }
+        if (event.getState() == PlayerFishEvent.State.FISHING && !services.auto().casting(player.getUniqueId())
+                && services.tugs().castHeldOver(player.getUniqueId())) {
+            // The right click held through the fight repeats once the hook is gone: no new cast until it is let go.
+            event.setCancelled(true);
             return;
         }
         switch (event.getState()) {
@@ -127,6 +131,14 @@ public final class FishListener implements IFishingListener {
         services.catches().bringUp(player, hook.getLocation(), water, landed);
         services.catches().credit(player, caught, water);
         services.auto().landed(player);
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onDismount(EntityDismountEvent event) {
+        if (event.isCancellable() && event.getEntity() instanceof Player player
+                && services.tugs().keepsSeated(player.getUniqueId())) {
+            event.setCancelled(true);
+        }
     }
 
     @EventHandler

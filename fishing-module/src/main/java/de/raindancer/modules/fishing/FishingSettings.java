@@ -136,7 +136,18 @@ public record FishingSettings(
         @Describe("The skin fishmongers wear: a player's name, a MineSkin link, several of either separated by commas "
                 + "(each fishmonger keeps one), or empty for a suit.")
         @Key("market.fishmonger-skin")
-        String merchantSkin) {
+        String merchantSkin,
+
+        @In("fishing") @Title("Legendary fish fight back") @Range(min = 0, max = 100)
+        @Describe("Out of a hundred legendary catches, how many put up a reel-in battle (hold sneak to reel) "
+                + "instead of coming straight up. 0 for never, 100 for every one.")
+        @Key("fight.legendary-percent")
+        int legendaryFightPercent,
+
+        @In("fishing") @Title("Mythic fish fight back") @Range(min = 0, max = 100)
+        @Describe("Out of a hundred mythic catches, how many put up a reel-in battle instead of coming straight up.")
+        @Key("fight.mythic-percent")
+        int mythicFightPercent) {
 
     public static final FishingSettings DEFAULTS = new FishingSettings(
             true,
@@ -144,12 +155,18 @@ public record FishingSettings(
             25, "100",
             40, 120, 100, 1500, 6000, 200, 5, 10, 25,
             100, "1000",
-            "8", "");
+            "8", "",
+            40, 60);
 
     /** What rod upgrades cost in fishing experience, for {@link UpgradeRule}. */
     public UpgradeRule.Costs costs() {
         return new UpgradeRule.Costs(hookCost, lureCost, reelCost, emberLineCost, voidLineCost, costGrowthPercent,
                 levelsPerRank, emberLineLevel, voidLineLevel);
+    }
+
+    /** How often a legendary or mythic catch fights, for {@link de.raindancer.modules.fishing.rules.TugRule}. */
+    public de.raindancer.modules.fishing.rules.TugRule.Odds fightOdds() {
+        return new de.raindancer.modules.fishing.rules.TugRule.Odds(legendaryFightPercent, mythicFightPercent);
     }
 
     public long chestMoneyMinor() {

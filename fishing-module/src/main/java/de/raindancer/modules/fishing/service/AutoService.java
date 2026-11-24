@@ -156,6 +156,11 @@ public final class AutoService implements IFishingService {
         return stack != null && stack.getItemMeta() instanceof Damageable damageable ? damageable.getDamage() : 0;
     }
 
+    /** True while this service is putting the fisher's line out, so the cast is not one by hand. */
+    public boolean casting(UUID player) {
+        return casting.contains(player);
+    }
+
     public void forget(UUID player) {
         watches.remove(player);
         told.remove(player);

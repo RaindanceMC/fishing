@@ -6,14 +6,13 @@ import de.raindancer.modules.fishing.model.Tier;
 import java.util.Random;
 
 /**
- * A legendary or better fish fights. The fish keeps pulling it towards the water, and
- * every reel draws it back. Every few seconds the fish runs, pulling hard, after a short warning; a reel during a run
- * does not draw, it strains the line, and too much strain in one run snaps it. Rope at the fisher: landed. Rope at the
- * water: the fisher goes in after it.
+ * A legendary or mythic fish sometimes fights. The fish keeps pulling it towards the water, and holding sneak reels
+ * it back, tightening the line a little. Every few seconds the fish runs, pulling hard, after a short warning; reeling
+ * during a run gains nothing and tightens the line fast, and a line pulled tight snaps. Letting go eases it. Rope at
+ * the fisher: landed. Rope at the water: the fish wins.
  *
- * The rope starts on the fish's side.
- *
- * <p>One step is two ticks. A held right click reels every four ticks, so about every second step.
+ * <p>The input is sneak, never the rod: a held right click would cast again the moment the fight ends. The rope
+ * starts on the fish's side. One step is two ticks.
  */
 public final class TugRule implements IFishingRule {
 
@@ -21,12 +20,19 @@ public final class TugRule implements IFishingRule {
 
     public enum Outcome { FIGHTING, LANDED, PULLED_IN, SNAPPED, ESCAPED }
 
-    static final double REEL = 0.04;
+    /** In percent of the catches of that tier. */
+    public record Odds(int legendaryPercent, int mythicPercent) {
+    }
+
+    static final double REEL = 0.02;
     static final double SURGE_FACTOR = 3.0;
+    /** Line tension gained per step reeled while calm, while it runs, and lost per step let go. */
+    static final double TIGHTEN = 0.01;
+    static final double TIGHTEN_RUNNING = 0.1;
+    static final double EASE = 0.05;
     static final int WARNING_STEPS = 6;
     /** The fish starts ahead: nobody lands a legendary in its first quiet moment. */
     static final double START = 0.3;
-    public static final int MAX_STRAIN = 4;
     /** 45 seconds: a fight nobody is winning ends with the fish gone. */
     static final int MAX_STEPS = 450;
 
@@ -34,9 +40,9 @@ public final class TugRule implements IFishingRule {
     public static final class Fight {
         private final Tier tier;
         private double rope = START;
+        private double tension;
         private Phase phase = Phase.CALM;
         private int phaseLeft;
-        private int strain;
         private int steps;
         private Outcome outcome = Outcome.FIGHTING;
 
@@ -57,12 +63,13 @@ public final class TugRule implements IFishingRule {
             rope = to;
         }
 
-        public Phase phase() {
-            return phase;
+        /** 0 is slack, 1 snaps. */
+        public double tension() {
+            return tension;
         }
 
-        public int strain() {
-            return strain;
+        public Phase phase() {
+            return phase;
         }
 
         public Outcome outcome() {
@@ -75,8 +82,13 @@ public final class TugRule implements IFishingRule {
         }
     }
 
-    public boolean fights(Catch caught) {
-        return caught instanceof Catch.Fish fish && fish.tier().atLeast(Tier.LEGENDARY);
+    /** Whether this catch fights before it comes up: only legendary and mythic fish, each its share of the time. */
+    public boolean fights(Catch caught, Odds odds, Random random) {
+        if (!(caught instanceof Catch.Fish fish) || !fish.tier().atLeast(Tier.LEGENDARY)) {
+            return false;
+        }
+        int percent = fish.tier().atLeast(Tier.MYTHIC) ? odds.mythicPercent() : odds.legendaryPercent();
+        return random.nextInt(100) < percent;
     }
 
     /** How hard this fish pulls each step while calm. */
@@ -90,29 +102,30 @@ public final class TugRule implements IFishingRule {
         return fight;
     }
 
-    public void reel(Fight fight) {
-        if (fight.outcome != Outcome.FIGHTING) {
-            return;
-        }
-        if (fight.phase == Phase.SURGE) {
-            fight.strain++;
-            if (fight.strain >= MAX_STRAIN) {
-                fight.outcome = Outcome.SNAPPED;
-            }
-            return;
-        }
-        fight.rope = Math.min(1, fight.rope + REEL);
-        if (fight.rope >= 1) {
-            fight.outcome = Outcome.LANDED;
-        }
-    }
-
-    public void step(Fight fight, Random random) {
+    /** One step of the fight; {@code reeling} is whether the fisher holds sneak. */
+    public void step(Fight fight, boolean reeling, Random random) {
         if (fight.outcome != Outcome.FIGHTING) {
             return;
         }
         fight.steps++;
-        fight.rope -= pull(fight.tier) * (fight.phase == Phase.SURGE ? SURGE_FACTOR : 1);
+        boolean running = fight.phase == Phase.SURGE;
+        if (reeling) {
+            fight.tension = Math.min(1, fight.tension + (running ? TIGHTEN_RUNNING : TIGHTEN));
+            if (fight.tension >= 1) {
+                fight.outcome = Outcome.SNAPPED;
+                return;
+            }
+            if (!running) {
+                fight.rope = Math.min(1, fight.rope + REEL);
+                if (fight.rope >= 1) {
+                    fight.outcome = Outcome.LANDED;
+                    return;
+                }
+            }
+        } else {
+            fight.tension = Math.max(0, fight.tension - EASE);
+        }
+        fight.rope -= pull(fight.tier) * (running ? SURGE_FACTOR : 1);
         if (fight.rope <= 0) {
             fight.rope = 0;
             fight.outcome = Outcome.PULLED_IN;
@@ -137,7 +150,6 @@ public final class TugRule implements IFishingRule {
             case SURGE -> {
                 fight.phase = Phase.CALM;
                 fight.phaseLeft = calm(random);
-                fight.strain = 0;
             }
         }
     }
@@ -148,6 +160,7 @@ public final class TugRule implements IFishingRule {
 
     @Override
     public String describe() {
-        return "the tug of war with a legendary or mythic fish: reel while it is calm, let go while it runs";
+        return "the reel-in battle a legendary or mythic fish sometimes puts up: hold sneak while it is calm, "
+                + "let go before it runs, and keep the line from snapping";
     }
 }
