@@ -156,7 +156,7 @@ public record FishingSettings(
             40, 120, 100, 1500, 6000, 200, 5, 10, 25,
             100, "1000",
             "8", "",
-            40, 60);
+            20, 40);
 
     /** What rod upgrades cost in fishing experience, for {@link UpgradeRule}. */
     public UpgradeRule.Costs costs() {
