@@ -1,0 +1,7 @@
+{
+ "parent": "rainsfishing:item/fish/yeukoula_sweaterfin",
+ "textures": {
+  "0": "rainsfishing:item/fish/yeukoula_sweaterfin_golden",
+  "particle": "rainsfishing:item/fish/yeukoula_sweaterfin_golden"
+ }
+}

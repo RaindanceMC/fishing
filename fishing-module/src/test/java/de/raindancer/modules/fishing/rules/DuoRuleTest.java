@@ -20,7 +20,7 @@ class DuoRuleTest {
     private final DuoRule rule = new DuoRule(CATALOG);
 
     @Test
-    @DisplayName("Rain and Hydro have their own legendary fish: the hoodfin in frozen water, the dragonet in rivers")
+    @DisplayName("Rain, Hydro and Yeuk have their own legendary fish: the hoodfin in frozen water, the dragonet in rivers, the sweaterfin in rivers and the sea")
     void theOwnersFish() {
         assertThat(CATALOG.fish("raindancer_hoodfin")).hasValueSatisfying(kind -> {
             assertThat(kind.tier()).isEqualTo(Tier.LEGENDARY);
@@ -29,6 +29,11 @@ class DuoRuleTest {
         assertThat(CATALOG.fish("hydro_dragonet")).hasValueSatisfying(kind -> {
             assertThat(kind.tier()).isEqualTo(Tier.LEGENDARY);
             assertThat(kind.waters()).containsExactly(Water.RIVER);
+        });
+        assertThat(CATALOG.fish("yeukoula_sweaterfin")).hasValueSatisfying(kind -> {
+            assertThat(kind.tier()).isEqualTo(Tier.LEGENDARY);
+            assertThat(kind.waters()).containsExactlyInAnyOrder(Water.RIVER, Water.OCEAN);
+            assertThat(new SwimRule().personality(kind).temper()).isEqualTo(SwimRule.Temper.CALM);
         });
         assertThat(CATALOG.duo("rain_and_hydro")).hasValueSatisfying(duo ->
                 assertThat(duo.fish()).containsExactly("raindancer_hoodfin", "hydro_dragonet"));

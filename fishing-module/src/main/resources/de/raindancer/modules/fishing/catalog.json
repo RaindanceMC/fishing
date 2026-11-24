@@ -724,6 +724,28 @@
    },
    "_skin": "Hydr0Drag0n: pink head with green cheeks, black suit, white shirt, red tie, pastel lavender sleeves",
    "temper": "aggressive"
+  },
+  {
+   "id": "yeukoula_sweaterfin",
+   "name": "Yeukoula Sweaterfin",
+   "tier": "legendary",
+   "waters": [
+    "river",
+    "ocean"
+   ],
+   "shape": "deep",
+   "colours": [
+    "#6a1e1b",
+    "#f3e5e5",
+    "#191919",
+    "#394d33"
+   ],
+   "extra": {
+    "C": "#440d10",
+    "D": "#f0a4b1"
+   },
+   "temper": "calm",
+   "_skin": "Yeukoula: black hair with a pink bow, pale face, dark red Christmas sweater with a cream band and green, red plaid trousers"
   }
  ],
  "dishes": [

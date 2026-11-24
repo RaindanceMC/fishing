@@ -300,6 +300,11 @@ assets/rainsfishing/items/fish/wartling_ray_albino.json
 assets/rainsfishing/items/fish/wartling_ray_golden.json
 assets/rainsfishing/items/fish/wartling_ray_melanistic.json
 assets/rainsfishing/items/fish/wartling_ray_prismatic.json
+assets/rainsfishing/items/fish/yeukoula_sweaterfin.json
+assets/rainsfishing/items/fish/yeukoula_sweaterfin_albino.json
+assets/rainsfishing/items/fish/yeukoula_sweaterfin_golden.json
+assets/rainsfishing/items/fish/yeukoula_sweaterfin_melanistic.json
+assets/rainsfishing/items/fish/yeukoula_sweaterfin_prismatic.json
 assets/rainsfishing/items/net.json
 assets/rainsfishing/items/rod/ember.json
 assets/rainsfishing/items/rod/leviathan.json
@@ -618,6 +623,11 @@ assets/rainsfishing/models/item/fish/wartling_ray_albino.json
 assets/rainsfishing/models/item/fish/wartling_ray_golden.json
 assets/rainsfishing/models/item/fish/wartling_ray_melanistic.json
 assets/rainsfishing/models/item/fish/wartling_ray_prismatic.json
+assets/rainsfishing/models/item/fish/yeukoula_sweaterfin.json
+assets/rainsfishing/models/item/fish/yeukoula_sweaterfin_albino.json
+assets/rainsfishing/models/item/fish/yeukoula_sweaterfin_golden.json
+assets/rainsfishing/models/item/fish/yeukoula_sweaterfin_melanistic.json
+assets/rainsfishing/models/item/fish/yeukoula_sweaterfin_prismatic.json
 assets/rainsfishing/models/item/fishing_spot/bobber.json
 assets/rainsfishing/models/item/fishing_spot/bobber_cave.json
 assets/rainsfishing/models/item/fishing_spot/bobber_frozen.json
@@ -950,6 +960,11 @@ assets/rainsfishing/textures/item/fish/wartling_ray_albino.png
 assets/rainsfishing/textures/item/fish/wartling_ray_golden.png
 assets/rainsfishing/textures/item/fish/wartling_ray_melanistic.png
 assets/rainsfishing/textures/item/fish/wartling_ray_prismatic.png
+assets/rainsfishing/textures/item/fish/yeukoula_sweaterfin.png
+assets/rainsfishing/textures/item/fish/yeukoula_sweaterfin_albino.png
+assets/rainsfishing/textures/item/fish/yeukoula_sweaterfin_golden.png
+assets/rainsfishing/textures/item/fish/yeukoula_sweaterfin_melanistic.png
+assets/rainsfishing/textures/item/fish/yeukoula_sweaterfin_prismatic.png
 assets/rainsfishing/textures/item/fishing_spot/bobber_cave.png
 assets/rainsfishing/textures/item/fishing_spot/bobber_frozen.png
 assets/rainsfishing/textures/item/fishing_spot/bobber_ocean.png

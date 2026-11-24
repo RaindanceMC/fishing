@@ -511,6 +511,18 @@ def build_all():
                                         "..F.F...FF......",
                                         "..S.S..........."],
                                        depth=[3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 2, 2, 2, 2])
+    # Yeukoula: black hair (K) with a pink bow (D), a pale face (W) round the eye, a dark red sweater with its
+    # cream band and green dots, and a tail in the red plaid (C and F) of the trousers.
+    out["yeukoula_sweaterfin"] = shaped([".DD..G.G.G......",
+                                         "DDKKKKKKKK......",
+                                         "KKKKKKKKKKBB..FC",
+                                         "KWEWBBBBBBBBBCFC",
+                                         "WWWWWAWWWAWWWFCF",
+                                         "WWWBBBBBBBBBBCFC",
+                                         ".WBBABBBABBBBFCF",
+                                         "..BBBBBBBBBB.CF.",
+                                         "...FF....FF....."],
+                                        depth=[3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 2, 2, 2])
     # Hydr0Drag0n: a pink head with little ears and a green cheek (D), a black suit (C) over a white shirt (W)
     # and a red tie (A), lavender sail and fins for the sleeves.
     out["hydro_dragonet"] = shaped([".B..B..F.F.F....",
